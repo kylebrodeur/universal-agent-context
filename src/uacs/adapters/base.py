@@ -48,7 +48,7 @@ class BaseFormatAdapter(ABC):
     FORMAT_NAME: str = "base"
     SUPPORTED_FILES: list[str] = []
 
-    def __init__(self, file_path: Path | None):
+    def __init__(self, file_path: Path | None = None):
         self.file_path = file_path
         self.content = file_path.read_text() if file_path and file_path.exists() else ""
         self.parsed = self.parse(self.content) if self.content else None

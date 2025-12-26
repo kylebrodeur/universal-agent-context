@@ -646,6 +646,33 @@ def list_categories(
     )
 
 
+@app.command("list-installed")
+def list_installed():
+    """List installed marketplace assets."""
+    uacs = get_uacs()
+    assets = uacs.marketplace.list_installed()
+
+    if not assets:
+        console.print("[yellow]No assets installed[/yellow]")
+        return
+
+    table = Table(title="Installed Assets")
+    table.add_column("Name", style="cyan")
+    table.add_column("Type", style="magenta")
+    table.add_column("Marketplace", style="blue")
+    table.add_column("Description")
+
+    for asset in assets:
+        table.add_row(
+            asset.name,
+            asset.asset_type,
+            asset.marketplace,
+            asset.description[:50] + "..." if len(asset.description) > 50 else asset.description,
+        )
+
+    console.print(table)
+
+
 @app.command("info")
 def marketplace_info():
     """Show marketplace information."""
