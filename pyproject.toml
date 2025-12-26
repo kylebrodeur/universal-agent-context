@@ -1,0 +1,64 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "universal-agent-context"
+version = "0.1.0"
+description = "A universal system for discovering, translating, and managing AI agent capabilities"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "Kyle Brodeur", email = "kyle@example.com"}
+]
+keywords = [
+    "ai",
+    "agents",
+    "context",
+    "skills",
+    "mcp",
+    "model-context-protocol",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+[project.urls]
+Homepage = "https://github.com/kylebrodeur/universal-agent-context"
+Documentation = "https://github.com/kylebrodeur/universal-agent-context/tree/main/docs"
+Repository = "https://github.com/kylebrodeur/universal-agent-context"
+"Bug Tracker" = "https://github.com/kylebrodeur/universal-agent-context/issues"
+
+[project.scripts]
+uacs = "uacs.cli.main:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/uacs"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+]
+ignore = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
