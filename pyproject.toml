@@ -28,6 +28,15 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
 ]
+dependencies = [
+    "typer>=0.12.0",
+    "rich>=13.7.0",
+    "httpx>=0.27.0",
+    "pydantic>=2.0.0",
+    "tiktoken>=0.5.0",
+    "mcp>=1.0.0",
+    "pyyaml>=6.0.0",
+]
 
 [project.urls]
 Homepage = "https://github.com/kylebrodeur/universal-agent-context"
@@ -38,27 +47,156 @@ Repository = "https://github.com/kylebrodeur/universal-agent-context"
 [project.scripts]
 uacs = "uacs.cli.main:app"
 
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.0.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=6.0.0",
+    "pytest-mock>=3.14.0",
+    "pytest-xdist>=3.6.0",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+    "respx>=0.21.0",
+    "pre-commit>=4.0.0",
+    "pyright>=1.1.390",
+    "bandit[toml]>=1.7.10",
+]
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/uacs"]
 
 [tool.ruff]
 line-length = 88
 target-version = "py311"
+src = ["src", "tests"]
 
 [tool.ruff.lint]
 select = [
-    "E",  # pycodestyle errors
-    "W",  # pycodestyle warnings
-    "F",  # pyflakes
-    "I",  # isort
-    "B",  # flake8-bugbear
-    "C4", # flake8-comprehensions
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "N",      # pep8-naming
+    "UP",     # pyupgrade
 ]
-ignore = []
+ignore = [
+    "E501",   # Line too long (will fix incrementally)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"src/uacs/marketplace/marketplace.py" = ["E402"]  # Module-level imports after try/except for optional deps
+
+[tool.ruff.lint.isort]
+known-first-party = ["uacs"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
 
 [tool.pytest.ini_options]
+asyncio_mode = "auto"
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "-v --tb=short"
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=src/uacs",
+    "--cov-report=term-missing:skip-covered",
+    "--cov-report=html",
+    "--cov-report=xml",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/site-packages/*",
+    "*/.venv/*",
+]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if TYPE_CHECKING:",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "@abstractmethod",
+    "@overload",
+]
+show_missing = true
+precision = 2
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+check_untyped_defs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+strict_equality = true
+strict_concatenate = true
+show_error_codes = true
+show_error_context = true
+pretty = true
+
+[[tool.mypy.overrides]]
+module = [
+    "tests.*",
+]
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+
+[[tool.mypy.overrides]]
+module = [
+    "tiktoken.*",
+    "mcp.*",
+    "yaml.*",
+]
+ignore_missing_imports = true
+
+[tool.pyright]
+pythonVersion = "3.11"
+strictMode = true
+exclude = [
+    "**/node_modules",
+    "**/__pycache__",
+    ".venv",
+    "htmlcov",
+    "dist",
+    "build",
+]
+reportMissingTypeStubs = false
+reportUnknownMemberType = false
+reportUnknownVariableType = false
+reportUnknownArgumentType = false
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv", "htmlcov"]
+skips = ["B101"]
+
+[dependency-groups]
+dev = [
+    "types-pyyaml>=6.0.12.20250915",
+]

@@ -13,7 +13,7 @@ from typing import Any
 from uacs.adapters.agent_skill_adapter import AgentSkillAdapter
 from uacs.adapters.agents_md_adapter import AgentsMDAdapter
 from uacs.context.shared_context import SharedContextManager
-from multi_agent_cli.utils.paths import get_project_root
+from uacs.utils.paths import get_project_root
 
 
 class UnifiedContextAdapter:
@@ -222,7 +222,9 @@ class UnifiedContextAdapter:
 
     def visualize_context(self):
         """Launch interactive context visualization."""
+
     from uacs.visualization import ContextVisualizer
+
     def create_snapshot(self, name: str) -> dict[str, Any]:
         """Create snapshot of current context state.
 

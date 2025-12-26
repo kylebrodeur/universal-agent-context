@@ -236,7 +236,9 @@ class UACS:
         Returns:
             Visualization string (ASCII art or HTML)
         """
-    from uacs.visualization import ContextVisualizer
+        from uacs.visualization import ContextVisualizer
+
+        visualizer = ContextVisualizer()
         # Get graph and stats from shared context
         graph = self.shared_context.get_graph()
         stats = self.shared_context.get_stats()

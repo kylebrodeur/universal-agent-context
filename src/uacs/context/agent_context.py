@@ -7,11 +7,19 @@ and priority-based content selection.
 from pathlib import Path
 from typing import Any
 
-from multi_agent_cli.maos.conversation import ConversationManager
 from uacs.adapters.agent_skill_adapter import AgentSkillAdapter
 from uacs.adapters.agents_md_adapter import AgentsMDAdapter
 from uacs.context.shared_context import SharedContextManager
-from multi_agent_cli.utils.paths import get_project_root
+from uacs.utils.paths import get_project_root
+
+# Optional MAOS integration
+try:
+    from multi_agent_cli.maos.conversation import ConversationManager
+
+    MAOS_AVAILABLE = True
+except ImportError:
+    MAOS_AVAILABLE = False
+    ConversationManager = None  # type: ignore[assignment,misc]
 
 # Default context profiles for each agent
 AGENT_CONTEXT_PROFILES = {

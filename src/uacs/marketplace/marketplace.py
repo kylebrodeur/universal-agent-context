@@ -17,7 +17,15 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
-from multi_agent_cli.protocols.mcp.manager import McpManager
+# Optional MAOS integration
+try:
+    from multi_agent_cli.protocols.mcp.manager import McpManager
+
+    MAOS_AVAILABLE = True
+except ImportError:
+    MAOS_AVAILABLE = False
+    McpManager = None  # type: ignore[assignment,misc]
+
 from uacs.marketplace.cache import MarketplaceCache, paginate
 from uacs.marketplace.repositories import (
     GitHubMCPRepository,
@@ -372,7 +380,10 @@ class MarketplaceAdapter:
         import asyncio
 
         # Determine repo type from CURATED_REPOS
-    from uacs.marketplace.repositories import CURATED_REPOS
+        from uacs.marketplace.repositories import CURATED_REPOS
+
+        repo_config = None
+        for config in CURATED_REPOS:
             if config["owner"] == owner and config["repo"] == repo:
                 repo_config = config
                 break
