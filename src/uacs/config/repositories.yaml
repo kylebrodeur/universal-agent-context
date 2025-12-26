@@ -1,0 +1,26 @@
+repositories:
+  - owner: modelcontextprotocol
+    repo: servers
+    type: mcp
+    path: src
+    description: Official Model Context Protocol servers
+  - owner: agentskills
+    repo: agentskills
+    type: skill
+    path: skills-ref
+    description: Agent Skills reference implementations
+  - owner: ComposioHQ
+    repo: awesome-claude-skills
+    type: skill
+    path: ""
+    description: Curated collection of Claude skills
+  - owner: huggingface
+    repo: skills
+    type: skill
+    path: ""
+    description: Hugging Face Agent Skills
+  - owner: anthropics
+    repo: skills
+    type: skill
+    path: skills
+    description: Anthropic Official Skills

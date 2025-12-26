@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 # Optional MAOS integration
 try:
-    from multi_agent_cli.protocols.mcp.manager import McpManager
+    from uacs.protocols.mcp.manager import McpManager
 
     MAOS_AVAILABLE = True
 except ImportError:

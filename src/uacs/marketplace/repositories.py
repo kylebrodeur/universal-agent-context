@@ -3,9 +3,11 @@
 import logging
 import os
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Any
 
 import httpx
+import yaml
 from dotenv import load_dotenv
 
 from .packages import MCPPackage, Package, SkillPackage
@@ -15,30 +17,25 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
+
+def load_curated_repos() -> list[dict[str, Any]]:
+    """Load curated repositories from configuration file."""
+    try:
+        config_path = Path(__file__).parent.parent / "config" / "repositories.yaml"
+        if not config_path.exists():
+            logger.warning(f"Repositories config not found at {config_path}")
+            return []
+
+        with open(config_path, "r") as f:
+            config = yaml.safe_load(f)
+            return config.get("repositories", [])
+    except Exception as e:
+        logger.error(f"Failed to load repositories config: {e}")
+        return []
+
+
 # Curated GitHub repositories for marketplace integration
-CURATED_REPOS = [
-    {
-        "owner": "modelcontextprotocol",
-        "repo": "servers",
-        "type": "mcp",
-        "path": "src",
-        "description": "Official Model Context Protocol servers",
-    },
-    {
-        "owner": "agentskills",
-        "repo": "agentskills",
-        "type": "skill",
-        "path": "skills-ref",
-        "description": "Agent Skills reference implementations",
-    },
-    {
-        "owner": "ComposioHQ",
-        "repo": "awesome-claude-skills",
-        "type": "skill",
-        "path": "",
-        "description": "Curated collection of Claude skills",
-    },
-]
+CURATED_REPOS = load_curated_repos()
 
 
 class RepositoryAdapter(ABC):
