@@ -17,21 +17,21 @@ from uacs.protocols.mcp.skills_server import list_skills, read_skill
 
 async def main():
     print("🛠️  Testing MCP Tools...")
-    
+
     # 1. List Skills
     print("\n📋 Calling 'list_skills' tool...")
     try:
         # In a real MCP server, this is called via JSON-RPC
         # Here we call the implementation directly
         skills = await list_skills()
-        
+
         print(f"Found {len(skills)} skills.")
         for skill in skills:
             print(f"  - {skill['name']}: {skill['description']}")
-            
+
     except Exception as e:
         print(f"Error listing skills: {e}")
-        
+
     # 2. Read a Skill (if any exist)
     # We'll try to read a hypothetical 'test-skill' or just skip
     skill_name = "test-skill"

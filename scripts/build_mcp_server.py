@@ -13,15 +13,15 @@ def build():
     entry_point = project_root / "src" / "uacs" / "mcp_server_entry.py"
     dist_dir = project_root / "dist"
     build_dir = project_root / "build"
-    
+
     print(f"Building UACS MCP Server from {entry_point}...")
-    
+
     # Clean previous builds
     if dist_dir.exists():
         shutil.rmtree(dist_dir)
     if build_dir.exists():
         shutil.rmtree(build_dir)
-        
+
     # PyInstaller arguments
     args = [
         "pyinstaller",
@@ -34,7 +34,7 @@ def build():
         "--hidden-import=tiktoken_ext",
         str(entry_point)
     ]
-    
+
     try:
         subprocess.run(args, check=True)
         print(f"\nBuild successful! Binary located at: {dist_dir / 'uacs-mcp-server'}")

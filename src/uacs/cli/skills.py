@@ -92,7 +92,7 @@ def to_prompt(
         if not skill_file.exists():
             console.print(f"[red]✗[/red] SKILL.md not found in {path}")
             raise typer.Exit(code=1)
-        
+
         content = skill_file.read_text()
         adapter.parsed = adapter.parse(content)
         prompts.append(adapter.to_system_prompt())
@@ -107,7 +107,7 @@ def list(
     """List all available skills in the project."""
     uacs = get_uacs()
     skills = uacs.get_capabilities()
-    
+
     if json_output:
         print(json.dumps(skills, indent=2))
         return
@@ -123,6 +123,6 @@ def list(
             skill.get("source", "unknown"),
             skill.get("description", "")[:100]
         )
-    
+
     console.print(table)
 

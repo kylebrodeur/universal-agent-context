@@ -16,26 +16,26 @@ from uacs import UACS
 
 async def main():
     print("🏪 Initializing UACS Marketplace...")
-    
+
     # Initialize UACS facade
     uacs = UACS(Path.cwd())
-    
+
     query = "python"
     print(f"\n🔍 Searching for '{query}' skills...")
-    
+
     # Search for skills
     # Note: This requires internet access to query remote repositories
     # If no remote repos are configured or accessible, it might return empty
     try:
         results = await uacs.search(query, package_type="skills")
-        
+
         if not results:
             print("No results found (check network or configured repositories).")
         else:
             print(f"Found {len(results)} packages:")
             for pkg in results:
                 print(f"  - {pkg.name}: {pkg.description[:60]}...")
-                
+
     except Exception as e:
         print(f"Search failed: {e}")
 
