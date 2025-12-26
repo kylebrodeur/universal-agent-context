@@ -141,9 +141,21 @@ Integrate a lightweight embedding model (e.g., `all-MiniLM-L6-v2` via `sentence-
 ### Phase 3: Graph Extraction
 Implement a simple heuristic or LLM-based extractor to identify entities (files, functions) in observations and create `MENTIONS` edges automatically.
 
-### Phase 4: Agent Tools
-Expose new tools to the agents:
-*   `recall_memory(query: str)`
-*   `explore_connections(entity_name: str)`
-*   `navigate_reasoning(start_observation_id: str)`dexed) |
+### Phase 4: Agent Tools & MCP Exposure
+Expose capabilities as standard tools that can be used by internal agents OR exposed via MCP to external clients.
+
+**Core Tools:**
+*   `recall_memory(query: str)`: Semantic search for past observations.
+*   `explore_connections(entity_name: str)`: Graph traversal to find related context.
+*   `sequential_thinking(thought: str, type: str, branch_from: str)`:  Records a thought step, handling the graph logic (creating `FOLLOWS` edges with correct types). This effectively replicates the `sequential-thinking` MCP but backed by our persistent graph.
+
+### Phase 5: MCP Server Implementation
+Wrap the `SurrealMemoryStore` in a standard MCP Server (`uacs serve-memory`).
+*   **Resources:** Expose `memory://observations` and `memory://entities` as readable resources.
+*   **Tools:** Expose the tools defined in Phase 4.
+*   **Prompts:** Provide standard prompts like `recall_context` that pre-fill the context window.
+
+This allows any MCP-compliant client (Claude Desktop, Cursor, etc.) to use UACS as its long-term memory and reasoning engine.
+
+## Comparison with Current Systemdexed) |
 | **Querying** | Python filtering | SurrealQL (Rich query language) |
