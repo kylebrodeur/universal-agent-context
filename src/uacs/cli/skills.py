@@ -13,7 +13,7 @@ from rich.table import Table
 from uacs import UACS
 from uacs.adapters import FormatAdapterRegistry
 from uacs.skills_validator import SkillValidator
-from uacs.utils.paths import get_project_root
+from uacs.cli.utils import get_project_root
 
 app = typer.Typer(help="Manage agent skills")
 console = Console()

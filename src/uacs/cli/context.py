@@ -9,7 +9,7 @@ from rich.panel import Panel
 
 from uacs import UACS
 from uacs.visualization import ContextVisualizer
-from uacs.utils.paths import get_project_root
+from uacs.cli.utils import get_project_root
 
 app = typer.Typer(help="Manage shared context and compression")
 console = Console()
