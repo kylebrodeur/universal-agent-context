@@ -138,8 +138,9 @@ class SurrealMemoryStore:
 ### Phase 2: Embedding Integration
 Integrate a lightweight embedding model (e.g., `all-MiniLM-L6-v2` via `sentence-transformers` or `fastembed`) into UACS to generate vectors for observations.
 
-### Phase 3: Graph Extraction
-Implement a simple heuristic or LLM-based extractor to identify entities (files, functions) in observations and create `MENTIONS` edges automatically.
+### Phase 3: Graph Extraction & Ingestion
+*   **Extraction:** Implement a simple heuristic or LLM-based extractor to identify entities (files, functions) in observations and create `MENTIONS` edges automatically.
+*   **Ingestion:** Add capability to parse external documents (PDF, MD, JSON) and ingest them as `observation` nodes (type='document') with vector embeddings. This allows the memory graph to be seeded with project documentation or data files.
 
 ### Phase 4: Agent Tools & MCP Exposure
 Expose capabilities as standard tools that can be used by internal agents OR exposed via MCP to external clients.

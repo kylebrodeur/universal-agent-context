@@ -88,11 +88,21 @@ Add to your MCP client configuration (e.g., Claude Desktop):
 
 ## Documentation
 
-- [Architecture Overview](docs/ARCHITECTURE.md)
-- [Format Translation](docs/SKILLS_FORMAT.md)
-- [Context Management](docs/UNIFIED_CONTEXT.md)
-- [Marketplace Guide](docs/MARKETPLACE.md)
-- [API Reference](docs/API_REFERENCE.md)
+- [Library Guide](docs/LIBRARY_GUIDE.md) - How to use UACS in your Python code
+- [CLI Reference](docs/CLI_REFERENCE.md) - Command-line interface documentation
+- [Context Management](docs/CONTEXT.md) - Understanding the unified context system
+- [Marketplace Guide](docs/MARKETPLACE.md) - Discovering and installing skills
+- [Format Adapters](docs/ADAPTERS.md) - Supported file formats and custom adapters
+
+## Examples
+
+Check out the `examples/` directory for working code samples:
+
+- [Basic Context](examples/basic_context.py) - Initialize and use the context system
+- [Marketplace Search](examples/marketplace_search.py) - Search for skills and MCP servers
+- [Custom Adapter](examples/custom_adapter.py) - Create a custom format adapter
+- [Memory Usage](examples/memory_usage.py) - Use persistent memory
+- [MCP Tools](examples/mcp_tool_usage.py) - Programmatic access to MCP tools
 
 ## Development
 
