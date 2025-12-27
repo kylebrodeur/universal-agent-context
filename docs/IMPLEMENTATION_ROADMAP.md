@@ -519,15 +519,55 @@ This roadmap guides the development and public launch of **UACS (Universal Agent
 - At least 1 community-contributed extension
 - Advanced features don't complicate basic usage
 
+### 5.3: Marketplace Expansion
+
+**Priority:** 🟡 High
+
+**Reference:** See [MAOS: MARKETPLACE_AGGREGATION_STRATEGY.md](https://github.com/kylebrodeur/multi-agent-cli/blob/main/docs/future/MARKETPLACE_AGGREGATION_STRATEGY.md) for full aggregation architecture
+
+**Current State (Phase 0):**
+- ✅ 2 repositories implemented: Skills + MCP
+- ✅ Basic search and install working
+- ✅ Package validation present
+
+**Expansion Tasks:**
+- [ ] **Add Additional Repository Sources:**
+  - [ ] Smithery.ai integration (MCP registry)
+  - [ ] GitHub Topics discovery (`topic:mcp-server`, `topic:agent-skills`)
+  - [ ] NPM package search (`@modelcontextprotocol/*`)
+  - [ ] PyPI package search (keywords: `mcp-server`, `agent-skill`)
+- [ ] **Enhanced Validation Pipeline:**
+  - [ ] Security scanning integration (mcp-checkpoint or custom)
+  - [ ] Quality scoring (documentation, tests, type hints)
+  - [ ] Dependency audit
+  - [ ] Community ratings/reviews system (future)
+- [ ] **Installation Manager:**
+  - [ ] Multi-tool support (Claude Desktop, Cursor, Cline, VS Code)
+  - [ ] Unified config management
+  - [ ] Version tracking and updates
+- [ ] **Cache & Performance:**
+  - [ ] Local marketplace cache (SQLite)
+  - [ ] Periodic sync (daily)
+  - [ ] Search indexing for <500ms searches
+  - [ ] Pagination for large result sets
+
+**Success Criteria:**
+- 5+ marketplace sources integrated
+- Search <500ms (cached), <2s (uncached)
+- Validation catches 90%+ security issues
+- Install works for multiple tools
+
 ---
 
 ## Phase 6: Production Hardening (Weeks 7-8)
 
 **Goal:** Make UACS enterprise-ready with security, reliability, and observability
 
-### 6.1: Security Audit
+### 6.1: Security Audit & Input Validation
 
 **Priority:** 🔥 Critical
+
+**Reference:** See `docs/SECURITY.md` for detailed security implementation plan (to be created in this phase)
 
 **Tasks:**
 - [ ] Run comprehensive security scan:
@@ -539,6 +579,11 @@ This roadmap guides the development and public launch of **UACS (Universal Agent
   - Command injection risks (MCP server)
   - Secrets in logs/errors
   - Path traversal vulnerabilities
+- [ ] **Implement UACS-specific security validation:**
+  - [ ] Input validation for context management (prevent prompt injection in shared context)
+  - [ ] Validation for marketplace installations (verify package integrity, scan for secrets)
+  - [ ] MCP server security (rate limiting, authentication for sensitive operations)
+  - [ ] File path sanitization (prevent path traversal in MCP filesystem access)
 - [ ] Add security documentation:
   - `SECURITY.md` with vulnerability reporting
   - Security best practices guide
@@ -546,10 +591,16 @@ This roadmap guides the development and public launch of **UACS (Universal Agent
 - [ ] Setup automated security scanning in CI
 - [ ] Consider third-party security audit (optional)
 
+**Integration with MCP Checkpoint (Optional):**
+- [ ] Evaluate [mcp-checkpoint](https://github.com/aira-security/mcp-checkpoint) for MCP server security scanning
+- [ ] Integrate if suitable for UACS use case
+- [ ] Document security scanning workflow for marketplace packages
+
 **Success Criteria:**
 - Zero high/critical vulnerabilities
 - Security policy published
 - Automated scanning in place
+- Input validation prevents common attack vectors
 
 ### 6.2: Error Handling & Logging
 
