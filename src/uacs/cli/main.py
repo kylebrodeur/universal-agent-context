@@ -88,42 +88,53 @@ def init(
         else:
             console.print(f"[dim]○[/dim] Already exists: {directory}")
 
-    # Create example SKILLS.md if it doesn't exist
-    skills_file = project_root / "SKILLS.md"
-    if not skills_file.exists():
-        example_skills = """# Agent Skills
+    # Create example Agent Skill if .agent/skills/ is empty
+    skills_dir = project_root / ".agent" / "skills"
+    example_skill_dir = skills_dir / "example-skill"
+    if skills_dir.exists() and not any(skills_dir.iterdir()):
+        # Directory exists but is empty - create example
+        example_skill_dir.mkdir(parents=True, exist_ok=True)
+        example_skill = """---
+name: example-skill
+description: Example skill demonstrating the Agent Skills format
+---
 
-This file defines available skills for AI agents using the Agent Skills format.
+# Example Skill
 
-## Code Review
+This is an example skill showing the Agent Skills format structure.
 
-**Triggers:** code review, review code, check code
+## When to Use
 
-Perform comprehensive code review with focus on:
-- Code quality and maintainability
-- Security vulnerabilities
-- Performance issues
-- Best practices adherence
+Use this skill when you need to demonstrate:
+- How to structure a skill with YAML frontmatter
+- How to organize instructions
+- How to trigger skill usage
 
-## Test Generation
+## Instructions
 
-**Triggers:** generate tests, create tests, test coverage
+1. **Understand the format**: Skills use YAML frontmatter + Markdown body
+2. **Define clear triggers**: Describe when this skill should be used
+3. **Provide actionable steps**: Break down the skill into clear instructions
+4. **Include examples**: Show concrete usage examples when relevant
 
-Generate unit and integration tests for code:
-- Identify untested code paths
-- Create test cases with good coverage
-- Follow testing best practices
+## Examples
+
+When a user asks "Show me how skills work", you can:
+1. Reference this example skill
+2. Explain the YAML frontmatter structure
+3. Show the markdown instruction format
 """
-        skills_file.write_text(example_skills)
-        console.print(f"[green]✓[/green] Created example {skills_file}")
-    else:
-        console.print(f"[dim]○[/dim] Already exists: {skills_file}")
+        skill_file = example_skill_dir / "SKILL.md"
+        skill_file.write_text(example_skill)
+        console.print(
+            f"[green]✓[/green] Created example skill {example_skill_dir.name}"
+        )
 
     console.print("\n[bold cyan]UACS initialized successfully![/bold cyan]")
     console.print("\nNext steps:")
-    console.print("  1. Edit SKILLS.md to define your agent skills")
-    console.print("  2. Run 'uacs skills list' to see available skills")
-    console.print("  3. Run 'uacs marketplace search QUERY' to find more skills")
+    console.print("  1. Run 'uacs skills list' to see available skills")
+    console.print("  2. Run 'uacs marketplace search QUERY' to find more skills")
+    console.print("  3. Run 'uacs marketplace install SKILL_ID' to install skills")
     console.print("  4. Run 'uacs serve' to start the MCP server")
 
 

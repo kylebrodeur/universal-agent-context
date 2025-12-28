@@ -144,7 +144,7 @@ This roadmap guides the development and public launch of **UACS (Universal Agent
   - ✅ 5-minute tutorial
   - ✅ Common use cases
   - ✅ Code examples for each major feature
-- [ ] Add animated GIF/screenshot of CLI in action (TODO: Next)
+- [ ] Add animated GIF/screenshot of CLI in action (TODO: Next) [[KB: We can come back to this at the end of the roadmap.]]
 
 **What We Have:**
 - 637-line comprehensive README.md
@@ -172,10 +172,10 @@ This roadmap guides the development and public launch of **UACS (Universal Agent
   - ✅ `MCP_SERVER_SETUP.md` - MCP server setup guide (EXISTS)
   - ✅ `SECURITY.md` - Security considerations (EXISTS)
   - ✅ `DEV_TOOLS.md` - Development tools guide (EXISTS)
-- [ ] Create `docs/ARCHITECTURE.md` - High-level system design (TODO: Next)
-- [ ] Create `CONTRIBUTING.md` - Contribution guidelines (TODO)
-- [ ] Create `CODE_OF_CONDUCT.md` - Community standards (TODO)
-- [ ] Add API reference documentation (auto-generated from docstrings) (TODO)
+- [ ] Create `docs/ARCHITECTURE.md` - High-level system design (TODO: Next) [[KB: This exists check to see if it is correct for UACS.]]
+- [ ] Create `CONTRIBUTING.md` - Contribution guidelines (TODO) [[KB: This exists check to see if it is correct for UACS.]]
+- [ ] Create `CODE_OF_CONDUCT.md` - Community standards (TODO) [[KB: I don't need this.]]
+- [ ] Add API reference documentation (auto-generated from docstrings) (TODO) [[KB: Great Idea. this is something I'd like to have a dedicated documentaion agent work on.]]
 - ✅ Ensure all code examples are tested and working
 
 **What We Have:**
@@ -196,13 +196,13 @@ This roadmap guides the development and public launch of **UACS (Universal Agent
 **Status:** ✅ **60% Complete** - Core examples exist, need advanced ones
 
 **Tasks:**
-- ✅ Review and test all examples in `examples/`:
+- ✅ Review and test all examples in `examples/`: [[KB: These items need to be reviewed]]
   - ✅ `basic_context.py` - Context management basics (EXISTS)
   - ✅ `custom_adapter.py` - Creating custom format adapters (EXISTS)
   - ✅ `marketplace_search.py` - Searching and installing packages (EXISTS)
   - ✅ `mcp_tool_usage.py` - Using MCP tools (EXISTS)
   - ✅ `memory_usage.py` - Memory system usage (EXISTS)
-- [ ] Add 3 new advanced examples:
+- [ ] Add 3 new advanced examples: [[KB: These examples may already exist, check to make sure they are current and work, don't give up and don't mark items complete if they aren't.]]
   - [ ] `compression_example.py` - Token compression in practice (TODO)
   - [ ] `multi_format_translation.py` - Converting between formats (TODO)
   - [ ] `custom_marketplace_repo.py` - Adding custom package sources (TODO)
@@ -239,7 +239,7 @@ This roadmap guides the development and public launch of **UACS (Universal Agent
 - ✅ Run security scan: `bandit -r src/` (clean - see uacs_security_review_report.txt)
 - ✅ Run type checking: `mypy src/` (configured in pyproject.toml)
 - ✅ Run linting: `ruff check src/` (passing)
-- [ ] Performance benchmarking:
+- [ ] Performance benchmarking: [[KB: I can tell you its slow in general. Do we need to document this now or just make speed improvements first?]]
   - [ ] Context compression time/ratio (TODO: Document metrics)
   - [ ] Marketplace search speed (TODO: Document metrics)
   - [ ] MCP server response time (TODO: Document metrics)
@@ -294,7 +294,7 @@ A specific, self-contained work item assigned to one agent.
 ```
 Phase 2: MCP Server Standalone Packaging
 │
-├─ Stage 1: Foundation Setup (SEQUENTIAL ⚡)
+├─ Stage 1: Foundation Setup (SEQUENTIAL ⚡) [[KB: Be clearer, so agent 1, 2, and 3 need to run sequential or they can be run parallel just before moving to Stage 2?]]
 │  ├─ Agent 1: PyInstaller setup (2-3h) ─┐
 │  ├─ Agent 2: Docker setup (2-3h) ──────┤─→ All complete
 │  └─ Agent 3: Doc templates (2h) ───────┘   before Stage 2
@@ -394,7 +394,7 @@ Phase 2: MCP Server Standalone Packaging
 
 ---
 
-#### 🤖 Agent 2 Task: Setup Docker Infrastructure
+#### 🤖 Agent 2 Task: Setup Docker Infrastructure [[KB: I'm curious why we are doing this at all right now. This seems like overkill and slowing us down for release.]]
 
 **Time Estimate:** 2-3 hours
 
