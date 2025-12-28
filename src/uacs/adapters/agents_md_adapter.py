@@ -309,7 +309,7 @@ class AgentsMDAdapter(BaseFormatAdapter):
         }
 
     def merge_with_skills(self, skills_prompt: str) -> str:
-        """Merge AGENTS.md context with SKILLS.md prompt.
+        """Merge AGENTS.md context with agent skills prompt.
 
         Args:
             skills_prompt: Existing skills-based prompt

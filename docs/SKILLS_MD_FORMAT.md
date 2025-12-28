@@ -1,15 +1,17 @@
 # SKILLS.md Format Documentation
 
 **Date:** December 27, 2025  
-**Purpose:** Document the legacy SKILLS.md format and its usage in UACS
+**Purpose:** Document the DEPRECATED SKILLS.md format - NOT SUPPORTED in UACS
 
 ---
 
 ## Overview
 
-**SKILLS.md** is a **legacy format** for defining multiple agent skills in a single file. It was originally used by Anthropic's Claude tools and is maintained in UACS for backward compatibility.
+**SKILLS.md** is a **DEPRECATED and UNSUPPORTED format** that was previously used for defining multiple agent skills in a single file. It was originally used by Anthropic's Claude tools.
 
-⚠️ **Important:** This is **NOT** the same as the [Agent Skills specification](https://agentskills.io) which uses individual `SKILL.md` files.
+🚫 **IMPORTANT: This format is NO LONGER SUPPORTED in UACS. Do not use it.**
+
+✅ **Use Instead:** The [Agent Skills specification](https://agentskills.io) with individual `SKILL.md` files in `.agent/skills/` directories.
 
 ---
 
@@ -61,10 +63,10 @@ Each skill has three required sections:
 | **Standard** | Anthropic (informal) | agentskills.io spec |
 | **Metadata** | Plain text sections | YAML frontmatter |
 | **Location** | `~/.claude/SKILLS.md` | `.agent/skills/*/SKILL.md` |
-| **Adapter** | `SkillsAdapter` | `AgentSkillAdapter` |
-| **Status** | ✅ Legacy (maintained) | ✅ Recommended |
-| **Validation** | Section parsing | YAML schema validation |
-| **Trigger matching** | ✅ Implemented | ⚠️ Partial (see issues) |
+| **Adapter** | `SkillsAdapter` (removed) | `AgentSkillAdapter` |
+| **Status** | 🚫 DEPRECATED (not supported) | ✅ Required |
+| **Validation** | ❌ Not available | YAML schema validation |
+| **Trigger matching** | ❌ Not available | ✅ Implemented |
 
 ### Example Comparison
 
@@ -102,42 +104,30 @@ Use markers: `pytest -m unit`
 
 ## Usage in UACS
 
-### Adapter: SkillsAdapter
+### 🚫 NOT SUPPORTED
 
-**Location:** `src/uacs/adapters/skills_adapter.py` (DOES NOT EXIST - adapter removed/refactored)
+**Status:** SKILLS.md format is **NOT SUPPORTED** in UACS.
 
-**Note:** The SkillsAdapter was mentioned in older documentation but does not exist as a separate file in the current codebase. The format translation functionality may have been:
-1. Integrated into `AgentSkillAdapter`
-2. Deprecated in favor of Agent Skills format
-3. Or exists under a different name/location
+**What Happened:** 
+- The `SkillsAdapter` has been completely removed
+- All SKILLS.md file search paths have been removed
+- CLI commands no longer recognize SKILLS.md format
+- Token counting does not include SKILLS.md
 
-### CLI Commands
+### ✅ Use Agent Skills Instead
 
 ```bash
-# List skills from all sources (including SKILLS.md)
+# List agent skills
 uacs skills list --all
 
-# Convert from SKILLS.md to other formats
-uacs skills convert --source SKILLS.md --target .cursorrules
+# Validate agent skills
+uacs skills validate .agent/skills/
 
-# Test trigger matching (legacy SKILLS.md only)
-uacs skills test "I need help with python testing"
-```
-
-### File Discovery
-
-UACS looks for SKILLS.md in:
-1. `~/.claude/SKILLS.md` (user-wide)
-2. `./SKILLS.md` (project-specific)
-
-### Token Counting
-
-```bash
-$ uacs context stats
-Context Statistics:
-  AGENTS.md:      460 tokens
-  SKILLS.md:      0 tokens (none found)  ← Shows token count if found
-  Shared Context: 0 tokens
+# Use agent skills directories only
+.agent/skills/
+  ├─ python-testing/SKILL.md
+  ├─ code-review/SKILL.md
+  └─ git-workflow/SKILL.md
 ```
 
 ---
@@ -331,16 +321,16 @@ mv ~/.claude/SKILLS.md ~/.claude/SKILLS.md.backup
 
 ### For Users
 
-1. **New projects:** Use Agent Skills format (`.agent/skills/*/SKILL.md`)
-2. **Existing SKILLS.md:** Continue using (fully supported)
-3. **Migration:** Not urgent, but recommended for long-term
+1. **New projects:** ✅ MUST use Agent Skills format (`.agent/skills/*/SKILL.md`)
+2. **Existing SKILLS.md:** 🚫 NO LONGER SUPPORTED - must migrate to Agent Skills
+3. **Migration:** ⚠️ REQUIRED - SKILLS.md will not work
 
 ### For Developers
 
-1. **Priority 1:** Document where `SkillsAdapter` actually lives
-2. **Priority 2:** Fix trigger matching for Agent Skills format
-3. **Priority 3:** Create migration tool (`skills migrate`)
-4. **Priority 4:** Add deprecation warning to SKILLS.md commands
+1. **Status:** SKILLS.md support has been completely removed
+2. **Format:** Only Agent Skills specification is supported
+3. **Migration:** Users must convert to `.agent/skills/` structure
+4. **No Backward Compatibility:** SKILLS.md files will be ignored
 
 ---
 
@@ -519,17 +509,19 @@ Types: feat, fix, docs, style, refactor, test, chore
 
 ## Summary
 
-**SKILLS.md** is a legacy format for defining agent skills in a single file. While still supported in UACS, the recommended approach is to use the [Agent Skills specification](https://agentskills.io) with individual `SKILL.md` files in `.agent/skills/` directories.
+**SKILLS.md** is a **DEPRECATED and UNSUPPORTED** format. It is **NOT SUPPORTED** in UACS.
 
 **Key Points:**
-- ✅ **Supported:** SKILLS.md works and is maintained
-- ⚠️ **Legacy:** Consider migrating to Agent Skills format
-- ❌ **Adapter missing:** `skills_adapter.py` referenced but doesn't exist (needs investigation)
-- 🐛 **Known issue:** Trigger matching only works with SKILLS.md, not SKILL.md
-- 📚 **Documentation:** Extensive references throughout both UACS and MAOS codebases
+- 🚫 **NOT SUPPORTED:** SKILLS.md does not work in UACS
+- ✅ **Required Format:** Agent Skills specification (`.agent/skills/*/SKILL.md`)
+- ❌ **Adapter Removed:** `skills_adapter.py` and SkillsAdapter have been removed
+- ❌ **No File Discovery:** SKILLS.md paths removed from codebase
+- 📚 **Migration Required:** All users must convert to Agent Skills format
 
-**Next Steps:**
-1. Locate or document where SkillsAdapter functionality actually exists
-2. Fix trigger matching for Agent Skills format
-3. Create migration tool for SKILLS.md → SKILL.md conversion
-4. Add deprecation warnings (planned in Phase 1 of roadmap)
+**Action Required:**
+1. ⚠️ **Remove any SKILLS.md files** from your projects
+2. ✅ **Create `.agent/skills/` directory structure**
+3. ✅ **Convert each skill** to individual SKILL.md files with YAML frontmatter
+4. ✅ **Validate** using `uacs skills validate .agent/skills/`
+
+**This format will not "sneak back in" - all backward compatibility has been removed.**

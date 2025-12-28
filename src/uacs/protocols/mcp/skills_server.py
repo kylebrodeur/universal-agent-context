@@ -24,13 +24,13 @@ async def list_tools() -> list[Tool]:
         # Skills Management
         Tool(
             name="skills_list",
-            description="List all available skills from SKILLS.md",
+            description="List all available agent skills",
             inputSchema={
                 "type": "object",
                 "properties": {
                     "skills_file": {
                         "type": "string",
-                        "description": "Optional path to SKILLS.md file",
+                        "description": "Optional path to skills file or directory",
                     }
                 },
             },
@@ -47,7 +47,7 @@ async def list_tools() -> list[Tool]:
                     },
                     "skills_file": {
                         "type": "string",
-                        "description": "Optional path to SKILLS.md file",
+                        "description": "Optional path to skills file or directory",
                     },
                 },
                 "required": ["skill_name"],
@@ -62,7 +62,7 @@ async def list_tools() -> list[Tool]:
                     "query": {"type": "string", "description": "Query to test"},
                     "skills_file": {
                         "type": "string",
-                        "description": "Optional path to SKILLS.md file",
+                        "description": "Optional path to skills file or directory",
                     },
                 },
                 "required": ["query"],
@@ -70,13 +70,13 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="skills_validate",
-            description="Validate SKILLS.md file format",
+            description="Validate agent skills file format",
             inputSchema={
                 "type": "object",
                 "properties": {
                     "skills_file": {
                         "type": "string",
-                        "description": "Path to SKILLS.md file",
+                        "description": "Path to skills file (SKILL.md or directory)",
                     }
                 },
             },
@@ -187,7 +187,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="unified_capabilities",
-            description="Get all unified capabilities (SKILLS.md + AGENTS.md + Context)",
+            description="Get all unified capabilities (Agent Skills + AGENTS.md + Context)",
             inputSchema={"type": "object", "properties": {}},
         ),
         Tool(
@@ -244,7 +244,7 @@ async def list_tools() -> list[Tool]:
         # Project Validation
         Tool(
             name="project_validate",
-            description="Validate AGENTS.md and SKILLS.md configuration",
+            description="Validate AGENTS.md and agent skills configuration",
             inputSchema={
                 "type": "object",
                 "properties": {

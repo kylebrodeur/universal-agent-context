@@ -1,4 +1,4 @@
-"""Unified context adapter combining SKILLS.md, AGENTS.md, and shared context.
+"""Unified context adapter combining agent skills, AGENTS.md, and shared context.
 
 This module creates a single unified interface for all agent context sources:
 - SKILL.md: Individual skill files (Agent Skills format, recommended)
@@ -276,7 +276,7 @@ class UnifiedContextAdapter:
 
 ## Source Breakdown
 - AGENTS.md: {token_stats["agents_md_tokens"]:,} tokens
-- SKILLS.md: {token_stats["skills_tokens"]:,} tokens (across {len(self.skills.skills)} skills)
+- Agent Skills: {token_stats["skills_tokens"]:,} tokens (across {len(self.skills.skills)} skills)
 - Shared Context: {token_stats["shared_context_tokens"]:,} tokens
 
 ## Recommendations

@@ -113,7 +113,7 @@ class AgentContextAdapter:
         """Initialize agent context adapter.
 
         Args:
-            skills_path: Path to SKILLS.md (ignored, using project root for discovery)
+            skills_path: Path to agent skills directory (ignored, using project root for discovery)
             agents_md_path: Path to AGENTS.md or project root
             context_storage: Path for shared context storage
         """

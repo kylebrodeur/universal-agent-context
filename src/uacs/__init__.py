@@ -2,7 +2,7 @@
 
 Provides unified context management for AI agents:
 - Marketplace discovery (Skills + MCP)
-- Format adapters (SKILLS.md, AGENTS.md, etc.)
+- Format adapters (Agent Skills, AGENTS.md, etc.)
 - Context management (shared memory + compression)
 """
 

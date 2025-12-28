@@ -35,7 +35,7 @@ def show_stats():
 
     console.print("[bold]Token Usage:[/bold]")
     console.print(f"  AGENTS.md:      {token_stats['agents_md_tokens']:>6,} tokens")
-    console.print(f"  SKILLS.md:      {token_stats['skills_tokens']:>6,} tokens")
+    console.print(f"  Agent Skills:   {token_stats['skills_tokens']:>6,} tokens")
     console.print(
         f"  Shared Context: {token_stats['shared_context_tokens']:>6,} tokens"
     )
@@ -174,10 +174,10 @@ def show_capabilities():
     else:
         console.print("[dim]○ AGENTS.md not found[/dim]")
 
-    # SKILLS.md
+    # Agent Skills
     skills = caps["available_skills"]
     if skills:
-        console.print(f"\n[green]✓[/green] SKILLS.md loaded ({len(skills)} skills)")
+        console.print(f"\n[green]✓[/green] Agent Skills loaded ({len(skills)} skills)")
         for skill in skills[:5]:
             console.print(f"  - {skill}")
         if len(skills) > 5:
@@ -197,7 +197,7 @@ def show_capabilities():
 def clear_context(
     confirm: bool = typer.Option(False, "--yes", "-y", help="Skip confirmation"),
 ):
-    """Clear all shared context (keeps SKILLS.md and AGENTS.md)."""
+    """Clear all shared context (keeps Agent Skills and AGENTS.md)."""
     if not confirm:
         response = typer.confirm("Clear all shared context? This cannot be undone.")
         if not response:
@@ -226,7 +226,7 @@ def validate_project(
         False, "--verbose", "-v", help="Show all issues including suggestions"
     ),
 ):
-    """Validate AGENTS.md and SKILLS.md configuration."""
+    """Validate AGENTS.md and agent skills configuration."""
     # Note: ProjectValidator is not part of UACS core, so this command may need updates
     # or be removed if the validator doesn't exist in UACS
     console.print("[yellow]⚠ This command requires ProjectValidator which may not be available in UACS[/yellow]")
