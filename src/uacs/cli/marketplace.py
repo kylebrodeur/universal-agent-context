@@ -148,19 +148,24 @@ def install_asset(
     ),
 ):
     """Install one or more assets from marketplace.
-    
+
     Examples:
         uacs marketplace install mcp-builder --source github-skills
         uacs marketplace install skill1 skill2 skill3
     """
     uacs = get_uacs()
-
-    if source:
-        console.print(f"[cyan]Installing {asset_id} from {source}...[/cyan]")
-    else:
-        console.print(f"[cyan]Searching for {asset_id}...[/cyan]")
-
+    
     try:
+        # Install each asset
+        for i, asset_id in enumerate(asset_ids, 1):
+            if len(asset_ids) > 1:
+                console.print(f"\n[bold]Installing {i}/{len(asset_ids)}: {asset_id}[/bold]")
+            
+            if source:
+                console.print(f"[cyan]Installing {asset_id} from {source}...[/cyan]")
+            else:
+                console.print(f"[cyan]Searching for {asset_id}...[/cyan]")
+
         # Search for the asset
         with Progress(
             SpinnerColumn(),
@@ -229,13 +234,19 @@ def install_asset(
             progress.add_task(description="Installing...", total=None)
             uacs.marketplace.install_asset(asset)
 
-        console.print("[green]✓[/green] Successfully installed")
-        if asset.asset_type == "mcp_server":
-            console.print(
-                "\n[dim]MCP Server configured. Restart agent to use tools.[/dim]"
-            )
-        else:
-            console.print('\n[dim]Test with: uacs skills test "your query"[/dim]')
+            console.print("[green]✓[/green] Successfully installed")
+            if asset.asset_type == "mcp_server":
+                console.print(
+                    "\n[dim]MCP Server configured. Restart agent to use tools.[/dim]"
+                )
+            else:
+                if len(asset_ids) == 1:
+                    console.print('\n[dim]Test with: uacs skills test "your query"[/dim]')
+        
+        # Summary for multiple installs
+        if len(asset_ids) > 1:
+            console.print(f"\n[green]✓[/green] Successfully installed {len(asset_ids)} assets")
+            console.print("\n[dim]Test with: uacs skills list[/dim]")
 
     except ValueError as e:
         console.print(f"[red]✗[/red] {e}")
