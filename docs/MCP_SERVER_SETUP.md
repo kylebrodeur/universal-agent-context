@@ -14,7 +14,9 @@ pip install universal-agent-context
 
 **Running the Server:**
 
-To run the server cleanly (without log output interfering with the MCP protocol), use: [[KB: Is there no auto run? ; why would log output interfere? What are we doing that's going to break? Do we log to the traces?]]
+To run the server cleanly (without log output interfering with the MCP protocol), use:
+
+> **Note:** We use `python -m uacs.mcp_server_entry` instead of `uacs serve` because MCP communicates over `stdin`/`stdout`. Any extra output (like "Starting server..." logs) will break the JSON-RPC protocol connection.
 
 ```bash
 python -m uacs.mcp_server_entry
