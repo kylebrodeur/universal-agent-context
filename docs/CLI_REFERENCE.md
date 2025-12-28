@@ -41,7 +41,7 @@ Manage agent skills.
 - `validate`: Validate skill format against specification.
 - `test`: Test skill triggers against a query.
 - `export`: Export skills to JSON.
-- `read-properties`: Read specific properties from a skill.
+- `read-properties`: Read specific properties from a skill. [[KB: Should be broken into read with --properties x or --properties x,y,z like we use flags for the other commands.]]
 
 ### `uacs marketplace`
 Discover and install skills and MCP servers.
