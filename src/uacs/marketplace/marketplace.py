@@ -92,7 +92,7 @@ class MarketplaceAdapter:
             cache_dir: Directory to cache downloaded assets
         """
         self.cache_dir = (
-            cache_dir or Path.home() / ".cache" / "multi-agent-cli" / "assets"
+            cache_dir or Path.home() / ".cache" / "uacs" / "marketplace" / "assets"
         )
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 

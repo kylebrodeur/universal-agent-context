@@ -181,7 +181,7 @@ class FormatAdapterRegistry:
         # Add user home directory for personal skills
         home_config_paths = [
             Path.home() / ".claude",  # Claude Code personal skills
-            Path.home() / ".config" / "multi-agent-cli",  # Our tool's config
+            Path.home() / ".config" / "uacs",  # UACS config directory
         ]
         search_paths.extend(home_config_paths)
 
@@ -214,7 +214,7 @@ class FormatAdapterRegistry:
         search_paths = [
             project_path,
             Path.home() / ".claude",
-            Path.home() / ".config" / "multi-agent-cli",
+            Path.home() / ".config" / "uacs",
         ]
 
         for adapter_class in cls._adapters.values():

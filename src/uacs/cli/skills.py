@@ -114,13 +114,52 @@ def list(
 
     table = Table(title="Available Skills")
     table.add_column("Name", style="cyan")
+    table.add_column("Origin", style="yellow", width=40)
     table.add_column("Source", style="green")
     table.add_column("Description")
 
     for skill in skills.get("agent_skills", []):
+        # Check if skill is from marketplace (has cached metadata)
+        source_path = skill.get("source", "unknown")
+        skill_name = skill.get("name", "unknown")
+        
+        # Skills in .agent/skills could be local or marketplace-installed
+        if ".agent/skills" in source_path or ".claude/skills" in source_path:
+            # Check if it has marketplace cache metadata
+            cache_file = uacs.marketplace.cache_dir / f"{skill_name}.json"
+            if cache_file.exists():
+                # Load cache to get marketplace source info
+                import json
+                try:
+                    with open(cache_file) as f:
+                        cache_data = json.load(f)
+                    asset = cache_data.get("asset", {})
+                    marketplace = asset.get("marketplace", "unknown")
+                    source_url = asset.get("source_url", "")
+                    
+                    # Extract repo info from GitHub URL
+                    # Format: https://github.com/owner/repo/...
+                    if "github.com" in source_url:
+                        parts = source_url.split("github.com/")[1].split("/")
+                        if len(parts) >= 2:
+                            repo_path = f"{parts[0]}/{parts[1]}"
+                            origin = f"marketplace:github:{repo_path}"
+                        else:
+                            origin = f"marketplace:{marketplace}"
+                    else:
+                        origin = f"marketplace:{marketplace}"
+                except Exception:
+                    origin = "marketplace"
+            else:
+                origin = "local"
+        else:
+            # Skills in other locations are always local
+            origin = "local"
+        
         table.add_row(
             skill.get("name", "unknown"),
-            skill.get("source", "unknown"),
+            origin,
+            source_path,
             skill.get("description", "")[:100]
         )
 

@@ -115,9 +115,7 @@ def search_marketplace(
     table.add_column("Type", style="magenta", width=10)
     table.add_column("Author", style="green", width=15)
     table.add_column("Source", style="blue", width=12)
-    table.add_column("Downloads", justify="right", style="yellow", width=10)
-    table.add_column("Rating", justify="right", style="yellow", width=8)
-    table.add_column("Description", width=40)
+    table.add_column("Description", width=50)
 
     for asset in results:
         table.add_row(
@@ -125,8 +123,6 @@ def search_marketplace(
             asset.asset_type,
             asset.author,
             asset.marketplace,
-            f"{asset.downloads:,}",
-            f"{asset.rating:.1f}⭐",
             asset.description[:80] + "..."
             if len(asset.description) > 80
             else asset.description,
@@ -154,13 +150,13 @@ def install_asset(
         uacs marketplace install skill1 skill2 skill3
     """
     uacs = get_uacs()
-    
+
     try:
         # Install each asset
         for i, asset_id in enumerate(asset_ids, 1):
             if len(asset_ids) > 1:
                 console.print(f"\n[bold]Installing {i}/{len(asset_ids)}: {asset_id}[/bold]")
-            
+
             if source:
                 console.print(f"[cyan]Installing {asset_id} from {source}...[/cyan]")
             else:
@@ -242,7 +238,7 @@ def install_asset(
             else:
                 if len(asset_ids) == 1:
                     console.print('\n[dim]Test with: uacs skills test "your query"[/dim]')
-        
+
         # Summary for multiple installs
         if len(asset_ids) > 1:
             console.print(f"\n[green]✓[/green] Successfully installed {len(asset_ids)} assets")

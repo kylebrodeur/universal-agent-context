@@ -67,10 +67,10 @@ class MarketplaceCache:
         """Initialize marketplace cache.
 
         Args:
-            cache_dir: Directory to store cache files (defaults to ~/.cache/multi-agent-cli/marketplace/)
+            cache_dir: Directory to store cache files (defaults to ~/.cache/uacs/marketplace/cache/)
         """
         self.cache_dir = (
-            cache_dir or Path.home() / ".cache" / "multi-agent-cli" / "marketplace"
+            cache_dir or Path.home() / ".cache" / "uacs" / "marketplace" / "cache"
         )
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
