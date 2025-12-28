@@ -122,7 +122,7 @@ def list(
         # Check if skill is from marketplace (has cached metadata)
         source_path = skill.get("source", "unknown")
         skill_name = skill.get("name", "unknown")
-        
+
         # Skills in .agent/skills could be local or marketplace-installed
         if ".agent/skills" in source_path or ".claude/skills" in source_path:
             # Check if it has marketplace cache metadata
@@ -136,7 +136,7 @@ def list(
                     asset = cache_data.get("asset", {})
                     marketplace = asset.get("marketplace", "unknown")
                     source_url = asset.get("source_url", "")
-                    
+
                     # Extract repo info from GitHub URL
                     # Format: https://github.com/owner/repo/...
                     if "github.com" in source_url:
@@ -155,7 +155,7 @@ def list(
         else:
             # Skills in other locations are always local
             origin = "local"
-        
+
         table.add_row(
             skill.get("name", "unknown"),
             origin,
