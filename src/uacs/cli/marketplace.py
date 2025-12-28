@@ -139,15 +139,20 @@ def search_marketplace(
 
 @app.command("install")
 def install_asset(
-    asset_id: str = typer.Argument(..., help="Asset ID to install"),
-    source: str | None = typer.Argument(
-        None, help="Marketplace source (optional if unique)"
+    asset_ids: list[str] = typer.Argument(..., help="Asset ID(s) to install"),
+    source: str | None = typer.Option(
+        None, "--source", "-s", help="Marketplace source (optional if unique)"
     ),
     force: bool = typer.Option(
         False, "--force", "-f", help="Overwrite if already installed"
     ),
 ):
-    """Install an asset from marketplace."""
+    """Install one or more assets from marketplace.
+    
+    Examples:
+        uacs marketplace install mcp-builder --source github-skills
+        uacs marketplace install skill1 skill2 skill3
+    """
     uacs = get_uacs()
 
     if source:

@@ -104,6 +104,7 @@ class UACS:
                     "name": skill.parsed.name,
                     "description": skill.parsed.description,
                     "triggers": skill.parsed.triggers,
+                    "source": skill.source_directory or "local",
                 }
                 for skill in self.agent_skills
                 if skill.parsed
