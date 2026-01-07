@@ -26,6 +26,38 @@ Building AI agent systems today means juggling multiple formats, wasting tokens,
 
 ---
 
+## Installation
+
+Choose the installation method that best fits your workflow:
+
+| Method | Best For | Prerequisite |
+| :--- | :--- | :--- |
+| **Python (pip)** | Developers integrating UACS into Python projects | Python 3.11+ |
+| **uvx** | Quick, temporary usage without installing dependencies | `uv` installed |
+| **[Binary](docs/MCP_SERVER_BINARY.md)** | Standalone usage, no Python environment needed | None |
+| **[Docker](docs/MCP_SERVER_DOCKER.md)** | Server deployments, team environments | Docker |
+
+### Quick Start (Python)
+
+```bash
+# Option 1: From source (Current - Week 1)
+git clone https://github.com/kylebrodeur/universal-agent-context
+cd universal-agent-context
+uv sync                    # Or: pip install -e .
+
+# Option 2: PyPI (Coming Week 3)
+pip install universal-agent-context
+
+# Option 3: One-liner (Coming Week 2)
+uvx universal-agent-context serve
+
+# Initialize project
+uv run uacs context init   # Creates .state/context/ directory
+uv run uacs memory init    # Creates .state/memory/ directory
+```
+
+---
+
 ## CLI Demo
 
 See UACS in action:
@@ -240,6 +272,17 @@ See [LAUNCH_STRATEGY.md](docs/LAUNCH_STRATEGY.md) for full positioning.
 **Goal:** Get context compression working in 2 minutes.
 
 ### Installation
+
+Choose the installation method that best fits your workflow:
+
+| Method | Best For | Prerequisite |
+| :--- | :--- | :--- |
+| **Python (pip)** | Developers integrating UACS into Python projects | Python 3.11+ |
+| **uvx** | Quick, temporary usage without installing dependencies | `uv` installed |
+| **[Binary](docs/MCP_SERVER_BINARY.md)** | Standalone usage, no Python environment needed | None |
+| **[Docker](docs/MCP_SERVER_DOCKER.md)** | Server deployments, team environments | Docker |
+
+#### Quick Start (Python)
 
 ```bash
 # Option 1: From source (Current - Week 1)
