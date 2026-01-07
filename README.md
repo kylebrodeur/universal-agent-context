@@ -658,6 +658,13 @@ See [IMPLEMENTATION_ROADMAP.md](docs/IMPLEMENTATION_ROADMAP.md) for complete tim
 - 📦 Installation - See [Quick Start](#installation) section
 - 🎯 [Use Cases](#use-cases) - Real-world scenarios
 
+**Integrations:**
+UACS works with popular MCP clients out of the box:
+- 🤖 [Claude Desktop](docs/integrations/CLAUDE_DESKTOP.md) - Complete setup guide with binary + Docker
+- ✏️ [Cursor](docs/integrations/CURSOR.md) - Integration with inline chat and Composer
+- 🌊 [Windsurf](docs/integrations/WINDSURF.md) - Cascade AI integration guide
+- 📚 [All Integrations](docs/INTEGRATIONS.md) - Overview, troubleshooting, and advanced configs
+
 **User Guides:**
 - [Library Guide](docs/LIBRARY_GUIDE.md) - Complete Python API reference
 - [CLI Reference](docs/CLI_REFERENCE.md) - All command documentation
