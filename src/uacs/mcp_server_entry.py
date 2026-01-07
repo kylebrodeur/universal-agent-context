@@ -39,7 +39,7 @@ async def run_sse(port: int = 3000):
     ]
 
     app = Starlette(routes=routes)
-    
+
     # Configure uvicorn
     config = uvicorn.Config(app, host="0.0.0.0", port=port, log_level="info")
     server_instance = uvicorn.Server(config)
@@ -49,7 +49,7 @@ async def run_stdio():
     """Run the server using stdio transport."""
     from uacs.protocols.mcp.skills_server import server
     from mcp.server.stdio import stdio_server
-    
+
     async with stdio_server() as (read_stream, write_stream):
         await server.run(
             read_stream, write_stream, server.create_initialization_options()
@@ -60,10 +60,10 @@ def main():
     default_transport = os.environ.get("UACS_TRANSPORT", "stdio")
     parser.add_argument("--transport", choices=["stdio", "sse"], default=default_transport, help="Transport mode")
     parser.add_argument("--port", type=int, default=3000, help="Port for SSE server")
-    
+
     # Parse args (this will handle --help and exit automatically)
     args = parser.parse_args()
-    
+
     # If we get here, args are valid
     try:
         if args.transport == "sse":

@@ -80,7 +80,7 @@ if [ "$BUILD_IMAGE" = true ]; then
     echo "------------------------"
     if docker build -f Dockerfile.mcp-server -t "$IMAGE_NAME" .; then
         echo -e "${GREEN}✓${NC} Image built successfully"
-        
+
         # Show image size
         SIZE=$(docker images --format "{{.Size}}" "$IMAGE_NAME")
         echo -e "${BLUE}ℹ${NC}  Image size: $SIZE"

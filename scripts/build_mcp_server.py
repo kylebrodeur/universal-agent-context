@@ -13,7 +13,7 @@ def get_host_platform():
     """Detect the current host platform."""
     system = platform.system().lower()
     machine = platform.machine().lower()
-    
+
     if system == "darwin":
         if machine == "arm64":
             return "macos-arm64"
@@ -28,7 +28,7 @@ def build():
     """Build the MCP server binary."""
     parser = argparse.ArgumentParser(description="Build UACS MCP Server")
     parser.add_argument(
-        "--platform", 
+        "--platform",
         choices=["macos-arm64", "macos-x86_64", "linux-x86_64", "windows-x86_64"],
         help="Target platform for the build. Defaults to host platform."
     )
@@ -58,7 +58,7 @@ def build():
     target_os = "macos" if "macos" in target_platform else \
                 "linux" if "linux" in target_platform else \
                 "windows" if "windows" in target_platform else "unknown"
-    
+
     host_os_mapped = "macos" if host_os == "darwin" else host_os
 
     if host_os_mapped != target_os:
@@ -92,17 +92,17 @@ def build():
     try:
         # Suppress conda warnings by filtering stderr
         result = subprocess.run(
-            pyinstaller_args, 
+            pyinstaller_args,
             check=True,
             capture_output=True,
             text=True
         )
-        
+
         # Filter out conda warnings from output
         for line in result.stderr.split('\n'):
             if 'conda-meta' not in line and line.strip():
                 print(line)
-        
+
         print(f"\nBuild successful! Binary located at: {dist_dir / output_name}")
     except subprocess.CalledProcessError as e:
         print(f"\nBuild failed with error code {e.returncode}")
