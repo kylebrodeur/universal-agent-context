@@ -195,51 +195,44 @@ async def list_tools() -> list[Tool]:
             description="Get token usage statistics across all sources",
             inputSchema={"type": "object", "properties": {}},
         ),
-        # Marketplace Integration
+        # Package Management
         Tool(
-            name="marketplace_search",
-            description="Search skills marketplace",
+            name="install_package",
+            description="Install package from GitHub, Git URL, or local path",
             inputSchema={
                 "type": "object",
                 "properties": {
-                    "query": {"type": "string", "description": "Search query"},
-                    "marketplace": {
+                    "source": {
                         "type": "string",
-                        "description": "Specific marketplace (skillsmp, skills4agents, agentshare)",
-                        "enum": ["skillsmp", "skills4agents", "agentshare"],
+                        "description": "Package source (owner/repo, git URL, or local path)",
                     },
-                    "category": {"type": "string", "description": "Filter by category"},
-                    "limit": {
-                        "type": "integer",
-                        "description": "Max results",
-                        "default": 20,
+                    "validate": {
+                        "type": "boolean",
+                        "description": "Whether to validate before installing",
+                        "default": True,
                     },
                 },
-                "required": ["query"],
+                "required": ["source"],
             },
         ),
         Tool(
-            name="marketplace_install",
-            description="Install a skill from marketplace",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "skill_id": {
-                        "type": "string",
-                        "description": "Skill ID to install",
-                    },
-                    "marketplace": {
-                        "type": "string",
-                        "description": "Marketplace source",
-                    },
-                },
-                "required": ["skill_id", "marketplace"],
-            },
-        ),
-        Tool(
-            name="marketplace_list_installed",
-            description="List installed marketplace skills",
+            name="list_installed_packages",
+            description="List all installed packages",
             inputSchema={"type": "object", "properties": {}},
+        ),
+        Tool(
+            name="validate_package",
+            description="Validate a package without installing",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "source": {
+                        "type": "string",
+                        "description": "Package source to validate",
+                    },
+                },
+                "required": ["source"],
+            },
         ),
         # Project Validation
         Tool(
@@ -269,7 +262,7 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
     from uacs.adapters.agent_skill_adapter import AgentSkillAdapter
     from uacs.adapters.agents_md_adapter import AgentsMDAdapter
     from uacs.context.unified_context import UnifiedContextAdapter
-    from uacs.marketplace.marketplace import MarketplaceAdapter
+    from uacs.packages import PackageManager
     from uacs.cli.utils import get_project_root
 
     # Skills Management Tools
@@ -445,83 +438,86 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
         stats = context_adapter.get_token_stats()
         return [TextContent(type="text", text=json.dumps(stats, indent=2))]
 
-    # Marketplace Tools
-    if name == "marketplace_search":
-        marketplace_adapter = MarketplaceAdapter()
-        results = marketplace_adapter.search(
-            query=arguments["query"],
-            marketplace=arguments.get("marketplace"),
-            category=arguments.get("category"),
-            limit=arguments.get("limit", 20),
-        )
-        return [
-            TextContent(
-                type="text",
-                text=json.dumps(
-                    [
-                        {
-                            "id": s.id,
-                            "name": s.name,
-                            "description": s.description,
-                            "author": s.author,
-                            "marketplace": s.marketplace,
-                            "downloads": s.downloads,
-                            "rating": s.rating,
-                        }
-                        for s in results
-                    ],
-                    indent=2,
-                ),
+    # Package Management Tools
+    if name == "install_package":
+        project_path = get_project_root()
+        manager = PackageManager(project_path)
+        try:
+            package = manager.install(
+                arguments["source"],
+                validate=arguments.get("validate", True)
             )
-        ]
-
-    if name == "marketplace_install":
-        marketplace_adapter = MarketplaceAdapter()
-        # First find the skill
-        results = marketplace_adapter.search(
-            query=arguments["skill_id"],
-            marketplace=arguments.get("marketplace"),
-            limit=1,
-        )
-        if results:
-            path = marketplace_adapter.install_asset(results[0])
             return [
                 TextContent(
                     type="text",
                     text=json.dumps(
                         {
                             "installed": True,
-                            "path": str(path),
-                            "skill_name": results[0].name,
+                            "package_name": package.name,
+                            "version": package.version,
+                            "path": str(package.path),
                         },
                         indent=2,
                     ),
                 )
             ]
-        return [
-            TextContent(
-                type="text",
-                text=json.dumps(
-                    {"installed": False, "error": "Skill not found"}, indent=2
-                ),
-            )
-        ]
+        except Exception as e:
+            return [
+                TextContent(
+                    type="text",
+                    text=json.dumps(
+                        {"installed": False, "error": str(e)},
+                        indent=2,
+                    ),
+                )
+            ]
 
-    if name == "marketplace_list_installed":
-        marketplace_adapter = MarketplaceAdapter()
-        installed = marketplace_adapter.list_installed()
+    if name == "list_installed_packages":
+        project_path = get_project_root()
+        manager = PackageManager(project_path)
+        packages = manager.list_installed()
         return [
             TextContent(
                 type="text",
                 text=json.dumps(
                     [
-                        {"id": s.id, "name": s.name, "marketplace": s.marketplace}
-                        for s in installed
+                        {
+                            "name": pkg.name,
+                            "version": pkg.version,
+                            "source": pkg.source,
+                            "path": str(pkg.path),
+                        }
+                        for pkg in packages
                     ],
                     indent=2,
                 ),
             )
         ]
+
+    if name == "validate_package":
+        project_path = get_project_root()
+        manager = PackageManager(project_path)
+        try:
+            is_valid = manager.validate(arguments["source"])
+            return [
+                TextContent(
+                    type="text",
+                    text=json.dumps(
+                        {"valid": is_valid},
+                        indent=2,
+                    ),
+                )
+            ]
+        except Exception as e:
+            return [
+                TextContent(
+                    type="text",
+                    text=json.dumps(
+                        {"valid": False, "error": str(e)},
+                        indent=2,
+                    ),
+                )
+            ]
 
     # Project Validation
     if name == "project_validate":

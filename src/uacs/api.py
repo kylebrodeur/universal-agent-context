@@ -10,42 +10,37 @@ from uacs.adapters.agent_skill_adapter import AgentSkillAdapter
 from uacs.adapters.agents_md_adapter import AgentsMDAdapter
 from uacs.context.shared_context import SharedContextManager
 from uacs.context.unified_context import UnifiedContextAdapter
-from uacs.marketplace.marketplace import (
-    MarketplaceAdapter,
-    MarketplaceAsset,
-)
+from uacs.packages import PackageManager
 
 
 class UACS:
     """Universal Agent Context System
 
     Provides unified context management across:
-    - Marketplace (Skills + MCP discovery)
+    - Packages (Local package management)
     - Adapters (Format translation)
     - Context (Shared memory + compression)
     - Project metadata (AGENTS.md)
 
     Example:
         >>> uacs = UACS(project_path=Path("."))
-        >>> results = uacs.search("code review")
+        >>> uacs.install_package("owner/repo")
         >>> context = uacs.build_context(query="...", agent="claude")
     """
 
     def __init__(
         self,
         project_path: Path,
-        marketplace_repos: dict[str, list[str]] | None = None,
     ):
         """Initialize UACS.
 
         Args:
             project_path: Path to the project root
-            marketplace_repos: Optional marketplace configuration
         """
         self.project_path = project_path
 
         # Initialize components
-        self.marketplace = MarketplaceAdapter()
+        self.packages = PackageManager(project_path)
 
         # Detect and load project format adapters
         agents_md_path = project_path / "AGENTS.md"
@@ -64,27 +59,31 @@ class UACS:
             context_storage=project_path / ".state" / "context",
         )
 
-    def search_marketplace(
+    def install_package(
         self,
-        query: str,
-        category: str | None = None,
-        asset_type: str | None = None,
-        limit: int = 20,
-    ) -> list[MarketplaceAsset]:
-        """Search for skills or MCP servers in the marketplace.
+        source: str,
+        validate: bool = True,
+        force: bool = False,
+    ) -> Any:
+        """Install a package from GitHub, Git URL, or local path.
 
         Args:
-            query: Search query
-            category: Filter by category
-            asset_type: Filter by type (skill, mcp_server)
-            limit: Maximum results
+            source: Package source (owner/repo, git URL, or local path)
+            validate: Whether to validate before installing
+            force: Whether to overwrite existing package
 
         Returns:
-            List of matching assets
+            Installed package information
         """
-        return self.marketplace.search(
-            query=query, category=category, asset_type=asset_type, limit=limit
-        )
+        return self.packages.install(source, validate=validate, force=force)
+
+    def list_packages(self) -> list[Any]:
+        """List installed packages.
+
+        Returns:
+            List of installed packages
+        """
+        return self.packages.list_installed()
 
     def get_capabilities(self, agent: str | None = None) -> dict[str, Any]:
         """Get available capabilities for an agent.
@@ -191,42 +190,6 @@ class UACS:
         """
         self.unified_context.export_unified_config(output_path)
 
-    def install(self, package: Any) -> dict[str, Any]:
-        """Install package from marketplace.
-
-        Args:
-            package: Package to install (MarketplaceAsset or dict)
-
-        Returns:
-            Installation result with status and details
-        """
-        # Install the asset
-        install_path = self.marketplace.install_asset(package)
-
-        result = {
-            "name": package.name if hasattr(package, "name") else str(package),
-            "type": package.asset_type if hasattr(package, "asset_type") else "unknown",
-            "path": str(install_path),
-            "status": "installed",
-        }
-
-        # Reload adapters after installation
-        agents_md_path = self.project_path / "AGENTS.md"
-
-        self.agents_md = (
-            AgentsMDAdapter(agents_md_path) if agents_md_path.exists() else None
-        )
-
-        # Reload Agent Skills
-        self.agent_skills = AgentSkillAdapter.discover_skills(self.project_path)
-
-        # Recreate unified context with updated adapters
-        self.unified_context = UnifiedContextAdapter(
-            agents_md_path=agents_md_path if agents_md_path.exists() else None,
-            context_storage=self.project_path / ".state" / "context",
-        )
-
-        return result
 
     def visualize_context(self, output_path: Path | None = None) -> str:
         """Visualize context structure.
@@ -259,23 +222,6 @@ class UACS:
 
         return "Visualization rendered to console"
 
-    def configure_marketplace(self, repos: dict[str, list[str]]) -> None:
-        """Update marketplace repositories configuration.
-
-        Args:
-            repos: Dictionary mapping repo types to URLs
-                   e.g., {'mcp': ['smithery'], 'skills': ['github.com/org/repo']}
-        """
-        # Store config
-        config_path = self.project_path / ".state" / "marketplace_config.json"
-        config_path.parent.mkdir(parents=True, exist_ok=True)
-
-        import json
-
-        config_path.write_text(json.dumps(repos, indent=2))
-
-        # Note: Marketplace update would happen here in Task 2.2
-        # For now, just save the config
 
     def get_stats(self) -> dict[str, Any]:
         """Get comprehensive UACS statistics.
@@ -302,7 +248,10 @@ class UACS:
                     else None,
                 },
             },
-            "marketplace": {"cache_dir": str(self.marketplace.cache_dir)},
+            "packages": {
+                "installed_count": len(self.packages.list_installed()),
+                "skills_dir": str(self.project_path / ".agent" / "skills"),
+            },
             "context": token_stats,
             "capabilities": self.get_capabilities(),
         }
