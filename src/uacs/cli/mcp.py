@@ -18,64 +18,28 @@ def list_servers():
     manager = McpManager()
     servers = manager.list_servers()
 
-    # Get marketplace-installed MCP servers
-    from uacs.marketplace.marketplace import MarketplaceAdapter
-
-    marketplace = MarketplaceAdapter()
-    marketplace_mcps = {
-        asset.name: asset
-        for asset in marketplace.list_installed()
-        if asset.asset_type == "mcp_server"
-    }
-
-    if not servers and not marketplace_mcps:
+    if not servers:
         console.print("[yellow]No MCP servers configured.[/yellow]")
-        console.print("\nSearched locations:")
-        console.print("  - Manual configuration (~/.uacs/mcp-config.json)")
-        console.print("  - Marketplace installations")
+        console.print("\nConfigure MCP servers in: ~/.uacs/mcp-config.json")
         return
 
     table = Table(title="MCP Servers in Use")
     table.add_column("Name", style="cyan", width=20)
-    table.add_column("Source", style="yellow", width=30)
-    table.add_column("Command", style="green", width=25)
+    table.add_column("Command", style="green", width=40)
     table.add_column("Args", style="white", width=30)
     table.add_column("Status", style="magenta", width=10)
 
-    # Track which marketplace servers we've seen
-    seen_marketplace = set()
-
     # Add configured servers
     for server in servers:
-        source = "Manual Config"
-        if server.name in marketplace_mcps:
-            asset = marketplace_mcps[server.name]
-            source = f"Marketplace ({asset.marketplace})"
-            seen_marketplace.add(server.name)
-
         status = "Enabled" if server.enabled else "Disabled"
         args_str = " ".join(server.args[:2])
         if len(server.args) > 2:
             args_str += "..."
 
-        table.add_row(server.name, source, server.command, args_str, status)
-
-    # Add marketplace-only servers (not in config)
-    for mcp_name, asset in marketplace_mcps.items():
-        if mcp_name not in seen_marketplace:
-            source = f"Marketplace ({asset.marketplace})"
-            command = asset.config.get("command", "N/A") if asset.config else "N/A"
-            args_str = ""
-            if asset.config and "args" in asset.config:
-                args = asset.config["args"]
-                if isinstance(args, list):
-                    args_str = " ".join(args[:2])
-                    if len(args) > 2:
-                        args_str += "..."
-            table.add_row(mcp_name, source, command, args_str, "N/A")
+        table.add_row(server.name, server.command, args_str, status)
 
     console.print(table)
-    console.print(f"\n[dim]Total: {len(table.rows)} MCP server(s) in use[/dim]")
+    console.print(f"\n[dim]Total: {len(servers)} MCP server(s) configured[/dim]")
 
 
 @app.command("add")

@@ -5,7 +5,7 @@ from pathlib import Path
 
 import typer
 
-from uacs.cli import context, marketplace, memory, mcp, skills
+from uacs.cli import context, memory, mcp, packages, skills
 
 app = typer.Typer(
     name="uacs",
@@ -16,7 +16,7 @@ app = typer.Typer(
 # Register sub-apps
 app.add_typer(skills.app, name="skills")
 app.add_typer(context.app, name="context")
-app.add_typer(marketplace.app, name="marketplace")
+app.add_typer(packages.app, name="packages")
 app.add_typer(memory.app, name="memory")
 app.add_typer(mcp.app, name="mcp")
 
@@ -38,7 +38,7 @@ def serve(
 
     console = typer.get_text_stream("stdout")
     typer.echo(f"Starting UACS MCP server on {host}:{port}...")
-    typer.echo("Exposing skills, context, and marketplace tools")
+    typer.echo("Exposing skills, context, and package management tools")
     typer.echo("Press Ctrl+C to stop\n")
 
     try:
@@ -133,8 +133,8 @@ When a user asks "Show me how skills work", you can:
     console.print("\n[bold cyan]UACS initialized successfully![/bold cyan]")
     console.print("\nNext steps:")
     console.print("  1. Run 'uacs skills list' to see available skills")
-    console.print("  2. Run 'uacs marketplace search QUERY' to find more skills")
-    console.print("  3. Run 'uacs marketplace install SKILL_ID' to install skills")
+    console.print("  2. Run 'uacs install owner/repo' to install packages from GitHub")
+    console.print("  3. Run 'uacs list' to see installed packages")
     console.print("  4. Run 'uacs serve' to start the MCP server")
 
 
