@@ -7,7 +7,7 @@
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)]()
 
-> **TL;DR:** Universal context middleware for AI agents. One source of truth → 5+ formats. 70% token compression. Skills + MCP marketplace. Works with Claude, Cursor, Windsurf, Cline, or your own Python code.
+> **TL;DR:** Universal context middleware for AI agents. One source of truth → 5+ formats. 70% token compression. Package management for skills + MCP. Works with Claude, Cursor, Windsurf, Cline, or your own Python code.
 
 ---
 
@@ -18,7 +18,7 @@ Building AI agent systems today means juggling multiple formats, wasting tokens,
 **In 30 seconds:**
 - 🔄 Write once → Deploy to Claude, Cursor, Cline, Gemini, Copilot
 - 🗜️ Save 70% on token costs with intelligent compression
-- 🏪 One marketplace for skills + MCP servers (cached, fast)
+- 📦 Package management for skills + MCP servers (GitHub, Git, local)
 - 🧠 Persistent memory across sessions (project + global)
 - ⚡ Python API + CLI + MCP server = works everywhere
 
@@ -63,36 +63,32 @@ uv run uacs memory init    # Creates .state/memory/ directory
 See UACS in action:
 
 ```bash
-# Search the marketplace (skills + MCP servers)
-$ uacs marketplace search "testing"
+# Install packages from GitHub
+$ uacs packages install anthropic/skills-testing
 
-🔍 Searching marketplace for "testing"...
-✅ Found 12 packages (3 skills, 9 MCP servers)
+📦 Installing package 'anthropic/skills-testing'...
+✅ Cloning from GitHub...
+✅ Validating package structure...
+✅ Installed to .agent/skills/testing/
 
-📦 Skills:
-  1. pytest-skill                  - Comprehensive Python testing with pytest
-     Source: github.com/anthropic/skills
-     
-  2. testing-best-practices        - Testing patterns and TDD guidance  
-     Source: agentskills.io
-     
-  3. e2e-testing                   - End-to-end test automation
-     Source: github.com/anthropic/skills
+# List installed packages
+$ uacs packages list
 
-📦 MCP Servers:
-  4. test-runner                   - Run tests via MCP protocol
-  5. coverage-reporter             - Code coverage analysis
-  ...
+📚 Installed Packages (5):
 
-# List installed skills
-$ uacs skills list
-
-📚 Installed Skills (5):
+Skills:
   ✓ code-review               - Review code for security and best practices
+    Source: github.com/anthropic/skills
+
   ✓ documentation             - Generate comprehensive docs
+    Source: github.com/anthropic/skills
+
   ✓ testing                   - Create unit, integration, and e2e tests
-  ✓ performance               - Optimize code performance
-  ✓ refactoring               - Improve code structure
+    Source: github.com/anthropic/skills
+
+MCP Servers:
+  ✓ filesystem                - File operations via MCP
+    Source: github.com/anthropic/mcp-servers
 
 # Check context compression stats
 $ uacs context stats
@@ -138,7 +134,7 @@ $ uacs memory search "testing"
 ```
 
 **What this shows:**
-- ⚡ **Fast marketplace search** - Results in <200ms (cached)
+- 📦 **Easy package installation** - From GitHub, Git, or local paths
 - 📊 **Real-time compression stats** - See exactly what you're saving
 - 🔄 **Format conversion** - One command, any format
 - 🧠 **Memory recall** - Find relevant context instantly
@@ -164,7 +160,7 @@ UACS provides three integration points:
 3. **MCP Server** - Expose UACS capabilities to Claude Desktop, Cursor, Windsurf, Cline
 
 **The Result:**
-> Your existing tools get marketplace search, format conversion, 70% token compression, and persistent memory - without changing how you work.
+> Your existing tools get package management, format conversion, 70% token compression, and persistent memory - without changing how you work.
 
 ---
 
@@ -204,7 +200,7 @@ context = uacs.get_compressed_context(max_tokens=3000)  # 70% compression
 # Savings: $210/month (70%)
 ```
 
-### 3. Skill Discovery & Management
+### 3. Package Management
 **Scenario:** You need testing capabilities for your agent.
 
 **Before UACS:**
@@ -217,10 +213,9 @@ context = uacs.get_compressed_context(max_tokens=3000)  # 70% compression
 
 **With UACS:**
 ```bash
-uacs marketplace search "python testing"
-# Results from: agentskills.io, Smithery, GitHub (cached)
-uacs marketplace install pytest-skill
+uacs packages install anthropic/skills-testing
 # Installed in .agent/skills/ with metadata tracking
+# Works with GitHub repos, Git URLs, or local paths
 ```
 
 ### 4. Persistent Agent Memory
@@ -243,10 +238,9 @@ relevant = uacs.memory.search("testing")
 
 - 🔄 **Format Translation** - Converts between 5+ formats (SKILLS.md, AGENTS.md, .cursorrules, .clinerules, ADK Config)
 - 🗜️ **70%+ Compression** - Intelligent context compression with LLM-based summarization
-- 🏪 **Unified Marketplace** - Skills + MCP servers in one search with caching
+- 📦 **Package Management** - Install skills + MCP servers from GitHub, Git, or local paths
 - 🎯 **Topic-Based Retrieval** - Auto-tagging and focused context
 - 🧠 **Memory System** - Long-term memory with project and global scopes
-- ⚡ **Smart Caching** - 24hr TTL cache for marketplace, <200ms cached searches
 - 🐍 **Standalone Library** - Python API, not just CLI
 
 **vs Similar Tools:**
@@ -255,13 +249,13 @@ relevant = uacs.memory.search("testing")
 |---------|------|------------|-----------------|
 | Format Translation | ✅ 5+ formats | ❌ Skills only | ❌ Skills only |
 | Context Compression | ✅ 70%+ savings | ❌ None | ❌ None |
-| Marketplace | ✅ Skills + MCP | ✅ Skills only | ✅ Skills catalog |
+| Package Management | ✅ Skills + MCP | ⚠️ Limited | ⚠️ Limited |
 | Memory System | ✅ Project + Global | ❌ None | ❌ None |
 | MCP Server | ✅ Full integration | ❌ None | ❌ None |
 | Python API | ✅ Complete | ⚠️ Limited | ⚠️ Limited |
 | Token Tracking | ✅ Real-time stats | ❌ None | ❌ None |
 
-**Bottom line:** UACS is the only solution that provides format translation, compression, marketplace, memory, AND MCP server in one package.
+**Bottom line:** UACS is the only solution that provides format translation, compression, package management, memory, AND MCP server in one package.
 
 See [LAUNCH_STRATEGY.md](docs/LAUNCH_STRATEGY.md) for full positioning.
 
@@ -309,11 +303,11 @@ uv run uacs --help
 # Output: Shows 5 command groups: context, skills, marketplace, memory, mcp
 ```
 
-**Step 2: Search the Marketplace (1 minute)**
+**Step 2: Install a Package (1 minute)**
 ```bash
-uv run uacs marketplace search "python testing"
-# Output: Skills from agentskills.io, Smithery, GitHub
-# Cached results load in <200ms on subsequent searches
+uv run uacs packages install anthropic/skills-testing
+# Output: Clones from GitHub, validates, and installs
+# Works with GitHub repos, Git URLs, or local paths
 ```
 
 **Step 3: Python API - Context Compression (2 minutes)**
@@ -368,7 +362,7 @@ uv run uacs memory search "testing"
 
 **What you just did:**
 - ✅ Installed UACS
-- ✅ Searched unified marketplace (skills + MCP)
+- ✅ Installed a package from GitHub
 - ✅ Compressed context with Python API
 - ✅ Added persistent memory
 
@@ -387,11 +381,9 @@ from pathlib import Path
 # Initialize
 uacs = UACS(project_path=Path.cwd())
 
-# Search marketplace
-results = uacs.search("python testing")
-
-# Install skill
-uacs.install(results[0].name)
+# Install packages
+uacs.packages.install("anthropic/skills-testing")  # From GitHub
+uacs.packages.install("/path/to/local/skill")      # From local path
 
 # Get compressed context
 context = uacs.get_compressed_context(
@@ -407,9 +399,10 @@ relevant = uacs.memory.search("async testing")
 #### 2. CLI Tool
 
 ```bash
-# Marketplace
-uacs marketplace search "python testing"
-uacs marketplace install pytest-skill
+# Package management
+uacs packages install anthropic/skills-testing
+uacs packages list
+uacs packages remove pytest-skill
 
 # Format conversion
 uacs skills convert --from cursorrules --to skills
@@ -450,7 +443,7 @@ uvx universal-agent-context serve
 ```
 
 **Now Claude Desktop can:**
-- Search your local skills and marketplace
+- Manage packages from GitHub, Git, or local paths
 - Convert between formats on-the-fly
 - Compress large contexts automatically
 - Access your project memory
@@ -529,45 +522,44 @@ print(f"Saved: {stats['tokens_saved_by_compression']} tokens")
 print(f"Ratio: {stats['compression_ratio']}")
 ```
 
-### 🏪 Unified Marketplace
+### 📦 Package Management
 
-**The Problem:** Skills scattered across multiple platforms. MCP servers in different registries. No unified search.
+**The Problem:** Skills scattered across GitHub. MCP servers in different repositories. Manual cloning and installation.
 
-**The Solution:** One search, multiple sources, smart caching.
+**The Solution:** Simple package manager modeled after GitHub CLI extensions.
 
 ```bash
-# Search everything (skills + MCP servers)
-uv run uacs marketplace search "filesystem"
+# Install from GitHub
+uv run uacs packages install anthropic/skills-testing
 
-# Filter by type
-uv run uacs marketplace search "python testing" --type skill
-uv run uacs marketplace search "file operations" --type mcp
+# Install from Git URL
+uv run uacs packages install https://github.com/owner/repo.git
 
-# Check cache performance
-uv run uacs marketplace cache --status
+# Install from local path
+uv run uacs packages install /path/to/skill
+
+# List installed packages
+uv run uacs packages list
+
+# Update packages
+uv run uacs packages update
 ```
 
-**What we aggregate:**
-- ✅ [agentskills.io](https://agentskills.io) - Community skills
-- ✅ [Smithery](https://smithery.ai) - MCP server registry
-- ✅ GitHub repositories - Direct skill sources
-- 🚧 More sources coming (Phase 2-3)
-
-**Performance:**
-- First search: <500ms (network fetch)
-- Cached searches: <200ms (24hr TTL)
-- Cache hit rate: ~85% for common searches
+**Installation sources:**
+- ✅ GitHub repositories (`owner/repo`)
+- ✅ Git URLs (HTTPS or SSH)
+- ✅ Local paths (absolute or relative)
 
 **Installation tracking:**
 ```bash
-# Install from marketplace
-uv run uacs marketplace install pytest-skill
+# Install package
+uv run uacs packages install anthropic/skills-testing
 
-# Stored in: .agent/skills/pytest-skill/
+# Stored in: .agent/skills/testing/
 # Metadata: .agent/skills/.installed.json (tracks source, version, installed date)
 
 # Uninstall
-uv run uacs marketplace uninstall pytest-skill
+uv run uacs packages remove testing
 ```
 
 ### 🧠 Memory System
@@ -673,12 +665,12 @@ UACS works with popular MCP clients out of the box:
 **Technical Deep Dives:**
 - [Adapters](docs/ADAPTERS.md) - Format translation architecture
 - [Context Management](docs/CONTEXT.md) - Compression algorithms
-- [Marketplace](docs/MARKETPLACE.md) - Skills + MCP discovery system
+- [Package Management](docs/PACKAGES.md) - Installation and management system
 
 **Examples:**
 All examples are in [examples/](examples/) and tested:
 - [basic_context.py](examples/basic_context.py) - Context system basics
-- [marketplace_search.py](examples/marketplace_search.py) - Search skills + MCP servers
+- [package_management.py](examples/package_management.py) - Install and manage packages
 - [memory_usage.py](examples/memory_usage.py) - Persistent memory
 - [custom_adapter.py](examples/custom_adapter.py) - Build custom format adapters
 - [mcp_tool_usage.py](examples/mcp_tool_usage.py) - Programmatic MCP access

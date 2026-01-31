@@ -166,18 +166,20 @@ class PackageManager:
         with open(self.metadata_file, "w", encoding="utf-8") as f:
             json.dump(metadata, f, indent=2, ensure_ascii=False)
 
-    def install(self, source: str) -> InstalledPackage:
+    def install(self, source: str, validate: bool = True, force: bool = False) -> InstalledPackage:
         """Install a package from a source.
 
         Installation flow:
         1. Parse source to determine type
         2. Fetch to temporary directory
-        3. Validate using SkillValidator
+        3. Validate using SkillValidator (if validate=True)
         4. Copy to .agent/skills/{name}/
         5. Save metadata
 
         Args:
             source: Package source (GitHub repo, Git URL, or local path)
+            validate: Whether to validate before installing (default: True)
+            force: Whether to overwrite existing package (default: False)
 
         Returns:
             InstalledPackage with installation details
@@ -209,32 +211,55 @@ class PackageManager:
             except Exception as e:
                 raise PackageManagerError(f"Failed to fetch package: {e}")
 
-            # Validate package
-            validation_result = self.validator.validate_file(fetched_path)
+            # Validate package if requested
+            if validate:
+                validation_result = self.validator.validate_file(fetched_path)
 
-            if not validation_result.valid:
-                error_messages = [
-                    f"{err.field}: {err.message}" for err in validation_result.errors
-                ]
-                raise PackageManagerError(
-                    f"Package validation failed:\n" + "\n".join(error_messages)
-                )
+                if not validation_result.valid:
+                    error_messages = [
+                        f"{err.field}: {err.message}" for err in validation_result.errors
+                    ]
+                    raise PackageManagerError(
+                        f"Package validation failed:\n" + "\n".join(error_messages)
+                    )
 
-            # Extract package name from metadata
-            if not validation_result.metadata or "name" not in validation_result.metadata:
-                raise PackageManagerError(
-                    "Package validation succeeded but no name found in metadata"
-                )
+                # Extract package name from metadata
+                if not validation_result.metadata or "name" not in validation_result.metadata:
+                    raise PackageManagerError(
+                        "Package validation succeeded but no name found in metadata"
+                    )
 
-            package_name = validation_result.metadata["name"]
+                package_name = validation_result.metadata["name"]
+                package_metadata = validation_result.metadata
+            else:
+                # Try to extract name from SKILL.md manually
+                skill_md = fetched_path / "SKILL.md"
+                if skill_md.exists():
+                    import re
+                    content = skill_md.read_text()
+                    match = re.search(r'^name:\s*(.+)$', content, re.MULTILINE)
+                    if match:
+                        package_name = match.group(1).strip()
+                        package_metadata = {"name": package_name}
+                    else:
+                        raise PackageManagerError(
+                            "Could not determine package name. Enable validation or ensure SKILL.md has a 'name' field."
+                        )
+                else:
+                    raise PackageManagerError(
+                        "No SKILL.md found. Enable validation to install this package."
+                    )
 
             # Check if already installed
             metadata = self._load_metadata()
             if package_name in metadata.get("packages", {}):
-                raise PackageManagerError(
-                    f"Package '{package_name}' is already installed. "
-                    f"Use update() to update it."
-                )
+                if not force:
+                    raise PackageManagerError(
+                        f"Package '{package_name}' is already installed. "
+                        f"Use force=True to overwrite or update() to update it."
+                    )
+                # Remove existing package if force=True
+                self.uninstall(package_name)
 
             # Copy to skills directory
             dest_path = self.skills_dir / package_name
@@ -254,11 +279,11 @@ class PackageManager:
             name=package_name,
             source=source,
             source_type=source_type,
-            version=validation_result.metadata.get("version"),
+            version=package_metadata.get("version"),
             location=dest_path,
             is_valid=True,
             validation_errors=[],
-            metadata=validation_result.metadata,
+            metadata=package_metadata,
         )
 
         # Save to metadata
