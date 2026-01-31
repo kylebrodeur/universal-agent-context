@@ -21,7 +21,7 @@ UACS is middleware for AI agent context management. It sits between your agent a
 
 1. **Universal Format Translation** - One source of truth → multiple formats
 2. **Intelligent Compression** - 70%+ token savings via deduplication, summarization, and quality scoring
-3. **Unified Marketplace** - Single API for skills + MCP server discovery
+3. **Package Management** - Simple installation for skills + MCP servers
 4. **Persistent Memory** - Project-scoped and global memory storage
 5. **Multiple Integration Points** - Python API, CLI, and MCP server
 
@@ -50,15 +50,15 @@ UACS is middleware for AI agent context management. It sits between your agent a
     ┌───────────────────────┼───────────────────────┐
     │                       │                       │
 ┌───▼───────────┐  ┌────────▼────────┐  ┌──────────▼────────┐
-│   ADAPTERS    │  │   MARKETPLACE   │  │     CONTEXT       │
-│ (Translation) │  │   (Discovery)   │  │   (Management)    │
+│   ADAPTERS    │  │    PACKAGES     │  │     CONTEXT       │
+│ (Translation) │  │  (Management)   │  │   (Management)    │
 ├───────────────┤  ├─────────────────┤  ├───────────────────┤
 │               │  │                 │  │                   │
-│ • Skills      │  │ • Git repos     │  │ • Unified Context │
-│ • AGENTS.md   │  │ • Skills        │  │ • Shared Memory   │
-│ • Gemini      │  │ • MCP servers   │  │ • Compression     │
-│ • .cursorrules│  │ • Caching       │  │ • Agent Context   │
-│ • .clinerules │  │ • Install/list  │  │                   │
+│ • Skills      │  │ • Git clone     │  │ • Unified Context │
+│ • AGENTS.md   │  │ • Local copy    │  │ • Shared Memory   │
+│ • Gemini      │  │ • Validation    │  │ • Compression     │
+│ • .cursorrules│  │ • Install/list  │  │ • Agent Context   │
+│ • .clinerules │  │ • Update/remove │  │                   │
 │               │  │                 │  │                   │
 └───────────────┘  └─────────────────┘  └───────────────────┘
          │                  │                      │
@@ -71,7 +71,6 @@ UACS is middleware for AI agent context management. It sits between your agent a
 │  • .agent/mcpservers/       - MCP server configs           │
 │  • .state/context/          - Runtime context              │
 │  • .state/memory/           - Project memory               │
-│  • ~/.uacs/cache/           - Marketplace cache            │
 │  • ~/.uacs/memory/          - Global memory                │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
@@ -165,39 +164,39 @@ def get_compressed_context(max_tokens: int) -> str:
 - Instruction injection
 - Skill discovery and formatting
 
-### 3. Marketplace (`uacs/marketplace/`)
+### 3. Package Manager (`uacs/packages/`)
 
-**Purpose:** Unified discovery and installation for skills + MCP servers.
+**Purpose:** Simple installation and management for skills + MCP servers.
 
 **Components:**
-- `marketplace.py` - Unified marketplace interface
-- `repositories.py` - Git repository management
-- `packages.py` - Package metadata handling
-- `cache.py` - Local caching layer (expires after 24h)
+- `manager.py` - Package manager interface
+- `installer.py` - Git clone and local copy operations
+- `validator.py` - Package structure validation
+- `metadata.py` - Installation tracking
 
 **Architecture:**
 ```python
-class Marketplace:
-    def search(query: str, type: str = "all") -> List[Package]:
-        """Search across skills and MCP servers."""
-        1. Check cache (24h expiry)
-        2. Query Git repositories
-        3. Filter by type (skills/mcp/all)
-        4. Rank by relevance
-        5. Return unified Package objects
-    
-    def install(package: Package) -> None:
-        """Install skill or MCP server."""
-        if package.type == "skills":
-            → Install to .agent/skills/{name}/
-        elif package.type == "mcp":
-            → Install to .agent/mcpservers/
+class PackageManager:
+    def install(source: str, type: str = "auto") -> None:
+        """Install from GitHub, Git URL, or local path."""
+        1. Detect source type (GitHub/Git/local)
+        2. Clone or copy package content
+        3. Validate package structure (for skills)
+        4. Place in appropriate directory
+        5. Update metadata (.installed.json)
+
+    def list(type: str = "all") -> List[Package]:
+        """List installed packages."""
+        → Read from .agent/skills/ and .agent/mcpservers/
+
+    def remove(name: str) -> None:
+        """Uninstall package."""
+        → Remove from .agent/skills/ or .agent/mcpservers/
 ```
 
-**Caching Strategy:**
-- Cache location: `~/.uacs/cache/marketplace.json`
-- Cache TTL: 24 hours
-- Invalidation: Manual via `uacs marketplace refresh`
+**Installation tracking:**
+- Metadata location: `.agent/skills/.installed.json`
+- Tracks: source, install date, version, install method
 
 ### 4. Memory (`uacs/memory/`)
 
@@ -277,28 +276,26 @@ User Request
     └─→ Return: {system_prompt, token_count, metadata}
 ```
 
-### Flow 2: Marketplace Discovery
+### Flow 2: Package Installation
 
 ```
-User: uacs marketplace search "testing"
+User: uacs packages install anthropic/skills-testing
     │
-    ├─→ Marketplace.search()
+    ├─→ PackageManager.install()
     │       │
-    │       ├─→ Check cache (~/.uacs/cache/)
-    │       │       │
-    │       │       ├─→ Cache hit → Return cached results
-    │       │       └─→ Cache miss → Continue
+    │       ├─→ Detect source type (GitHub)
     │       │
-    │       ├─→ Query Git repositories
-    │       │       ├─→ Anthropic skills repo
-    │       │       └─→ MCP servers repo
+    │       ├─→ Clone from GitHub
+    │       │       └─→ git clone https://github.com/anthropic/skills-testing
     │       │
-    │       ├─→ Parse package metadata
-    │       ├─→ Filter by type (skills/mcp)
-    │       ├─→ Rank by relevance
-    │       └─→ Cache results (24h TTL)
+    │       ├─→ Validate package structure
+    │       │       └─→ Check SKILL.md, frontmatter, directory structure
+    │       │
+    │       ├─→ Copy to .agent/skills/testing/
+    │       │
+    │       └─→ Update metadata (.installed.json)
     │
-    └─→ Display to user
+    └─→ Display success message
 ```
 
 ### Flow 3: Format Translation
@@ -332,9 +329,10 @@ from uacs import UACS
 
 uacs = UACS(Path.cwd())
 
-# Marketplace
-results = uacs.search("python testing")
-uacs.install(results[0])
+# Package management
+uacs.packages.install("anthropic/skills-testing")  # GitHub
+uacs.packages.install("/path/to/local/skill")      # Local path
+uacs.packages.list()
 
 # Context
 context = uacs.build_context(
@@ -366,9 +364,10 @@ uacs.convert_format(
 uacs skills list
 uacs skills convert --to cursorrules
 
-# Marketplace
-uacs marketplace search "testing"
-uacs marketplace install anthropic/skills-testing
+# Package management
+uacs packages install anthropic/skills-testing
+uacs packages list
+uacs packages remove testing
 
 # Context
 uacs context stats
@@ -405,11 +404,11 @@ uacs memory search "language preference"
 ```
 
 **Exposed Tools:**
-- `search_marketplace` - Search skills/MCP
-- `install_package` - Install from marketplace
+- `install_package` - Install from GitHub, Git, or local
+- `list_packages` - Show installed packages
 - `get_compressed_context` - Build context with compression
-- `list_installed` - Show installed packages
 - `convert_format` - Format translation
+- `manage_memory` - Memory operations
 
 **Use Cases:**
 - Claude Desktop power users
@@ -482,26 +481,29 @@ class SkillsAdapter(BaseFormatAdapter):
 - Preserve high-quality entries (quality score > 0.8)
 - Only summarize old, low-value content
 
-### 4. Why Unified Marketplace?
+### 4. Why Simple Package Manager?
 
-**Decision:** Single API for both skills and MCP servers.
+**Decision:** Git-based installation without search/discovery.
 
 **Rationale:**
-- ✅ Users don't care about implementation (SKILLS.md vs MCP)
-- ✅ Both provide capabilities
-- ✅ Single search interface
-- ✅ Consistent installation
+- ✅ Simple and reliable (no complex indexing)
+- ✅ Works like GitHub CLI extensions
+- ✅ Users already know sources (GitHub, Git URLs)
+- ✅ Consistent installation from any source
 
 **Architecture:**
 ```python
 class Package:
     name: str
-    type: str  # "skills" | "mcp"
+    type: str  # "skill" | "mcp"
     source: str
+    install_method: str  # "github" | "git" | "local"
     metadata: Dict[str, Any]
 
-# Unified API
-marketplace.search("testing")  # Returns both skills and MCP
+# Installation from any source
+packages.install("owner/repo")           # GitHub
+packages.install("https://...")          # Git URL
+packages.install("/path/to/package")     # Local
 ```
 
 ### 5. Why Project + Global Memory?
@@ -581,12 +583,12 @@ bandit = "^1.7"             # Security scanning
 - **Compression (10K tokens → 3K):** 50-100ms
 - **Total context build time:** < 150ms
 
-### Marketplace Operations
+### Package Operations
 
-- **Search (cached):** < 10ms
-- **Search (cold):** 500-2000ms (network dependent)
-- **Install skill:** 100-500ms (Git clone + copy)
-- **Install MCP:** 200-1000ms (npx download)
+- **Install from GitHub:** 500-2000ms (Git clone + validation)
+- **Install from local:** 50-100ms (copy + validation)
+- **List packages:** < 10ms (read metadata)
+- **Validate package:** 20-50ms (structure check)
 
 ### Memory Operations
 
@@ -598,7 +600,7 @@ bandit = "^1.7"             # Security scanning
 
 - **Skills:** Tested up to 100 skills (< 50ms parse time)
 - **Context entries:** 10,000+ entries (compression keeps prompt under limits)
-- **Marketplace cache:** 1000+ packages (< 10ms search)
+- **Installed packages:** 1000+ packages (< 10ms list)
 - **Memory entries:** 100,000+ entries (indexed search)
 
 ---
@@ -607,13 +609,14 @@ bandit = "^1.7"             # Security scanning
 
 ### Potential Enhancements (Phase 2+)
 
-1. **Distributed Caching**
-   - Redis support for shared cache across machines
-   - Team-wide marketplace cache
+1. **Package Discovery**
+   - Optional package index/registry
+   - Search functionality for known packages
+   - Community package recommendations
 
 2. **Vector Database Integration**
    - Semantic search over skills/context
-   - Replace keyword search with embeddings
+   - Better context retrieval
 
 3. **Streaming Compression**
    - Incremental compression during conversation
@@ -622,7 +625,7 @@ bandit = "^1.7"             # Security scanning
 4. **Plugin System**
    - User-defined adapters
    - Custom compression strategies
-   - Marketplace source plugins
+   - Custom package sources
 
 5. **Multi-Language Support**
    - TypeScript SDK
@@ -635,7 +638,7 @@ bandit = "^1.7"             # Security scanning
 
 - [Library Guide](LIBRARY_GUIDE.md) - Python API usage
 - [CLI Reference](CLI_REFERENCE.md) - Command-line interface
-- [Marketplace Guide](MARKETPLACE.md) - Discovery and installation
+- [Package Management](PACKAGES.md) - Installation and management
 - [Context Management](CONTEXT.md) - Compression strategies
 - [MCP Server Setup](MCP_SERVER_SETUP.md) - Claude Desktop integration
 
