@@ -31,9 +31,13 @@ curl -fsSL https://raw.githubusercontent.com/kylebrodeur/universal-agent-context
 docker run -d -p 3000:3000 --name uacs ghcr.io/kylebrodeur/uacs:0.1.0
 ```
 
-Or with docker-compose:
+Or use the quick start script:
+```bash
+./bin/docker-quickstart
+```
+
+Or create your own docker-compose.yml:
 ```yaml
-version: '3.8'
 services:
   uacs:
     image: ghcr.io/kylebrodeur/uacs:0.1.0

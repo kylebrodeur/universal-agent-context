@@ -115,7 +115,7 @@ git clone https://github.com/kylebrodeur/universal-agent-context
 cd universal-agent-context
 
 # Build locally
-docker build -f Dockerfile.mcp-server -t uacs:latest .
+docker build -f Dockerfile -t uacs:latest .
 
 # Or pull from registry (when available)
 # docker pull ghcr.io/kylebrodeur/uacs:latest
