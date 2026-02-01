@@ -25,26 +25,76 @@ app.add_typer(mcp.app, name="mcp")
 def serve(
     host: str = typer.Option("localhost", "--host", "-h", help="Server host"),
     port: int = typer.Option(8080, "--port", "-p", help="Server port"),
+    with_ui: bool = typer.Option(False, "--with-ui", help="Start web UI visualization server"),
+    ui_port: int = typer.Option(8081, "--ui-port", help="Web UI port"),
 ):
     """Start UACS MCP server for tool integration.
 
     The MCP server exposes all UACS capabilities as tools that can be
     consumed by AI agents via the Model Context Protocol.
 
-    Example:
+    Use --with-ui to also start the web-based context visualization UI.
+
+    Examples:
         uacs serve --host 0.0.0.0 --port 8080
+        uacs serve --with-ui --ui-port 8081
     """
     from uacs.protocols.mcp.skills_server import main as mcp_main
 
     console = typer.get_text_stream("stdout")
     typer.echo(f"Starting UACS MCP server on {host}:{port}...")
     typer.echo("Exposing skills, context, and package management tools")
+
+    if with_ui:
+        typer.echo(f"Web UI will be available at http://{host}:{ui_port}")
+        typer.echo("Starting visualization server...")
+        _run_with_ui(host, port, ui_port)
+    else:
+        typer.echo("Press Ctrl+C to stop\n")
+        try:
+            asyncio.run(mcp_main())
+        except KeyboardInterrupt:
+            typer.echo("\n\nServer stopped")
+
+
+def _run_with_ui(host: str, port: int, ui_port: int):
+    """Run MCP server with web UI visualization.
+
+    Args:
+        host: Server host
+        port: MCP server port
+        ui_port: Web UI port
+    """
+    import uvicorn
+    from pathlib import Path
+    from uacs.context.shared_context import SharedContextManager
+    from uacs.visualization.web_server import VisualizationServer
+
+    # Initialize shared context manager
+    storage_path = Path.cwd() / ".state" / "context"
+    context_manager = SharedContextManager(storage_path=storage_path)
+
+    # Create visualization server
+    viz_server = VisualizationServer(context_manager, host, ui_port)
+
+    # Print startup message
+    typer.echo(f"\n✓ Web UI available at http://{host}:{ui_port}")
+    typer.echo("✓ MCP server running (stdio mode)")
     typer.echo("Press Ctrl+C to stop\n")
 
+    # Run visualization server (MCP server runs in stdio mode alongside)
+    config = uvicorn.Config(
+        viz_server.app,
+        host=host,
+        port=ui_port,
+        log_level="info",
+    )
+    server = uvicorn.Server(config)
+
     try:
-        asyncio.run(mcp_main())
+        asyncio.run(server.serve())
     except KeyboardInterrupt:
-        typer.echo("\n\nServer stopped")
+        typer.echo("\n\nServers stopped")
 
 
 @app.command()

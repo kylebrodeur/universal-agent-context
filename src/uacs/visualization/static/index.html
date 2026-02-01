@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UACS Context Visualizer</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0f0f23;
+            color: #cccccc;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #1a1a2e;
+            padding: 20px;
+            border-bottom: 2px solid #16213e;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #00d4ff;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .header .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff4444;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.connected {
+            background: #44ff44;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .nav {
+            background: #16213e;
+            padding: 15px 20px;
+            display: flex;
+            gap: 15px;
+            border-bottom: 1px solid #0f0f23;
+        }
+
+        .nav-button {
+            background: transparent;
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .nav-button:hover {
+            background: #00d4ff;
+            color: #0f0f23;
+        }
+
+        .nav-button.active {
+            background: #00d4ff;
+            color: #0f0f23;
+        }
+
+        .container {
+            display: flex;
+            height: calc(100vh - 130px);
+        }
+
+        .main-view {
+            flex: 1;
+            padding: 20px;
+            overflow: auto;
+        }
+
+        .sidebar {
+            width: 350px;
+            background: #1a1a2e;
+            padding: 20px;
+            border-left: 2px solid #16213e;
+            overflow: auto;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        .card {
+            background: #1a1a2e;
+            border: 1px solid #16213e;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .stat-item {
+            background: #0f0f23;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 3px solid #00d4ff;
+        }
+
+        .stat-label {
+            color: #888888;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            color: #00d4ff;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        #graph-container {
+            width: 100%;
+            height: 600px;
+            background: #1a1a2e;
+            border-radius: 8px;
+            border: 1px solid #16213e;
+        }
+
+        .node {
+            cursor: pointer;
+        }
+
+        .node circle {
+            fill: #00d4ff;
+            stroke: #16213e;
+            stroke-width: 2px;
+        }
+
+        .node.summary circle {
+            fill: #ff6b35;
+        }
+
+        .node text {
+            fill: #cccccc;
+            font-size: 12px;
+            pointer-events: none;
+        }
+
+        .link {
+            stroke: #16213e;
+            stroke-opacity: 0.6;
+            stroke-width: 2px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .topic-cluster {
+            background: #0f0f23;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border-left: 3px solid #00d4ff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topic-name {
+            color: #cccccc;
+            font-size: 14px;
+        }
+
+        .topic-count {
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .heatmap-cell {
+            fill: #1a1a2e;
+            stroke: #0f0f23;
+            stroke-width: 2;
+        }
+
+        .heatmap-cell:hover {
+            stroke: #00d4ff;
+            stroke-width: 3;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666666;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            font-size: 18px;
+            color: #666666;
+        }
+
+        .metric-bar {
+            height: 40px;
+            background: #0f0f23;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .metric-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #0088ff);
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>UACS Context Visualizer</h1>
+        <div class="status">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <span id="statusText">Connecting...</span>
+        </div>
+    </div>
+
+    <div class="nav">
+        <button class="nav-button active" data-view="conversation">Conversation Flow</button>
+        <button class="nav-button" data-view="dashboard">Token Dashboard</button>
+        <button class="nav-button" data-view="deduplication">Deduplication</button>
+        <button class="nav-button" data-view="quality">Quality Distribution</button>
+        <button class="nav-button" data-view="topics">Topic Clusters</button>
+    </div>
+
+    <div class="container">
+        <div class="main-view">
+            <!-- Conversation Flow View -->
+            <div class="view active" id="conversation-view">
+                <div id="graph-container"></div>
+            </div>
+
+            <!-- Token Dashboard View -->
+            <div class="view" id="dashboard-view">
+                <div class="card">
+                    <h3>Token Usage Overview</h3>
+                    <div class="chart-container">
+                        <canvas id="tokenChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Compression Efficiency</h3>
+                    <div class="chart-container">
+                        <canvas id="compressionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deduplication View -->
+            <div class="view" id="deduplication-view">
+                <div class="card">
+                    <h3>Deduplication Statistics</h3>
+                    <div id="dedupStats"></div>
+                </div>
+                <div class="card">
+                    <h3>Duplicate Content Heatmap</h3>
+                    <div id="dedupHeatmap"></div>
+                </div>
+            </div>
+
+            <!-- Quality Distribution View -->
+            <div class="view" id="quality-view">
+                <div class="card">
+                    <h3>Content Quality Distribution</h3>
+                    <div class="chart-container">
+                        <canvas id="qualityChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Quality Metrics</h3>
+                    <div id="qualityMetrics"></div>
+                </div>
+            </div>
+
+            <!-- Topic Clusters View -->
+            <div class="view" id="topics-view">
+                <div class="card">
+                    <h3>Topic Network</h3>
+                    <div id="topicGraph" style="height: 500px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="card">
+                <h3>Statistics</h3>
+                <div class="stat-grid" id="statsGrid">
+                    <div class="loading">Loading...</div>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Recent Topics</h3>
+                <div id="topicsList">
+                    <div class="loading">Loading...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let ws = null;
+        let currentData = {};
+        let charts = {};
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setupNavigation();
+            connectWebSocket();
+            initializeCharts();
+        });
+
+        // Navigation
+        function setupNavigation() {
+            document.querySelectorAll('.nav-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const view = button.dataset.view;
+                    switchView(view);
+                });
+            });
+        }
+
+        function switchView(viewName) {
+            // Update buttons
+            document.querySelectorAll('.nav-button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.view === viewName);
+            });
+
+            // Update views
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.toggle('active', view.id === `${viewName}-view`);
+            });
+
+            // Refresh view with current data
+            if (currentData.graph) {
+                updateView(viewName, currentData);
+            }
+        }
+
+        // WebSocket connection
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws`;
+
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                updateStatus(true);
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                currentData = data;
+                updateAllViews(data);
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                updateStatus(false);
+            };
+
+            ws.onclose = () => {
+                updateStatus(false);
+                setTimeout(connectWebSocket, 5000);
+            };
+        }
+
+        function updateStatus(connected) {
+            const indicator = document.getElementById('statusIndicator');
+            const text = document.getElementById('statusText');
+
+            if (connected) {
+                indicator.classList.add('connected');
+                text.textContent = 'Connected';
+            } else {
+                indicator.classList.remove('connected');
+                text.textContent = 'Disconnected';
+            }
+        }
+
+        // Update all views
+        function updateAllViews(data) {
+            updateStatsGrid(data.stats);
+            updateTopicsList(data.topics);
+
+            // Update active view
+            const activeView = document.querySelector('.nav-button.active').dataset.view;
+            updateView(activeView, data);
+        }
+
+        function updateView(viewName, data) {
+            switch(viewName) {
+                case 'conversation':
+                    updateConversationFlow(data.graph);
+                    break;
+                case 'dashboard':
+                    updateDashboard(data.stats);
+                    break;
+                case 'deduplication':
+                    updateDeduplication(data.graph);
+                    break;
+                case 'quality':
+                    updateQuality(data.quality);
+                    break;
+                case 'topics':
+                    updateTopics(data.topics);
+                    break;
+            }
+        }
+
+        // Stats grid
+        function updateStatsGrid(stats) {
+            const grid = document.getElementById('statsGrid');
+            grid.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-label">Entries</div>
+                    <div class="stat-value">${stats.entry_count || 0}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Summaries</div>
+                    <div class="stat-value">${stats.summary_count || 0}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Total Tokens</div>
+                    <div class="stat-value">${(stats.total_tokens || 0).toLocaleString()}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Tokens Saved</div>
+                    <div class="stat-value">${(stats.tokens_saved || 0).toLocaleString()}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Compression</div>
+                    <div class="stat-value">${stats.compression_ratio || '0%'}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Avg Quality</div>
+                    <div class="stat-value">${stats.avg_quality || '0.00'}</div>
+                </div>
+            `;
+        }
+
+        // Topics list
+        function updateTopicsList(topics) {
+            const list = document.getElementById('topicsList');
+            if (!topics || !topics.clusters || topics.clusters.length === 0) {
+                list.innerHTML = '<div style="color: #666; text-align: center;">No topics yet</div>';
+                return;
+            }
+
+            list.innerHTML = topics.clusters.slice(0, 5).map(cluster => `
+                <div class="topic-cluster">
+                    <span class="topic-name">${cluster.topic}</span>
+                    <span class="topic-count">${cluster.count}</span>
+                </div>
+            `).join('');
+        }
+
+        // Conversation Flow
+        function updateConversationFlow(graph) {
+            const container = document.getElementById('graph-container');
+            container.innerHTML = '';
+
+            if (!graph.nodes || graph.nodes.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No context entries yet</p></div>';
+                return;
+            }
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            const svg = d3.select('#graph-container')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height);
+
+            const simulation = d3.forceSimulation(graph.nodes)
+                .force('link', d3.forceLink(graph.edges).id(d => d.id).distance(100))
+                .force('charge', d3.forceManyBody().strength(-300))
+                .force('center', d3.forceCenter(width / 2, height / 2));
+
+            const link = svg.append('g')
+                .selectAll('line')
+                .data(graph.edges)
+                .enter()
+                .append('line')
+                .attr('class', 'link');
+
+            const node = svg.append('g')
+                .selectAll('g')
+                .data(graph.nodes)
+                .enter()
+                .append('g')
+                .attr('class', d => `node ${d.type}`)
+                .call(d3.drag()
+                    .on('start', dragstarted)
+                    .on('drag', dragged)
+                    .on('end', dragended));
+
+            node.append('circle')
+                .attr('r', d => d.type === 'summary' ? 15 : 10);
+
+            node.append('text')
+                .attr('dx', 15)
+                .attr('dy', 5)
+                .text(d => d.id.substring(0, 8));
+
+            simulation.on('tick', () => {
+                link
+                    .attr('x1', d => d.source.x)
+                    .attr('y1', d => d.source.y)
+                    .attr('x2', d => d.target.x)
+                    .attr('y2', d => d.target.y);
+
+                node.attr('transform', d => `translate(${d.x},${d.y})`);
+            });
+
+            function dragstarted(event) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                event.subject.fx = event.subject.x;
+                event.subject.fy = event.subject.y;
+            }
+
+            function dragged(event) {
+                event.subject.fx = event.x;
+                event.subject.fy = event.y;
+            }
+
+            function dragended(event) {
+                if (!event.active) simulation.alphaTarget(0);
+                event.subject.fx = null;
+                event.subject.fy = null;
+            }
+        }
+
+        // Initialize Charts
+        function initializeCharts() {
+            // Token Chart
+            const tokenCtx = document.getElementById('tokenChart');
+            charts.token = new Chart(tokenCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Used', 'Saved'],
+                    datasets: [{
+                        data: [0, 0],
+                        backgroundColor: ['#00d4ff', '#ff6b35']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#cccccc' }
+                        }
+                    }
+                }
+            });
+
+            // Compression Chart
+            const compressionCtx = document.getElementById('compressionChart');
+            charts.compression = new Chart(compressionCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Entries', 'Summaries'],
+                    datasets: [{
+                        label: 'Count',
+                        data: [0, 0],
+                        backgroundColor: '#00d4ff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#cccccc' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: '#cccccc' },
+                            grid: { color: '#16213e' }
+                        },
+                        x: {
+                            ticks: { color: '#cccccc' },
+                            grid: { color: '#16213e' }
+                        }
+                    }
+                }
+            });
+
+            // Quality Chart
+            const qualityCtx = document.getElementById('qualityChart');
+            charts.quality = new Chart(qualityCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['High', 'Medium', 'Low'],
+                    datasets: [{
+                        label: 'Entries',
+                        data: [0, 0, 0],
+                        backgroundColor: ['#44ff44', '#ffaa00', '#ff4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#cccccc' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: '#cccccc' },
+                            grid: { color: '#16213e' }
+                        },
+                        x: {
+                            ticks: { color: '#cccccc' },
+                            grid: { color: '#16213e' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update Dashboard
+        function updateDashboard(stats) {
+            if (charts.token) {
+                charts.token.data.datasets[0].data = [
+                    stats.total_tokens || 0,
+                    stats.tokens_saved || 0
+                ];
+                charts.token.update();
+            }
+
+            if (charts.compression) {
+                charts.compression.data.datasets[0].data = [
+                    stats.entry_count || 0,
+                    stats.summary_count || 0
+                ];
+                charts.compression.update();
+            }
+        }
+
+        // Update Deduplication
+        function updateDeduplication(graph) {
+            const statsDiv = document.getElementById('dedupStats');
+            const uniqueHashes = new Set();
+
+            if (graph.nodes) {
+                graph.nodes.forEach(node => {
+                    if (node.type === 'entry') {
+                        uniqueHashes.add(node.id);
+                    }
+                });
+            }
+
+            const duplicatesPrevented = Math.max(0, (graph.nodes?.length || 0) - uniqueHashes.size);
+            const dedupRate = graph.nodes?.length > 0
+                ? ((duplicatesPrevented / graph.nodes.length) * 100).toFixed(1)
+                : 0;
+
+            statsDiv.innerHTML = `
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Unique Entries</div>
+                        <div class="stat-value">${uniqueHashes.size}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Duplicates Prevented</div>
+                        <div class="stat-value">${duplicatesPrevented}</div>
+                    </div>
+                </div>
+                <div class="metric-bar">
+                    <div class="metric-bar-fill" style="width: ${100 - dedupRate}%">
+                        ${100 - dedupRate}% Unique
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update Quality
+        function updateQuality(quality) {
+            if (!quality) return;
+
+            if (charts.quality) {
+                charts.quality.data.datasets[0].data = [
+                    quality.high_quality || 0,
+                    quality.medium_quality || 0,
+                    quality.low_quality || 0
+                ];
+                charts.quality.update();
+            }
+
+            const metricsDiv = document.getElementById('qualityMetrics');
+            const avgQuality = quality.average || 0;
+            const percentage = (avgQuality * 100).toFixed(1);
+
+            metricsDiv.innerHTML = `
+                <div class="metric-bar">
+                    <div class="metric-bar-fill" style="width: ${percentage}%">
+                        Average Quality: ${avgQuality.toFixed(2)}
+                    </div>
+                </div>
+                <div class="stat-grid" style="margin-top: 20px;">
+                    <div class="stat-item">
+                        <div class="stat-label">High Quality</div>
+                        <div class="stat-value">${quality.high_quality || 0}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Medium Quality</div>
+                        <div class="stat-value">${quality.medium_quality || 0}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Low Quality</div>
+                        <div class="stat-value">${quality.low_quality || 0}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update Topics
+        function updateTopics(topics) {
+            const container = document.getElementById('topicGraph');
+            container.innerHTML = '';
+
+            if (!topics || !topics.clusters || topics.clusters.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No topics yet</p></div>';
+                return;
+            }
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            const nodes = topics.clusters.map(c => ({
+                id: c.topic,
+                count: c.count
+            }));
+
+            const svg = d3.select('#topicGraph')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height);
+
+            const simulation = d3.forceSimulation(nodes)
+                .force('charge', d3.forceManyBody().strength(-100))
+                .force('center', d3.forceCenter(width / 2, height / 2))
+                .force('collision', d3.forceCollide().radius(d => Math.sqrt(d.count) * 10 + 5));
+
+            const node = svg.append('g')
+                .selectAll('g')
+                .data(nodes)
+                .enter()
+                .append('g')
+                .attr('class', 'node');
+
+            node.append('circle')
+                .attr('r', d => Math.sqrt(d.count) * 10 + 5)
+                .attr('fill', '#00d4ff');
+
+            node.append('text')
+                .attr('text-anchor', 'middle')
+                .attr('dy', 5)
+                .text(d => d.id)
+                .style('fill', '#0f0f23')
+                .style('font-weight', '600');
+
+            simulation.on('tick', () => {
+                node.attr('transform', d => `translate(${d.x},${d.y})`);
+            });
+        }
+
+        // Fetch initial data
+        async function fetchInitialData() {
+            try {
+                const [graph, stats, topics, quality] = await Promise.all([
+                    fetch('/api/graph').then(r => r.json()),
+                    fetch('/api/stats').then(r => r.json()),
+                    fetch('/api/topics').then(r => r.json()),
+                    fetch('/api/quality').then(r => r.json())
+                ]);
+
+                currentData = { graph, stats, topics, quality };
+                updateAllViews(currentData);
+            } catch (error) {
+                console.error('Error fetching initial data:', error);
+            }
+        }
+
+        // Fetch initial data on load
+        fetchInitialData();
+    </script>
+</body>
+</html>
