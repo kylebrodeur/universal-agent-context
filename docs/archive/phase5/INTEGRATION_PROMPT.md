@@ -20,7 +20,7 @@ Create comprehensive integration guides and test UACS MCP server with major MCP 
 ### 1.1 Test Binary with Claude Desktop (1.5 hours)
 
 **Steps:**
-1. Install the binary: `./scripts/install_mcp_server.sh`
+1. Install the binary: `./bin/install`
 2. Locate Claude Desktop config:
    - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
 3. Add UACS to config:
@@ -45,7 +45,7 @@ Create comprehensive integration guides and test UACS MCP server with major MCP 
 ### 1.2 Test Docker with Claude Desktop (1 hour)
 
 **Steps:**
-1. Start Docker container: `./scripts/docker_quickstart.sh`
+1. Start Docker container: `./bin/docker-quickstart`
 2. Configure Claude Desktop for SSE transport:
    ```json
    {

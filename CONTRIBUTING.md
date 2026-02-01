@@ -42,191 +42,79 @@ Thank you for your interest in contributing to the Universal Agent Context Syste
 
 ## Development Environment
 
-### Quick Setup (Recommended)
-
-Using `uv` (fast and modern):
+### Quick Setup
 
 ```bash
-# Install uv if you don't have it
+# Install uv (recommended package manager)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Install dependencies + dev tools
+# Install all dependencies
 uv sync --all-extras
 
 # Verify installation
-uv run pytest tests/ --tb=short
+make all  # Runs format + lint + type-check + security + test
 ```
 
-### Alternative Setup (Using pip)
+> **📖 Detailed Setup Instructions**  
+> For alternative installation methods, IDE configuration, and debugging tips, see the [Development Guide](docs/guides/DEVELOPMENT.md).
+
+### Essential Commands
 
 ```bash
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-
-# Install in editable mode with dev dependencies
-pip install -e ".[dev,test,mcp]"
-
-# Verify installation
-pytest tests/ --tb=short
+make all      # Run all checks before committing
+make test     # Run test suite
+make format   # Auto-format code
+make lint     # Check code style
 ```
 
-### Development Commands
-
-```bash
-# Format code (automatically fixes issues)
-uv run ruff format src/ tests/
-
-# Check linting
-uv run ruff check src/ tests/
-
-# Auto-fix linting issues
-uv run ruff check --fix src/ tests/
-
-# Type checking
-uv run mypy src/
-
-# Security scanning
-uv run bandit -r src/
-
-# Run all checks (format + lint + type-check + security + test)
-make all
-
-# Or individually
-make format   # Format code
-make lint     # Check linting
-make test     # Run tests
-make type     # Type check
-make security # Security scan
-```
-
-### Project-Specific Setup
-
-```bash
-# Initialize UACS directories (optional, for testing CLI)
-uv run uacs context init
-uv run uacs memory init
-
-# Install filesystem MCP server (for MCP tests)
-npx -y @modelcontextprotocol/server-filesystem .
-```
+**See [Development Guide](docs/guides/DEVELOPMENT.md) for the complete list of commands and tool configurations.**
 
 ---
 
 ## Code Style
 
-### Python Style Guide
+We use modern Python tooling for code quality:
 
-We use **Ruff** for both formatting and linting:
+- **Ruff** for formatting and linting (88 char line length)
+- **MyPy** for static type checking
+- **Python 3.11+** required
 
-- **Line length:** 88 characters (Black-compatible)
-- **Python version:** 3.11+
-- **Style guide:** PEP 8 + type hints
+### Key Requirements
 
-### Type Annotations
-
-**All functions must have type annotations:**
-
+**1. Type hints on all functions:**
 ```python
-# ✅ Good
-def parse_skills(content: str) -> List[Skill]:
+def parse_skills(content: str) -> list[Skill]:
     """Parse skills from markdown content."""
-    pass
-
-# ❌ Bad
-def parse_skills(content):
-    return []
+    ...
 ```
 
-### Docstrings
-
-Use **Google-style docstrings** for all public APIs:
-
+**2. Google-style docstrings for public APIs:**
 ```python
-def add_entry(
-    self,
-    content: str,
-    agent: str,
-    metadata: dict[str, Any] | None = None
-) -> str:
-    """Add a context entry to the shared context.
+def add_entry(self, content: str, agent: str) -> str:
+    """Add a context entry.
 
     Args:
         content: The content to store
-        agent: Name of the agent creating the entry
-        metadata: Optional metadata dictionary
+        agent: Name of the agent
 
     Returns:
         The unique entry ID
-
-    Raises:
-        ValueError: If content is empty
-
-    Example:
-        >>> ctx = SharedContextManager()
-        >>> entry_id = ctx.add_entry("Hello", "claude")
     """
 ```
 
-### Dataclasses Over Dicts
-
-**Always use dataclasses for structured data:**
-
+**3. Use dataclasses for structured data:**
 ```python
-# ✅ Good
-from dataclasses import dataclass
-
 @dataclass
 class Skill:
     name: str
     instructions: str
     triggers: list[str]
-
-# ❌ Bad
-skill = {
-    "name": "test",
-    "instructions": "...",
-    "triggers": []
-}
 ```
 
-### Async/Await
+**4. Use async/await for I/O operations**
 
-Use `async`/`await` for I/O operations:
-
-```python
-# ✅ Good
-async def fetch_package(url: str) -> dict[str, Any]:
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url)
-        return response.json()
-
-# ❌ Bad (blocking I/O)
-import requests
-def fetch_package(url: str) -> dict[str, Any]:
-    return requests.get(url).json()
-```
-
-### Import Order
-
-1. Standard library
-2. Third-party packages
-3. Local imports
-
-```python
-# Standard library
-import json
-from pathlib import Path
-from typing import Any
-
-# Third-party
-import httpx
-from pydantic import BaseModel
-
-# Local
-from uacs.adapters.base import BaseFormatAdapter
-from uacs.utils import token_counter
-```
+> **📖 Complete Style Guide**  
+> For detailed examples, import ordering, and modern Python best practices, see the [Development Guide](docs/guides/DEVELOPMENT.md).
 
 ---
 
@@ -236,92 +124,50 @@ from uacs.utils import token_counter
 
 ```bash
 # Run all tests
-uv run pytest tests/ -v
-
-# Run specific test file
-uv run pytest tests/adapters/test_skills_adapter.py -v
+make test
 
 # Run with coverage
 uv run pytest tests/ --cov=src/uacs --cov-report=html
 
 # View coverage report
-open htmlcov/index.html  # macOS
-xdg-open htmlcov/index.html  # Linux
+open htmlcov/index.html
 ```
 
 ### Writing Tests
 
-**Test structure mirrors source:**
-
+Test files mirror source structure:
 ```
 src/uacs/adapters/skills_adapter.py
 → tests/adapters/test_skills_adapter.py
-
-src/uacs/context/shared_context.py
-→ tests/context/test_shared_context.py
 ```
 
-**Use pytest fixtures for common setup:**
-
+**Basic test example:**
 ```python
 import pytest
 from pathlib import Path
-from uacs.adapters.skills_adapter import SkillsAdapter
 
 @pytest.fixture
-def sample_skills_file(tmp_path: Path) -> Path:
-    """Create a sample SKILLS.md file for testing."""
-    skills_file = tmp_path / "SKILLS.md"
-    skills_file.write_text("""
-# Skills
+def sample_file(tmp_path: Path) -> Path:
+    """Create a sample file for testing."""
+    file = tmp_path / "test.md"
+    file.write_text("# Test Content")
+    return file
 
-## code-review
-Reviews code for security and best practices.
-
-**Triggers:** review, security, analyze
-""")
-    return skills_file
-
-def test_skills_adapter_parse(sample_skills_file: Path):
-    """Test that SkillsAdapter can parse skills."""
-    adapter = SkillsAdapter(sample_skills_file)
-    parsed = adapter.parse()
-    
-    assert len(parsed.skills) == 1
-    assert parsed.skills[0].name == "code-review"
-    assert "security" in parsed.skills[0].triggers
+def test_parse_file(sample_file: Path):
+    """Test file parsing."""
+    result = parse(sample_file)
+    assert result is not None
 ```
 
-**Test async functions:**
+### Requirements
 
-```python
-import pytest
+- All new features must have tests
+- Aim for 80%+ code coverage
+- Test both success and error cases
+- Use descriptive test names: `test_compression_reduces_tokens_by_70_percent`
 
-@pytest.mark.asyncio
-async def test_fetch_package():
-    """Test async package fetching."""
-    result = await fetch_package("https://api.example.com/package")
-    assert result["name"] == "test-package"
-```
-
-### Test Requirements
-
-- **All new features must have tests**
-- **Aim for 80%+ code coverage**
-- **Test both success and error cases**
-- **Use descriptive test names**
-
-```python
-# ✅ Good test names
-def test_compression_reduces_tokens_by_70_percent()
-def test_marketplace_search_returns_empty_list_when_no_matches()
-def test_adapter_raises_valueerror_on_invalid_format()
-
-# ❌ Bad test names
-def test_compression()
-def test_search()
-def test_adapter()
-```
+> **📖 Advanced Testing**  
+> For async tests, fixtures, and debugging techniques, see the [Development Guide](docs/guides/DEVELOPMENT.md).
 
 ---
 
@@ -474,33 +320,23 @@ universal-agent-context/
 
 ### Reporting Bugs
 
-When reporting bugs, include:
-
-1. **UACS version:** `uv run uacs --version`
-2. **Python version:** `python --version`
-3. **Operating system**
-4. **Minimal reproduction steps**
-5. **Expected vs actual behavior**
-6. **Relevant error messages/logs**
-
-### Suggesting Features
-
-Before suggesting a feature:
-
-1. Check if it already exists in the [roadmap](docs/IMPLEMENTATION_ROADMAP.md)
-2. Search existing GitHub issues
-3. Open a discussion to gather feedback
-4. If approved, create an issue with detailed requirements
+Include:
+1. UACS version: `uv run uacs --version`
+2. Python version: `python --version`
+3. Operating system
+4. Minimal reproduction steps
+5. Expected vs actual behavior
+6. Error messages/logs
 
 ---
 
 ## Additional Resources
 
+- [Development Guide](docs/guides/DEVELOPMENT.md) - Detailed tool configuration and IDE setup
 - [Architecture Overview](docs/ARCHITECTURE.md)
 - [Library Guide](docs/LIBRARY_GUIDE.md)
 - [CLI Reference](docs/CLI_REFERENCE.md)
 - [Marketplace Guide](docs/MARKETPLACE.md)
-- [Implementation Roadmap](docs/IMPLEMENTATION_ROADMAP.md)
 
 ---
 

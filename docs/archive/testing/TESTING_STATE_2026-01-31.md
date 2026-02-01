@@ -136,7 +136,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 
 **Commit 3: Add Visualizer**
 ```bash
-git add src/uacs/visualization/ docs/VISUALIZATION*.md tests/test_visualization_server.py examples/visualization_demo.py scripts/test_visualization.sh VISUALIZATION_BUILD_COMPLETE.md
+git add src/uacs/visualization/ docs/VISUALIZATION*.md tests/test_visualization_server.py examples/visualization_demo.py tests/scripts/test_visualization.sh VISUALIZATION_BUILD_COMPLETE.md
 git commit -m "feat: Add Context Graph Visualizer with real-time web UI
 
 Built complete web-based visualization:
@@ -221,7 +221,7 @@ tests/
 examples/
 └── visualization_demo.py
 
-scripts/
+tests/scripts/
 └── test_visualization.sh
 
 VISUALIZATION_BUILD_COMPLETE.md

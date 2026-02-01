@@ -14,6 +14,8 @@ Run directly:
 docker run -p 3000:3000 universal-agent-context serve
 ```
 
+> **Note:** The `universal-agent-context` image must be built locally first. See [Building Locally](#building-locally) below.
+
 ## Docker Compose
 
 Create a `docker-compose.yml`:

@@ -34,7 +34,7 @@ Choose the installation method that best fits your workflow:
 | :--- | :--- | :--- |
 | **Python (pip)** | Developers integrating UACS into Python projects | Python 3.11+ |
 | **uvx** | Quick, temporary usage without installing dependencies | `uv` installed |
-| **[Binary](docs/MCP_SERVER_BINARY.md)** | Standalone usage, no Python environment needed | None |
+| **[Binary](docs/guides/MCP_SERVER_BINARY.md)** | Standalone usage, no Python environment needed | None |
 | **[Docker](docs/MCP_SERVER_DOCKER.md)** | Server deployments, team environments | Docker |
 
 ### Quick Start (Python)
@@ -257,7 +257,7 @@ relevant = uacs.memory.search("testing")
 
 **Bottom line:** UACS is the only solution that provides format translation, compression, package management, memory, AND MCP server in one package.
 
-See [LAUNCH_STRATEGY.md](docs/LAUNCH_STRATEGY.md) for full positioning.
+See [LAUNCH_STRATEGY.md](.github/internal/LAUNCH_STRATEGY.md) for full positioning.
 
 ---
 
@@ -273,7 +273,7 @@ Choose the installation method that best fits your workflow:
 | :--- | :--- | :--- |
 | **Python (pip)** | Developers integrating UACS into Python projects | Python 3.11+ |
 | **uvx** | Quick, temporary usage without installing dependencies | `uv` installed |
-| **[Binary](docs/MCP_SERVER_BINARY.md)** | Standalone usage, no Python environment needed | None |
+| **[Binary](docs/guides/MCP_SERVER_BINARY.md)** | Standalone usage, no Python environment needed | None |
 | **[Docker](docs/MCP_SERVER_DOCKER.md)** | Server deployments, team environments | Docker |
 
 #### Quick Start (Python)
@@ -639,7 +639,7 @@ We're executing an **8-week public launch plan**:
 - Phase 5-6: Advanced features (streaming, webhooks, A2A protocol)
 - Phase 7-8: Enterprise features (auth, analytics, multi-tenancy)
 
-See [IMPLEMENTATION_ROADMAP.md](docs/IMPLEMENTATION_ROADMAP.md) for complete timeline and [LAUNCH_STRATEGY.md](docs/LAUNCH_STRATEGY.md) for marketing plan.
+See [DEVELOPMENT_ROADMAP.md](.github/internal/DEVELOPMENT_ROADMAP.md) for complete timeline and [LAUNCH_STRATEGY.md](.github/internal/LAUNCH_STRATEGY.md) for marketing plan.
 
 ---
 
@@ -676,8 +676,8 @@ All examples are in [examples/](examples/) and tested:
 - [mcp_tool_usage.py](examples/mcp_tool_usage.py) - Programmatic MCP access
 
 **Development:**
-- [Implementation Roadmap](docs/IMPLEMENTATION_ROADMAP.md) - Development status & timeline
-- [Launch Strategy](docs/LAUNCH_STRATEGY.md) - Marketing & positioning
+- [Development Roadmap](.github/internal/DEVELOPMENT_ROADMAP.md) - Development status & timeline
+- [Launch Strategy](.github/internal/LAUNCH_STRATEGY.md) - Marketing & positioning
 - [Contributing](CONTRIBUTING.md) - How to contribute (coming Week 1)
 
 ---
