@@ -139,7 +139,7 @@ This is the foundation. Every UACS feature builds on these basic operations.
 **Location:** `examples/02_context_compression/`
 
 **What You'll Learn:**
-- Achieving 70%+ token savings
+- Achieving token savings
 - Compression strategies (deduplication, quality filtering, topic filtering)
 - Real-world cost calculations
 - Before/after token comparisons
