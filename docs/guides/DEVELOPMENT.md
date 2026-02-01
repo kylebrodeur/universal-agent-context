@@ -1,29 +1,68 @@
 # Development Tools Guide
 
-This document outlines the modern Python development tools configured for this project.
+This document provides detailed technical reference for developers working on UACS. 
 
-## ✅ Completed Updates
+> **🚀 New Contributors:** Start with [CONTRIBUTING.md](../../CONTRIBUTING.md) for a quick-start guide to making your first contribution.
 
-### 1. Tool Configuration
-- ✅ Added comprehensive **Ruff** configuration (formatting + linting)
-- ✅ Added strict **MyPy** type checking configuration
-- ✅ Added **Pyright** for additional type checking
-- ✅ Added **Bandit** security scanning configuration
-- ✅ Added **pytest** with coverage configuration
-- ✅ Updated all version constraints to match installed versions
+## Table of Contents
 
-### 2. New Files Created
-- ✅ `.pre-commit-config.yaml` - Pre-commit hooks
-- ✅ `Makefile` - Common development commands
-- ✅ `.editorconfig` - Editor consistency
-- ✅ `.github/workflows/ci.yml` - GitHub Actions CI pipeline (if applicable)
+- [Installation Options](#installation-options)
+- [Tool Stack](#tool-stack)
+- [Common Commands](#common-commands)
+- [Configuration Details](#configuration-details)
+- [IDE Setup](#ide-setup)
+- [Debugging](#debugging)
+- [Code Style Deep Dive](#code-style-deep-dive)
+- [Testing Advanced Topics](#testing-advanced-topics)
+- [CI/CD](#cicd)
+- [Migration Notes](#migration-notes)
+- [Additional Resources](#additional-resources)
 
-### 3. Documentation Updates
-- ✅ Development tools configured for UACS
-- ✅ Added security scan command
-- ✅ Added parallel test execution command
+---
 
-## 🛠️ Tool Stack
+## Installation Options
+
+### Using uv (Recommended)
+
+```bash
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Install all dependencies
+uv sync --all-extras
+
+# Verify installation
+uv run pytest tests/ --tb=short
+```
+
+### Using pip (Alternative)
+
+```bash
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install in editable mode
+pip install -e ".[dev,test,mcp]"
+
+# Verify installation
+pytest tests/ --tb=short
+```
+
+### Project-Specific Setup
+
+```bash
+# Initialize UACS directories (for testing CLI)
+uv run uacs context init
+uv run uacs memory init
+
+# Install filesystem MCP server (for MCP tests)
+npx -y @modelcontextprotocol/server-filesystem .
+```
+
+---
+
+## Tool Stack
 
 ### Code Quality
 - **Ruff** (v0.14.10) - Fast Python linter & formatter (replaces: black, isort, flake8)
@@ -42,21 +81,19 @@ This document outlines the modern Python development tools configured for this p
 - **pre-commit** (v4.0.0+) - Git hooks for code quality
 - **uv** - Fast Python package installer
 
-## 📦 Installation
+---
 
-### Install All Dependencies
-```bash
-uv sync --all-extras
-```
+## Common Commands
 
-### Install Pre-commit Hooks
+### Pre-commit Hooks
+
 ```bash
+# Install hooks
 pre-commit install
-# Or using make:
-make pre-commit-install
-```
 
-## 🚀 Common Commands
+# Run manually
+pre-commit run --all-files
+```
 
 ### Using Make (Recommended)
 ```bash
@@ -130,7 +167,7 @@ Located in [.pre-commit-config.yaml](../.pre-commit-config.yaml):
 4. Bandit security scanning
 5. Poetry/pyproject.toml validation
 
-## 📊 CI/CD
+## CI/CD
 
 ### GitHub Actions
 If using GitHub Actions, configure [.github/workflows/ci.yml](../.github/workflows/ci.yml):
@@ -143,9 +180,58 @@ If using GitHub Actions, configure [.github/workflows/ci.yml](../.github/workflo
   - Tests with coverage
   - Codecov integration
 
-## 🎯 Modern Python Best Practices
+---
 
-### 1. Type Hints Everywhere
+## Code Style Deep Dive
+
+### Import Order
+
+Imports should be organized in three groups:
+
+```python
+# 1. Standard library
+import json
+from pathlib import Path
+from typing import Any
+
+# 2. Third-party packages
+import httpx
+from pydantic import BaseModel
+
+# 3. Local imports
+from uacs.adapters.base import BaseFormatAdapter
+from uacs.utils import token_counter
+```
+
+### Complete Docstring Example
+
+```python
+def add_entry(
+    self,
+    content: str,
+    agent: str,
+    metadata: dict[str, Any] | None = None
+) -> str:
+    """Add a context entry to the shared context.
+
+    Args:
+        content: The content to store
+        agent: Name of the agent creating the entry
+        metadata: Optional metadata dictionary
+
+    Returns:
+        The unique entry ID
+
+    Raises:
+        ValueError: If content is empty
+
+    Example:
+        >>> ctx = SharedContextManager()
+        >>> entry_id = ctx.add_entry("Hello", "claude")
+    """
+```
+
+### Modern Python Patterns
 ```python
 from typing import Optional
 from collections.abc import Sequence
@@ -198,7 +284,69 @@ import os
 config_file = os.path.join("config", "settings.yaml")
 ```
 
-## 🔒 Security Best Practices
+---
+
+## Testing Advanced Topics
+
+### Async Test Examples
+
+```python
+import pytest
+
+@pytest.mark.asyncio
+async def test_fetch_package():
+    """Test async package fetching."""
+    result = await fetch_package("https://api.example.com/package")
+    assert result["name"] == "test-package"
+```
+
+### Complex Fixture Example
+
+```python
+import pytest
+from pathlib import Path
+from uacs.adapters.skills_adapter import SkillsAdapter
+
+@pytest.fixture
+def sample_skills_file(tmp_path: Path) -> Path:
+    """Create a sample SKILLS.md file for testing."""
+    skills_file = tmp_path / "SKILLS.md"
+    skills_file.write_text("""
+# Skills
+
+## code-review
+Reviews code for security and best practices.
+
+**Triggers:** review, security, analyze
+""")
+    return skills_file
+
+def test_skills_adapter_parse(sample_skills_file: Path):
+    """Test that SkillsAdapter can parse skills."""
+    adapter = SkillsAdapter(sample_skills_file)
+    parsed = adapter.parse()
+    
+    assert len(parsed.skills) == 1
+    assert parsed.skills[0].name == "code-review"
+    assert "security" in parsed.skills[0].triggers
+```
+
+### Running Specific Tests
+
+```bash
+# Run specific test file
+uv run pytest tests/adapters/test_skills_adapter.py -v
+
+# Run tests matching pattern
+uv run pytest tests/ -k "test_compression" -v
+
+# Run tests in parallel
+uv run pytest tests/ -n auto
+```
+
+---
+
+## Security Best Practices
 
 1. **Never commit secrets** - Use `.env` files (add to `.gitignore`)
 2. **Run bandit regularly** - `make security` or `bandit -r src/`
@@ -206,13 +354,17 @@ config_file = os.path.join("config", "settings.yaml")
 4. **Validate user input** - Use Pydantic for data validation
 5. **Sanitize file paths** - Use `Path.resolve()` and check traversal
 
-## 📈 Coverage Goals
+---
+
+## Coverage Goals
 
 - **Target**: 80%+ code coverage
 - **View reports**: Open `htmlcov/index.html` after running `make test-cov`
 - **Exclude**: Test files, `__main__` blocks, type checking blocks
 
-## 🐛 Debugging
+---
+
+## Debugging
 
 ### Run Tests with Debug Output
 ```bash
@@ -229,24 +381,24 @@ pytest tests/test_specific.py -v
 pytest tests/ --pdb  # Drop into debugger on failure
 ```
 
-## 📚 Additional Resources
+---
 
-- [Ruff Documentation](https://docs.astral.sh/ruff/)
-- [MyPy Documentation](https://mypy.readthedocs.io/)
-- [pytest Documentation](https://docs.pytest.org/)
-- [uv Documentation](https://docs.astral.sh/uv/)
-- [pre-commit Documentation](https://pre-commit.com/)
+## CI/CD
 
-## 🎉 Quick Start Checklist
+### GitHub Actions
+If using GitHub Actions, configure [.github/workflows/ci.yml](../.github/workflows/ci.yml):
+- Runs on: Ubuntu, macOS, Windows
+- Python versions: 3.11, 3.12, 3.13
+- Jobs:
+  - Lint & format check
+  - Type checking
+  - Security scanning
+  - Tests with coverage
+  - Codecov integration
 
-- [ ] Run `uv sync --all-extras`
-- [ ] Run `make pre-commit-install`
-- [ ] Run `make all` to verify everything works
-- [ ] Configure your IDE to use ruff and mypy
-- [ ] Set up your `.env` file for local development (if applicable)
-- [ ] Review project documentation for UACS-specific guidelines
+---
 
-## 💡 IDE Setup
+## IDE Setup
 
 ### VS Code
 1. Install extensions:
@@ -278,7 +430,9 @@ pytest tests/ --pdb  # Drop into debugger on failure
 2. Settings → Tools → External Tools:
    - Add Ruff for formatting and linting
 
-## 🔄 Migration Notes
+---
+
+## Migration Notes
 
 ### From Black to Ruff
 - Ruff is 10-100x faster than Black

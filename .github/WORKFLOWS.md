@@ -19,7 +19,7 @@
 ```bash
 # Step 1: Launch multiple agents in parallel (single message, multiple Task calls)
 # Agent 1: Build visualizer → src/uacs/visualization/
-# Agent 2: Build demos → examples/0X_*/
+# Agent 2: Build demos → examples/tutorials/0X_*/
 
 # Step 2: Let agents complete independently
 # No worktrees needed if directory separation is clean
@@ -56,7 +56,7 @@
 
 ```bash
 # 1. Test the "happy path" first
-uv run python examples/01_basic_setup/demo.py
+uv run python examples/tutorials/01_basic_setup/demo.py
 
 # 2. When error occurs, identify the pattern
 # Error: SharedContextManager.count_tokens() missing argument
@@ -69,7 +69,7 @@ grep -r "SharedContextManager.count_tokens" examples/
 # Don't fix one at a time - you'll forget others
 
 # 5. Test ALL affected files
-for demo in examples/0*/demo.py; do
+for demo in examples/tutorials/0*/demo.py; do
     uv run python "$demo"
 done
 
@@ -189,11 +189,11 @@ token_count = uacs.shared_context.count_tokens(context)
 Commit: feat: Add comprehensive demos
 
 Files:
-├── examples/01_basic_setup/
+├── examples/tutorials/01_basic_setup/
 │   ├── demo.py          # Runnable code
 │   ├── README.md        # Feature docs
 │   └── output.txt       # Example output
-├── examples/02_context_compression/
+├── examples/tutorials/02_context_compression/
 │   ├── demo.py
 │   ├── README.md
 │   └── comparison.md    # Deep dive docs
@@ -265,7 +265,7 @@ Files:
 - 14 untracked files (needs testing & commit)
 
 ## Bug Found
-Line 127 in examples/01_basic_setup/demo.py:
+Line 127 in examples/tutorials/01_basic_setup/demo.py:
 SharedContextManager.count_tokens() missing argument
 
 ## Testing Plan
@@ -276,7 +276,7 @@ SharedContextManager.count_tokens() missing argument
 
 ## Commands
 ```bash
-uv run python examples/01_basic_setup/demo.py
+uv run python examples/tutorials/01_basic_setup/demo.py
 ...
 ```
 

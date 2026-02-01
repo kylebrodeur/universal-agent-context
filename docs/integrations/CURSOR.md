@@ -36,8 +36,8 @@ git clone https://github.com/kylebrodeur/universal-agent-context
 cd universal-agent-context
 
 # Build and install
-uv run python scripts/build_mcp_server.py
-./scripts/install_mcp_server.sh
+uv run python tools/build_mcp_server.py
+./bin/install
 ```
 
 Or download from releases:

@@ -28,8 +28,8 @@ git clone https://github.com/kylebrodeur/universal-agent-context
 cd universal-agent-context
 
 # Build and install (requires Python for build step only)
-uv run python scripts/build_mcp_server.py
-./scripts/install_mcp_server.sh
+uv run python tools/build_mcp_server.py
+./bin/install
 ```
 
 Or download directly from releases:
@@ -125,7 +125,7 @@ docker build -f Dockerfile.mcp-server -t uacs:latest .
 
 ```bash
 # Quick start script
-./scripts/docker_quickstart.sh
+./bin/docker-quickstart
 
 # Or manual start
 docker run -d \

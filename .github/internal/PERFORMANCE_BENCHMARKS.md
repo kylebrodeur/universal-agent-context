@@ -10,7 +10,7 @@
 
 - [Test Methodology](#test-methodology)
 - [Context Compression](#context-compression)
-- [Marketplace Operations](#marketplace-operations)
+- [Package Management Operations](#package-management-operations)
 - [Memory Operations](#memory-operations)
 - [Format Conversion](#format-conversion)
 - [MCP Server Performance](#mcp-server-performance)
@@ -40,7 +40,7 @@ uv sync --all-extras
 # Run benchmarks
 uv run pytest tests/ --benchmark-only
 uv run python examples/compression_example.py
-uv run python scripts/benchmark_marketplace.py
+uv run python scripts/benchmark_packages.py
 ```
 
 ### Measurement Tools
@@ -107,11 +107,11 @@ uv run python scripts/benchmark_marketplace.py
 
 ---
 
-## Marketplace Operations
+## Package Management Operations
 
 ### Search Performance
 
-**Test:** Search for "testing" across repositories
+**Test:** Search for "testing" across package registries
 
 | Cache State | Repositories | Results | Time (ms) | Network Calls |
 |-------------|--------------|---------|-----------|---------------|
@@ -121,7 +121,7 @@ uv run python scripts/benchmark_marketplace.py
 | Warm        | 5            | 42      | 12        | 0             |
 
 **Cache TTL:** 24 hours
-**Cache Location:** `~/.uacs/cache/marketplace.json`
+**Cache Location:** `~/.uacs/cache/packages.json`
 
 **Key Insight:** Caching provides 200-300x speedup for repeated searches.
 
@@ -256,8 +256,8 @@ uv run python scripts/benchmark_marketplace.py
 
 | Tool                    | Cache | Time (ms) | Network |
 |-------------------------|-------|-----------|---------|
-| search_marketplace      | Cold  | 1,456     | Yes     |
-| search_marketplace      | Warm  | 8         | No      |
+| search_packages         | Cold  | 1,456     | Yes     |
+| search_packages         | Warm  | 8         | No      |
 | get_compressed_context  | N/A   | 124       | No      |
 | install_package         | N/A   | 3,234     | Yes     |
 | list_installed          | N/A   | 6         | No      |
@@ -326,9 +326,9 @@ uv run python scripts/benchmark_marketplace.py
 
 1. **Enable Caching**
    ```bash
-   # Marketplace cache enabled by default
+   # Package cache enabled by default
    # Cache expires after 24 hours
-   uacs marketplace refresh  # Manual refresh if needed
+   uacs packages refresh  # Manual refresh if needed
    ```
 
 2. **Limit Context Size**
@@ -358,10 +358,10 @@ uv run python scripts/benchmark_marketplace.py
 - **Balanced (< 150ms):** Use token budget 2000-4000 (recommended)
 - **Aggressive (< 500ms):** Use token budget < 1000
 
-**Marketplace Settings:**
+**Package Management Settings:**
 - **Cold start:** First search takes 1-3 seconds (network)
 - **Warm cache:** Subsequent searches < 10ms
-- **Refresh:** Run `uacs marketplace refresh` weekly
+- **Refresh:** Run `uacs packages refresh` weekly
 
 **Memory Settings:**
 - **Project scope:** For workspace-specific facts
@@ -392,29 +392,29 @@ print(f'Compression time: {elapsed*1000:.2f}ms')
 "
 ```
 
-### Run Marketplace Benchmark
+### Run Package Search Benchmark
 
 ```bash
 # Search benchmark
 uv run python -c "
 import asyncio
 import time
-from uacs import UACS
+from uacs.packages import PackageManager
 from pathlib import Path
 
 async def benchmark():
-    uacs = UACS(Path.cwd())
-    
+    pm = PackageManager()
+
     # Cold search
     start = time.perf_counter()
-    results = await uacs.search('testing')
+    results = await pm.search('testing')
     cold_time = time.perf_counter() - start
-    
+
     # Warm search
     start = time.perf_counter()
-    results = await uacs.search('testing')
+    results = await pm.search('testing')
     warm_time = time.perf_counter() - start
-    
+
     print(f'Cold search: {cold_time*1000:.2f}ms')
     print(f'Warm search: {warm_time*1000:.2f}ms')
 
@@ -470,8 +470,8 @@ uv run snakeviz profile.stats
    - Expected: 50% reduction in compression time
    - Target: Phase 2
 
-3. **Parallel Marketplace Queries**
-   - Query multiple repos simultaneously
+3. **Parallel Package Registry Queries**
+   - Query multiple registries simultaneously
    - Expected: 2-3x faster cold searches
    - Target: Phase 1.5
 
@@ -485,8 +485,8 @@ uv run snakeviz profile.stats
 ## Related Documentation
 
 - [Architecture Overview](ARCHITECTURE.md)
-- [Context Management](CONTEXT.md)
-- [Marketplace Guide](MARKETPLACE.md)
+- [Context Management](features/CONTEXT.md)
+- [Package Management Guide](MARKETPLACE.md)
 - [Library Guide](LIBRARY_GUIDE.md)
 
 ---

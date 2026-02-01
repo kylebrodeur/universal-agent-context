@@ -109,7 +109,7 @@ Config location: `~/Library/Application Support/Windsurf/mcp_config.json` (macOS
    ```bash
    git clone https://github.com/kylebrodeur/universal-agent-context
    cd universal-agent-context
-   ./scripts/install_mcp_server.sh
+   ./bin/install
    ```
 
 2. **Add to client config**:
@@ -563,7 +563,7 @@ If you're currently using UACS CLI and want to integrate with an MCP client:
 
 2. **Install binary**:
    ```bash
-   ./scripts/install_mcp_server.sh
+   ./bin/install
    ```
 
 3. **Configure client** (see client-specific guides above)
@@ -592,9 +592,9 @@ Migrating from other agent context systems:
 
 ### Documentation
 - **[Main README](../README.md)** - Overview and quick start
-- **[MCP Server Binary Guide](MCP_SERVER_BINARY.md)** - Binary installation details
-- **[MCP Server Docker Guide](MCP_SERVER_DOCKER.md)** - Docker deployment
-- **[Library Guide](LIBRARY_GUIDE.md)** - Python API reference
+- **[MCP Server Binary Guide](../guides/MCP_SERVER_BINARY.md)** - Binary installation details
+- **[MCP Server Docker Guide](../guides/MCP_SERVER_DOCKER.md)** - Docker deployment
+- **[Library Guide](../LIBRARY_GUIDE.md)** - Python API reference
 - **[Skills Documentation](ADAPTERS.md)** - Skills system deep dive
 
 ### Integration-Specific Guides
@@ -678,10 +678,10 @@ A: Absolutely! Test UACS with your favorite MCP client and submit a PR with your
 
 Now that you've chosen your integration, explore:
 
-1. **[Skills Marketplace](MARKETPLACE.md)** - Discover 100+ pre-built skills
+1. **[Skills Marketplace](../MARKETPLACE.md)** - Discover 100+ pre-built skills
 2. **[Context Management](CONTEXT.md)** - Deep dive into context optimization  
 3. **[AGENTS.md Format](ADAPTERS.md)** - Multi-agent coordination
-4. **[Library Guide](LIBRARY_GUIDE.md)** - Use UACS programmatically in Python
+4. **[Library Guide](../LIBRARY_GUIDE.md)** - Use UACS programmatically in Python
 
 ---
 

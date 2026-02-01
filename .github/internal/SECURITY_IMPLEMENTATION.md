@@ -10,7 +10,7 @@
 
 This guide covers security best practices for UACS components:
 - Context management (shared context, compression)
-- Marketplace (package discovery, validation, installation)
+- Package management (discovery, validation, installation)
 - MCP server (Model Context Protocol implementation)
 - Memory system (persistent storage)
 
@@ -24,7 +24,7 @@ This guide covers security best practices for UACS components:
 
 **UACS handles:**
 1. **User-provided context** - Skills, project metadata, memory entries
-2. **Marketplace packages** - Third-party skills and MCP servers
+2. **Packages** - Third-party skills and MCP servers
 3. **MCP server operations** - File system access, tool execution
 4. **Memory storage** - Persistent data across sessions
 
@@ -32,7 +32,7 @@ This guide covers security best practices for UACS components:
 - Prompt injection via malicious context
 - Command injection via MCP tools
 - Path traversal in file operations
-- Secrets in marketplace packages
+- Secrets in installed packages
 - Malicious code in installed skills
 
 ---
@@ -120,9 +120,9 @@ class SharedContextManager:
             # Option 2: Sanitize and warn (future enhancement)
 ```
 
-### 2. Marketplace Package Security
+### 2. Package Management Security
 
-**Component:** `uacs/marketplace/marketplace.py`, `uacs/marketplace/packages.py`
+**Component:** `uacs/packages/manager.py`
 
 **Threats:**
 - Malicious code in skill files
@@ -216,27 +216,27 @@ class PackageSecurityScanner:
 **Integration:**
 
 ```python
-# In uacs/marketplace/marketplace.py
+# In uacs/packages/manager.py
 from uacs.security.package_scanner import PackageSecurityScanner
 
-class MarketplaceAdapter:
+class PackageManager:
     def __init__(self):
         self.scanner = PackageSecurityScanner()
-    
-    def install(self, package: MarketplaceAsset, target_dir: Path) -> Dict:
+
+    def install(self, package: Package, target_dir: Path) -> Dict:
         """Install package with security validation."""
         # Download/extract package to temp location
         temp_path = self._download_package(package)
-        
+
         # Security scan BEFORE installation
         scan_result = self.scanner.scan_package(temp_path)
-        
+
         if not scan_result["safe"]:
             raise SecurityError(
                 f"Package failed security scan (score: {scan_result['score']}): "
                 f"{', '.join(scan_result['issues'])}"
             )
-        
+
         # If scan passes, proceed with installation
         return self._install_to_target(temp_path, target_dir)
 ```
@@ -420,10 +420,10 @@ mcp-checkpoint baseline check
 1. **Review packages before installation:**
    ```bash
    # Check package metadata
-   uacs marketplace info package-name
-   
+   uacs packages info package-name
+
    # View package source (if available)
-   uacs marketplace inspect package-name
+   uacs packages inspect package-name
    ```
 
 2. **Use project-scoped memory for sensitive data:**
@@ -496,7 +496,7 @@ UACS_MCP_RATE_LIMIT=100
     "reject_on_secrets": true,
     "reject_on_injection": true
   },
-  "marketplace": {
+  "package_management": {
     "scan_before_install": true,
     "min_security_score": 80,
     "allow_executables": false
@@ -543,7 +543,7 @@ UACS_MCP_RATE_LIMIT=100
 - [ ] Implement `PackageSecurityScanner` class
 - [ ] Implement `MCPSecurityGuard` class
 - [ ] Integrate validation in `SharedContextManager`
-- [ ] Integrate scanning in `MarketplaceAdapter`
+- [ ] Integrate scanning in `PackageManager`
 - [ ] Integrate security guard in MCP server
 - [ ] Add validation to `SimpleMemoryStore`
 - [ ] Write 50+ security tests
@@ -573,7 +573,7 @@ UACS_MCP_RATE_LIMIT=100
 - [OWASP Top 10 for LLMs](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
 - [MCP Security Best Practices](https://modelcontextprotocol.io/docs/security)
 - [MAOS Security Implementation](https://github.com/kylebrodeur/multi-agent-cli/blob/main/docs/future/SECURITY_IMPLEMENTATION_PLAN.md)
-- [UACS Implementation Roadmap Phase 6.1](./IMPLEMENTATION_ROADMAP.md#61-security-audit--input-validation)
+- [UACS Development Roadmap](../.github/internal/DEVELOPMENT_ROADMAP.md)
 
 ---
 

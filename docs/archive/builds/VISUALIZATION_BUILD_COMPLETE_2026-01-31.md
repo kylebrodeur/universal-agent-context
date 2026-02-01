@@ -41,7 +41,7 @@ Successfully built a complete web-based visualization system for UACS that provi
 
 ### Examples & Scripts
 - ✅ `examples/visualization_demo.py` - Interactive demo (5KB)
-- ✅ `scripts/test_visualization.sh` - Verification script
+- ✅ `tests/scripts/test_visualization.sh` - Verification script
 
 ### Configuration
 - ✅ `pyproject.toml` - Updated with fastapi and websockets dependencies
@@ -74,7 +74,7 @@ pytest tests/test_visualization_server.py -v
 
 ### 5. Verify Installation
 ```bash
-bash scripts/test_visualization.sh
+bash tests/scripts/test_visualization.sh
 ```
 
 ## Visualization Modes
@@ -362,7 +362,7 @@ See full troubleshooting guide in `docs/VISUALIZATION.md`.
 6. `docs/VISUALIZATION.md`
 7. `docs/VISUALIZATION_QUICKSTART.md`
 8. `examples/visualization_demo.py`
-9. `scripts/test_visualization.sh`
+9. `tests/scripts/test_visualization.sh`
 10. `.github/VISUALIZATION_FEATURE_SUMMARY.md`
 
 ### Modified Files (3)
@@ -402,7 +402,7 @@ uacs serve --help | grep "with-ui"
 
 Or use the verification script:
 ```bash
-bash scripts/test_visualization.sh
+bash tests/scripts/test_visualization.sh
 ```
 
 ## Support & Resources
