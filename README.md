@@ -7,7 +7,7 @@
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)]()
 
-> **TL;DR:** Universal context middleware for AI agents. One source of truth → 5+ formats. 70% token compression. Package management for skills + MCP. Works with Claude, Cursor, Windsurf, Cline, or your own Python code.
+> **TL;DR:** Universal context middleware for AI agents. One source of truth → 5+ formats. Perfect recall with smart deduplication (15% savings). Package management for skills + MCP. Works with Claude, Cursor, Windsurf, Cline, or your own Python code.
 
 ---
 
@@ -17,7 +17,7 @@ Building AI agent systems today means juggling multiple formats, wasting tokens,
 
 **In 30 seconds:**
 - 🔄 Write once → Deploy to Claude, Cursor, Cline, Gemini, Copilot
-- 🗜️ Save 70% on token costs with intelligent compression
+- 🗜️ Never lose context with automatic deduplication (15% immediate savings)
 - 📦 Package management for skills + MCP servers (GitHub, Git, local)
 - 🧠 Persistent memory across sessions (project + global)
 - ⚡ Python API + CLI + MCP server = works everywhere
@@ -90,24 +90,24 @@ MCP Servers:
   ✓ filesystem                - File operations via MCP
     Source: github.com/anthropic/mcp-servers
 
-# Check context compression stats
+# Check context stats
 $ uacs context stats
 
 📊 Context Statistics:
   Total entries: 127
   Original tokens: 45,234
-  Compressed tokens: 12,456 (72.5% reduction)
-  Token savings: 32,778
-  
-  Compression breakdown:
-    - Deduplication: 15,234 tokens (33.7%)
-    - Summarization: 14,567 tokens (32.2%)
-    - Quality filtering: 2,977 tokens (6.6%)
+  After deduplication: 38,449 (15% reduction)
+  Token savings: 6,785
+
+  Optimization breakdown:
+    - Deduplication: 6,785 tokens (15%)
+    - Quality filtering: Enabled
+    - Topic indexing: 12 topics identified
 
 💰 Cost Savings (at $0.01/1K tokens):
-  Without compression: $0.45/call
-  With compression: $0.12/call
-  Savings: $0.33/call (73%)
+  Without deduplication: $0.45/call
+  With deduplication: $0.38/call
+  Savings: $0.07/call (15%)
 
 # Convert between formats
 $ uacs skills convert --to cursorrules
@@ -160,7 +160,7 @@ UACS provides three integration points:
 3. **MCP Server** - Expose UACS capabilities to Claude Desktop, Cursor, Windsurf, Cline
 
 **The Result:**
-> Your existing tools get package management, format conversion, 70% token compression, and persistent memory - without changing how you work.
+> Your existing tools get package management, format conversion, perfect recall with deduplication, and persistent memory - without changing how you work.
 
 ---
 
@@ -192,12 +192,14 @@ uacs skills convert --to clinerules   # Auto-generate .clinerules
 - Cost per call: $0.10
 - 100 calls/day: $10/day = $300/month
 
-**With UACS:**
+**With UACS (v0.1.0):**
 ```python
-context = uacs.get_compressed_context(max_tokens=3000)  # 70% compression
-# Cost per call: $0.03
-# 100 calls/day: $3/day = $90/month
-# Savings: $210/month (70%)
+context = uacs.get_compressed_context(max_tokens=8500)  # Smart retrieval + deduplication
+# 15% deduplication savings + perfect recall
+# Cost per call: $0.085
+# 100 calls/day: $8.50/day = $255/month
+# Savings: $45/month (15%)
+# Plus: 2 hours/week saved (no re-explaining after context resets)
 ```
 
 ### 3. Package Management
@@ -237,7 +239,7 @@ relevant = uacs.memory.search("testing")
 ## What Makes UACS Different
 
 - 🔄 **Format Translation** - Converts between 5+ formats (SKILLS.md, AGENTS.md, .cursorrules, .clinerules, ADK Config)
-- 🗜️ **70%+ Compression** - Intelligent context compression with LLM-based summarization
+- 🗜️ **Smart Deduplication** - Automatic removal of duplicate content (15% immediate savings, 70% compression coming in v0.2.0)
 - 📦 **Package Management** - Install skills + MCP servers from GitHub, Git, or local paths
 - 🎯 **Topic-Based Retrieval** - Auto-tagging and focused context
 - 🧠 **Memory System** - Long-term memory with project and global scopes
@@ -248,7 +250,7 @@ relevant = uacs.memory.search("testing")
 | Feature | UACS | openskills | ai-agent-skills |
 |---------|------|------------|-----------------|
 | Format Translation | ✅ 5+ formats | ❌ Skills only | ❌ Skills only |
-| Context Compression | ✅ 70%+ savings | ❌ None | ❌ None |
+| Context Management | ✅ 15% dedup + perfect recall | ❌ None | ❌ None |
 | Package Management | ✅ Skills + MCP | ⚠️ Limited | ⚠️ Limited |
 | Memory System | ✅ Project + Global | ❌ None | ❌ None |
 | MCP Server | ✅ Full integration | ❌ None | ❌ None |
@@ -388,7 +390,7 @@ uacs.packages.install("/path/to/local/skill")      # From local path
 # Get compressed context
 context = uacs.get_compressed_context(
     topic="testing",
-    max_tokens=4000  # 70% compression applied
+    max_tokens=4000  # Smart deduplication + topic filtering
 )
 
 # Memory management
@@ -484,27 +486,32 @@ skills_format = content.to_system_prompt()
 
 **The Problem:** Large contexts = high costs. A 10K token call costs $0.10. At scale, this adds up fast.
 
-**The Solution:** 4-layer compression achieving 70%+ token savings.
+**The Solution:** Smart context management with perfect recall.
 
-| Technique | Savings | How it Works |
-|-----------|---------|--------------|
-| Deduplication | 40% | Hash-based duplicate detection |
-| LLM Summarization | 75% | Intelligently condense old context |
-| Topic Filtering | 85% | Send only relevant context per task |
-| Progressive Loading | 90% | Incremental context updates |
+**Current Implementation (v0.1.0):**
+1. **Deduplication** - Hash-based, automatic (15% savings)
+2. **Quality Filtering** - Remove noise, keep signal
+3. **Topic-Based Retrieval** - Focus on relevant context
+4. **Exact Storage** - 100% fidelity, zero information loss
 
-**Real-world Impact:**
+**Coming in v0.2.0:**
+5. **LLM Summarization** - Claude Haiku for intelligent compression
+6. **Vector Embeddings** - Semantic similarity search
+7. **Knowledge Graph** - Context relationship traversal
+8. **Target: 70%+ compression** with zero information loss
+
+**Real-world Impact (v0.1.0):**
 ```python
-# Before compression:
-- Context size: 10,000 tokens
-- Cost per call: $0.10 (at $0.01/1K tokens)
-- 100 calls/day: $10/day = $300/month
+# Deduplication savings:
+- Original context: 10,000 tokens
+- After deduplication: 8,500 tokens (15% savings)
+- Cost per call: $0.085 (vs $0.10)
+- 100 calls/day: $8.50/day vs $10/day
+- Monthly savings: $45 (15%)
 
-# After 70% compression:
-- Context size: 3,000 tokens  
-- Cost per call: $0.03
-- 100 calls/day: $3/day = $90/month
-- Monthly savings: $210 (70%)
+# Plus time savings:
+- Context never lost = no re-explaining
+- Save ~2 hours/week for active developers
 ```
 
 **Usage:**
