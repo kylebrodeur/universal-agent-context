@@ -300,7 +300,7 @@ uv run uacs memory init    # Creates .state/memory/ directory
 **Step 1: Test the CLI (30 seconds)**
 ```bash
 uv run uacs --help
-# Output: Shows 5 command groups: context, skills, marketplace, memory, mcp
+# Output: Shows 5 command groups: context, skills, packages, memory, mcp
 ```
 
 **Step 2: Install a Package (1 minute)**
@@ -741,7 +741,7 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) (coming Week 1)
 ```
 MAOS (Multi-Agent Orchestration)
     └── imports universal-agent-context
-            └── provides context, skills, marketplace, memory
+            └── provides context, skills, packages, memory
 ```
 
 ---
@@ -757,7 +757,7 @@ MIT License - see [LICENSE](LICENSE) for details
 - **Anthropic** - Agent Skills specification ([docs](https://docs.anthropic.com/en/docs/build-with-claude/agent-skills)) and MCP protocol
 - **Google** - Agent Development Kit (ADK)
 - **OpenAI** - AGENTS.md standard
-- **Community** - Skills marketplace contributors at [agentskills.io](https://agentskills.io) and [Smithery](https://smithery.ai)
+- **Community** - Skills contributors at [agentskills.io](https://agentskills.io) and [Smithery](https://smithery.ai)
 
 ---
 
