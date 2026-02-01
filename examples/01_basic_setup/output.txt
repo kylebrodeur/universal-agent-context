@@ -1,0 +1,105 @@
+======================================================================
+  Demo 1: Basic Setup
+======================================================================
+
+This demo introduces the core UACS workflow.
+Follow along to learn the fundamentals!
+
+Step 1: Initializing UACS...
+----------------------------------------------------------------------
+Project path: examples/01_basic_setup/.demo_state
+State directory: examples/01_basic_setup/.demo_state/.state/context
+Status: Initialized successfully
+
+======================================================================
+  Step 2: Adding Context Entries
+======================================================================
+
+Simulating an agent conversation about security review...
+
+1. User asks for security review:
+   Content: Please review the authentication module for security issues.
+   Status: Added (topics: security, code-review)
+
+2. Claude plans the review:
+   Content: I'll analyze the authentication module for common vulnerab...
+   Status: Added (topics: security, planning)
+
+3. Claude reports a finding:
+   Content: Found potential timing attack in password comparison at li...
+   Status: Added (topics: security, finding)
+
+4. Claude reports another issue:
+   Content: Password requirements are weak: minimum 6 characters, no c...
+   Status: Added (topics: security, finding)
+
+======================================================================
+  Step 3: Building Context
+======================================================================
+
+Building compressed context for Claude...
+Query: 'Continue the security review'
+Topic filter: security
+Token budget: 4000 tokens
+
+Context built successfully:
+  Length: 156 tokens
+  Preview (first 200 chars):
+  [user] Please review the authentication module for security issues.
+
+[claude] I'll analyze the authentication module for common vulnerabilities: SQL injection, XSS, timing attacks, and weak p...
+
+======================================================================
+  Step 4: Token Statistics
+======================================================================
+
+Token Usage:
+  Total entries: 4
+  Total tokens: 187
+  Compressed tokens: 156
+
+  Compression ratio: 16.6%
+  Tokens saved: 31
+
+Compression Strategies Applied:
+  - Deduplication: Identical content stored once
+  - Quality filtering: Low-value entries summarized
+  - Recency bias: Recent entries prioritized
+  - Topic relevance: Only 'security' entries included
+
+======================================================================
+  What You Learned
+======================================================================
+
+1. Initialization:
+   UACS uses project-local storage (.state/context/)
+   State is persistent between sessions
+
+2. Context Entries:
+   Simple key-value pairs with automatic metadata
+   Topics enable semantic filtering
+
+3. Context Building:
+   Compression happens automatically
+   Topic filtering reduces irrelevant content
+   Token budgets are enforced
+
+4. Statistics:
+   Real-time visibility into token usage
+   Understand compression effectiveness
+
+======================================================================
+  Demo Complete
+======================================================================
+
+Next Steps:
+  1. Demo 2: Context Compression - Deep dive into 70%+ savings
+  2. Demo 3: Multi-Agent Context - Share context between agents
+  3. Demo 4: Topic-Based Retrieval - Advanced filtering
+  4. Demo 5: Claude Code Integration - The killer use case
+
+To run next demo:
+  uv run python examples/02_context_compression/demo.py
+
+Demo state saved to: examples/01_basic_setup/.demo_state
+(You can delete this directory when done: rm -rf examples/01_basic_setup/.demo_state)
