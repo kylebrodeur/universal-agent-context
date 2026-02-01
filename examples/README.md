@@ -2,21 +2,41 @@
 
 Welcome to the UACS examples directory! This contains comprehensive demonstrations and code samples showing when, why, and how to use UACS.
 
+## Directory Structure
+
+```
+examples/
+├── quickstart/          ← Quick reference examples (single-file)
+│   ├── basic_context.py
+│   ├── compression_example.py
+│   ├── memory_usage.py
+│   └── ...
+│
+└── tutorials/           ← Comprehensive tutorials (multi-file with docs)
+    ├── 01_basic_setup/
+    ├── 02_context_compression/
+    ├── 03_multi_agent_context/
+    ├── 04_topic_based_retrieval/
+    └── 05_claude_code_integration/
+```
+
 ## Quick Navigation
 
-### 🚀 Start Here: 5 Core Demos
+### 🚀 Start Here: 5 Core Tutorials
 
-Follow these demos in order to build understanding progressively:
+Follow these tutorials in order to build understanding progressively:
 
-1. **[01_basic_setup/](./01_basic_setup/)** - Learn the fundamentals (5 min)
-2. **[02_context_compression/](./02_context_compression/)** - Save 70% on token costs (5 min)
-3. **[03_multi_agent_context/](./03_multi_agent_context/)** - Coordinate multiple agents (5 min)
-4. **[04_topic_based_retrieval/](./04_topic_based_retrieval/)** - Focus context with topics (5 min)
-5. **[05_claude_code_integration/](./05_claude_code_integration/)** - THE KILLER USE CASE (10 min)
+1. **[tutorials/01_basic_setup/](./tutorials/01_basic_setup/)** - Learn the fundamentals (5 min)
+2. **[tutorials/02_context_compression/](./tutorials/02_context_compression/)** - Save 70% on token costs (5 min)
+3. **[tutorials/03_multi_agent_context/](./tutorials/03_multi_agent_context/)** - Coordinate multiple agents (5 min)
+4. **[tutorials/04_topic_based_retrieval/](./tutorials/04_topic_based_retrieval/)** - Focus context with topics (5 min)
+5. **[tutorials/05_claude_code_integration/](./tutorials/05_claude_code_integration/)** - THE KILLER USE CASE (10 min)
 
 **Total time:** ~30 minutes for complete mastery
 
-### 📚 Additional Examples
+### ⚡ Quick Reference Examples
+
+Single-file examples for specific features (in `quickstart/`):
 
 - `basic_context.py` - Simple context usage
 - `compression_example.py` - Compression demo
@@ -25,6 +45,11 @@ Follow these demos in order to build understanding progressively:
 - `multi_format_translation.py` - Format conversion
 - `custom_adapter.py` - Custom adapters
 - `mcp_tool_usage.py` - MCP integration
+- `visualization_demo.py` - Web visualization
+
+**When to use which:**
+- **Quickstart examples:** Quick reference for a specific feature
+- **Tutorials:** Learn concepts with full explanations and documentation
 
 ---
 
@@ -46,7 +71,7 @@ Follow these demos in order to build understanding progressively:
 
 **Run it:**
 ```bash
-uv run python examples/01_basic_setup/demo.py
+uv run python examples/tutorials/01_basic_setup/demo.py
 ```
 
 ---
@@ -69,7 +94,7 @@ uv run python examples/01_basic_setup/demo.py
 
 **Run it:**
 ```bash
-uv run python examples/02_context_compression/demo.py
+uv run python examples/tutorials/02_context_compression/demo.py
 ```
 
 ---
@@ -92,7 +117,7 @@ uv run python examples/02_context_compression/demo.py
 
 **Run it:**
 ```bash
-uv run python examples/03_multi_agent_context/demo.py
+uv run python examples/tutorials/03_multi_agent_context/demo.py
 ```
 
 ---
@@ -115,7 +140,7 @@ uv run python examples/03_multi_agent_context/demo.py
 
 **Run it:**
 ```bash
-uv run python examples/04_topic_based_retrieval/demo.py
+uv run python examples/tutorials/04_topic_based_retrieval/demo.py
 ```
 
 ---
@@ -138,7 +163,7 @@ uv run python examples/04_topic_based_retrieval/demo.py
 
 **Run it:**
 ```bash
-uv run python examples/05_claude_code_integration/demo.py
+uv run python examples/tutorials/05_claude_code_integration/demo.py
 ```
 
 ---
@@ -146,10 +171,10 @@ uv run python examples/05_claude_code_integration/demo.py
 ## Quick Start
 
 ```bash
-# Run all demos
+# Run all tutorials
 for demo in 01_basic_setup 02_context_compression 03_multi_agent_context 04_topic_based_retrieval 05_claude_code_integration; do
     echo "Running $demo..."
-    uv run python examples/$demo/demo.py
+    uv run python examples/tutorials/$demo/demo.py
     echo ""
 done
 ```
@@ -223,36 +248,41 @@ Demo 2 → Demo 5
 examples/
 ├── README.md (this file)
 │
-├── 01_basic_setup/
-│   ├── README.md (What/Why/When/How)
-│   ├── demo.py (runnable code)
-│   └── output.txt (expected output)
+├── quickstart/              ← Single-file quick reference examples
+│   ├── basic_context.py
+│   ├── compression_example.py
+│   ├── memory_usage.py
+│   ├── package_install.py
+│   ├── multi_format_translation.py
+│   ├── custom_adapter.py
+│   ├── mcp_tool_usage.py
+│   └── visualization_demo.py
 │
-├── 02_context_compression/
-│   ├── README.md
-│   ├── demo.py
-│   └── comparison.md (before/after analysis)
-│
-├── 03_multi_agent_context/
-│   ├── README.md
-│   ├── demo.py
-│   └── architecture.md (5 patterns)
-│
-├── 04_topic_based_retrieval/
-│   ├── README.md
-│   ├── demo.py
-│   └── use_cases.md (real-world examples)
-│
-├── 05_claude_code_integration/
-│   ├── README.md
-│   ├── demo.py
-│   └── DESIGN.md (15-page integration design)
-│
-└── [additional examples]
-    ├── basic_context.py
-    ├── compression_example.py
-    ├── memory_usage.py
-    └── ...
+└── tutorials/               ← Comprehensive multi-file tutorials
+    ├── 01_basic_setup/
+    │   ├── README.md (What/Why/When/How)
+    │   ├── demo.py (runnable code)
+    │   └── output.txt (expected output)
+    │
+    ├── 02_context_compression/
+    │   ├── README.md
+    │   ├── demo.py
+    │   └── comparison.md (before/after analysis)
+    │
+    ├── 03_multi_agent_context/
+    │   ├── README.md
+    │   ├── demo.py
+    │   └── architecture.md (5 patterns)
+    │
+    ├── 04_topic_based_retrieval/
+    │   ├── README.md
+    │   ├── demo.py
+    │   └── use_cases.md (real-world examples)
+    │
+    └── 05_claude_code_integration/
+        ├── README.md
+        ├── demo.py
+        └── DESIGN.md (15-page integration design)
 ```
 
 ---
@@ -300,7 +330,7 @@ After completing all demos, you will be able to:
 
 **Start now:**
 ```bash
-uv run python examples/01_basic_setup/demo.py
+uv run python examples/tutorials/01_basic_setup/demo.py
 ```
 
 ---
