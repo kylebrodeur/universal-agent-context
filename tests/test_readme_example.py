@@ -18,8 +18,7 @@ uacs.shared_context.add_entry(
 )
 
 # Get compressed context
-context = uacs.get_compressed_context(
-    topic="security",      # Filter by topic
+context = uacs.shared_context.get_compressed_context(
     max_tokens=1000        # Token budget
 )
 
