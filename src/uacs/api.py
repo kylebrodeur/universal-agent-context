@@ -204,7 +204,7 @@ class UACS:
 
         visualizer = ContextVisualizer()
         # Get graph and stats from shared context
-        graph = self.shared_context.get_graph()
+        graph = self.shared_context.get_context_graph()
         stats = self.shared_context.get_stats()
 
         # Render the visualizations
