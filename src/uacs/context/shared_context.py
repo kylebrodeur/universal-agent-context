@@ -192,8 +192,14 @@ class SharedContextManager:
             if (agent is None or e.agent == agent) and e.quality >= min_quality
         ]
 
-        # Sort by quality (descending) then recency
-        entries.sort(key=lambda e: (e.quality, e.timestamp), reverse=True)
+        # Sort by weighted combination of quality (70%) and recency (30%)
+        entries.sort(
+            key=lambda e: (
+                e.quality * 0.7 + self._recency_score(e.timestamp) * 0.3,
+                e.timestamp,
+            ),
+            reverse=True,
+        )
 
         # Build context within token budget
         context_parts = []
@@ -246,28 +252,31 @@ class SharedContextManager:
                 agent=agent, max_tokens=max_tokens, min_quality=min_quality
             )
 
-        # Separate entries by topic matching
+        # Separate entries by topic matching with boosted quality for multi-topic matches
         topic_set = set(topics)
         matching_entries = []
         fallback_entries = []
 
         for entry in all_entries:
             entry_topics = set(entry.topics) if entry.topics else set()
-            if entry_topics & topic_set:  # Has any matching topic
-                matching_entries.append(entry)
+            matches = len(entry_topics & topic_set)  # Count topic matches
+            if matches > 0:
+                # Boost quality based on number of matching topics (20% per match, capped at 1.0)
+                boosted_quality = min(entry.quality * (1 + 0.2 * matches), 1.0)
+                matching_entries.append((entry, boosted_quality))
             else:
                 fallback_entries.append(entry)
 
-        # Sort matching entries by quality (descending) then recency
-        matching_entries.sort(key=lambda e: (e.quality, e.timestamp), reverse=True)
+        # Sort matching entries by boosted quality (descending) then recency
+        matching_entries.sort(key=lambda x: (x[1], x[0].timestamp), reverse=True)
         fallback_entries.sort(key=lambda e: (e.quality, e.timestamp), reverse=True)
 
         # Build context within token budget, prioritizing matching entries
         context_parts = []
         token_count = 0
 
-        # Add matching entries first
-        for entry in matching_entries:
+        # Add matching entries first (now with boosted quality)
+        for entry, boosted_quality in matching_entries:
             if token_count + entry.token_estimate > max_tokens:
                 break
 
@@ -454,6 +463,29 @@ class SharedContextManager:
         # Fallback: rough estimate
         return len(text) // 4
 
+    def _recency_score(self, timestamp_str: str) -> float:
+        """Calculate recency bonus based on entry age.
+
+        Args:
+            timestamp_str: ISO format timestamp string
+
+        Returns:
+            Recency score (1.0 = now, 0.0 = 24h+ ago)
+        """
+        from datetime import datetime
+
+        try:
+            from dateutil.parser import parse
+
+            timestamp = parse(timestamp_str)
+        except (ImportError, ValueError):
+            # Fallback: assume recent if parsing fails
+            return 0.5
+
+        age_hours = (datetime.now(timestamp.tzinfo) - timestamp).total_seconds() / 3600
+        # Linear decay: 1.0 at 0 hours, 0.0 at 24+ hours
+        return max(0.0, 1.0 - (age_hours / 24))
+
     def _calculate_quality(self, content: str) -> float:
         """Calculate content quality score (0-1).
 
@@ -464,22 +496,43 @@ class SharedContextManager:
             Quality score between 0 and 1
         """
         score = 1.0
+        content_lower = content.lower()
 
         # Penalize very short content
         if len(content) < 50:
             score *= 0.5
 
-        # Penalize error messages
-        content_lower = content.lower()
+        # Penalize error messages (but they can still be important)
         if "error" in content_lower or "failed" in content_lower:
             score *= 0.7
 
-        # Reward code blocks
+        # Reward longer, detailed content
+        if len(content) > 200:
+            score *= 1.2
+        if len(content) > 500:
+            score *= 1.3
+
+        # Reward code blocks (indicates technical content)
         if "```" in content:
+            score *= 1.3
+
+        # Reward content with questions (important for context)
+        if "?" in content and len(content) > 100:
             score *= 1.2
 
-        # Reward substantial content
-        if self.count_tokens(content) > 100:
+        # Penalize very generic responses
+        generic_phrases = ["you're welcome", "let me know", "happy to help"]
+        if any(phrase in content_lower for phrase in generic_phrases):
+            score *= 0.6
+
+        # Reward technical content (has specific terms)
+        technical_indicators = ["function", "class", "method", "error", "bug", "fix", "implement"]
+        if any(term in content_lower for term in technical_indicators):
+            score *= 1.2
+
+        # Reward substantial token count
+        token_count = self.count_tokens(content)
+        if token_count > 100:
             score *= 1.1
 
         return min(score, 1.0)
