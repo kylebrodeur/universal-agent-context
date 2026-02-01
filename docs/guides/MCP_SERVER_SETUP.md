@@ -35,7 +35,7 @@ uvx --from universal-agent-context python -m uacs.mcp_server_entry
 Build the image:
 
 ```bash
-docker build -f Dockerfile.mcp-server -t uacs-mcp-server .
+docker build -t uacs-mcp-server .
 ```
 
 Run the server:

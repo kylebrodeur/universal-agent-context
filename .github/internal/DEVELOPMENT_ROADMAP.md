@@ -779,7 +779,7 @@ Phase 2: MCP Server Standalone Packaging
 - [ ] Windows x86_64 binary (< 50MB)
 
 **Docker:**
-- [ ] Dockerfile.mcp-server (< 100MB image)
+- [ ] Dockerfile (< 100MB image)
 - [ ] docker-compose.yml
 - [ ] Docker Hub image published (Phase 3)
 

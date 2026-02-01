@@ -25,6 +25,8 @@ wheels/
 
 # Local state
 .state/
+.agent/
+.claude/
 
 # Environment
 .env
@@ -36,19 +38,25 @@ wheels/
 *.swp
 *.swo
 *~
+*.code-workspace
 
 # Testing
 .pytest_cache/
 .coverage
+coverage.xml
 htmlcov/
 .tox/
 
-# Debug and test files
+# Type checking and linting caches
+.mypy_cache/
+.ruff_cache/
+
+# Debug and test files (root level only, not tests/ directory)
 *.log
-debug_*.py
-test_*.py
-inspect_*.py
-reproduce_*.py
+/debug_*.py
+/test_*.py
+/inspect_*.py
+/reproduce_*.py
 
 # OS
 .DS_Store

@@ -138,7 +138,7 @@ git clone https://github.com/kylebrodeur/universal-agent-context
 cd universal-agent-context
 
 # Build and run
-docker build -f Dockerfile.mcp-server -t uacs:latest .
+docker build -f Dockerfile -t uacs:latest .
 docker run -d \
   --name uacs-mcp \
   -p 3000:3000 \

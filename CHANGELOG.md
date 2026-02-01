@@ -61,10 +61,10 @@ curl -fsSL https://raw.githubusercontent.com/kylebrodeur/universal-agent-context
 
 #### Option 3: Docker
 ```bash
-# Using docker-compose (recommended)
-docker-compose up -d
+# Quick start script (recommended)
+./bin/docker-quickstart
 
-# Or docker run
+# Or docker run directly
 docker run -d -p 3000:3000 --name uacs kylebrodeur/uacs:latest
 ```
 

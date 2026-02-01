@@ -144,7 +144,7 @@ Ideal for team environments or isolated deployments.
 # Build image
 git clone https://github.com/kylebrodeur/universal-agent-context
 cd universal-agent-context
-docker build -f Dockerfile.mcp-server -t uacs:latest .
+docker build -f Dockerfile -t uacs:latest .
 
 # Run container
 docker run -d \
