@@ -61,3 +61,14 @@ htmlcov/
 # OS
 .DS_Store
 Thumbs.db
+
+# Internal documentation (kept locally, not in public repo)
+.github/internal/
+docs/archive/
+.github/CLAUDE_CODE_INTEGRATION_TODO.md
+.github/CLAUDE_CODE_HOOKS_ENHANCED.md
+.github/CLAUDE_CODE_PLUGIN_READY.md
+.github/PRE_RELEASE_AUDIT.md
+.github/SESSION_SUMMARY.md
+.github/TESTING_PLAN.md
+.github/REPOSITORY_SETTINGS.md
