@@ -761,14 +761,11 @@ UACS reads and writes AGENTS.md format, enabling format translation across tools
 
 ### Complementary Tools
 
-**[memcord](https://github.com/ukkit/memcord)** - Privacy-first conversation history for Claude
-Searchable archives with auto-summarization. Perfect companion: memcord for conversation history, UACS for active context management.
-
 **[claude-code-transcripts](https://github.com/simonw/claude-code-transcripts)** - Publish sessions to HTML/Gist
-Export and share your Claude Code sessions. Pairs perfectly with UACS: optimize context during sessions, publish beautiful archives afterward.
+Export and share your Claude Code sessions as beautiful web pages. Pairs with UACS trace visualization.
 
 **[GrepAI](https://github.com/yoanbernabeu/grepai)** - Semantic code search (100% local)
-Natural language code search as MCP server. Use together: GrepAI finds code, UACS compresses it as context.
+Natural language code search as MCP server. Use together: GrepAI finds code, UACS compresses and manages it as context.
 
 ### Content Sources
 
@@ -777,8 +774,11 @@ Official Codex skills collection. Install via UACS: `uacs packages install opena
 
 ### Alternative Approaches
 
+**[memcord](https://github.com/ukkit/memcord)** - Privacy-first MCP memory server
+Conversation history with summarization. Alternative to UACS's trace visualization - different storage model (MCP server vs JSONL) and different focus (summarization vs compression analytics).
+
 **[claude-mem](https://github.com/thedotmack/claude-mem)** - Session memory with web UI
-Similar goals to UACS but focuses on cross-session continuity with SQLite + Chroma backend. UACS offers broader infrastructure (compaction prevention, trace viz, MCP, packages) while claude-mem provides dedicated memory browsing.
+Similar to UACS trace visualization but with SQLite + Chroma backend. UACS offers broader infrastructure (compaction prevention, format translation, MCP server, packages) while claude-mem provides dedicated memory browsing interface.
 
 **[openskills](https://github.com/numman-ali/openskills)** - Universal skills loader (Node.js)
 Progressive disclosure approach to skill loading. Alternative to UACS's compression strategy, Node.js vs Python.
