@@ -311,8 +311,6 @@ relevant = uacs.memory.search("testing")
 
 **Bottom line:** UACS is the only solution that provides format translation, compression, package management, memory, AND MCP server in one package.
 
-See [LAUNCH_STRATEGY.md](.github/internal/LAUNCH_STRATEGY.md) for full positioning.
-
 ---
 
 ## Quick Start
@@ -698,8 +696,6 @@ We're executing an **8-week public launch plan**:
 - Phase 5-6: Advanced features (streaming, webhooks, A2A protocol)
 - Phase 7-8: Enterprise features (auth, analytics, multi-tenancy)
 
-See [DEVELOPMENT_ROADMAP.md](.github/internal/DEVELOPMENT_ROADMAP.md) for complete timeline and [LAUNCH_STRATEGY.md](.github/internal/LAUNCH_STRATEGY.md) for marketing plan.
-
 ---
 
 ## Documentation
@@ -735,9 +731,7 @@ All examples are in [examples/](examples/) and tested:
 - [mcp_tool_usage.py](examples/mcp_tool_usage.py) - Programmatic MCP access
 
 **Development:**
-- [Development Roadmap](.github/internal/DEVELOPMENT_ROADMAP.md) - Development status & timeline
-- [Launch Strategy](.github/internal/LAUNCH_STRATEGY.md) - Marketing & positioning
-- [Contributing](CONTRIBUTING.md) - How to contribute (coming Week 1)
+- [Contributing](CONTRIBUTING.md) - How to contribute
 
 ---
 
