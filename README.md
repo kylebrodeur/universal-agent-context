@@ -747,18 +747,32 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## Related Projects
 
-### Multi-Agent CLI (MAOS)
-- **Repository:** [github.com/kylebrodeur/multi-agent-cli](https://github.com/kylebrodeur/multi-agent-cli)
-- **Relationship:** MAOS imports UACS for context management
-- **Focus:** Multi-agent orchestration using Google ADK
-- **Use case:** Build systems with multiple AI agents (Gemini, Claude, Copilot) working together
+### Complementary Tools
 
-**Architecture:**
-```
-MAOS (Multi-Agent Orchestration)
-    └── imports universal-agent-context
-            └── provides context, skills, packages, memory
-```
+**[memcord](https://github.com/ukkit/memcord)** - Privacy-first conversation history for Claude
+Searchable archives with auto-summarization. Perfect companion: memcord for conversation history, UACS for active context management.
+
+**[claude-code-transcripts](https://github.com/simonw/claude-code-transcripts)** - Publish sessions to HTML/Gist
+Export and share your Claude Code sessions. Pairs perfectly with UACS: optimize context during sessions, publish beautiful archives afterward.
+
+**[GrepAI](https://github.com/yoanbernabeu/grepai)** - Semantic code search (100% local)
+Natural language code search as MCP server. Use together: GrepAI finds code, UACS compresses it as context.
+
+### Format Standards & Content
+
+**[AGENTS.md](https://github.com/agentsmd/agents.md)** - Agent context format specification
+Open standard for agent-readable project documentation. UACS supports AGENTS.md for format translation.
+
+**[OpenAI Skills](https://github.com/openai/skills)** - Curated skills catalog
+Official Codex skills collection. Install via UACS: `uacs packages install openai/skills-[name]`
+
+### Alternative Approaches
+
+**[claude-mem](https://github.com/thedotmack/claude-mem)** - Session memory with web UI
+Similar goals to UACS but focuses on cross-session continuity with SQLite + Chroma backend. UACS offers broader infrastructure (compaction prevention, trace viz, MCP, packages) while claude-mem provides dedicated memory browsing.
+
+**[openskills](https://github.com/numman-ali/openskills)** - Universal skills loader (Node.js)
+Progressive disclosure approach to skill loading. Alternative to UACS's compression strategy, Node.js vs Python.
 
 ---
 
