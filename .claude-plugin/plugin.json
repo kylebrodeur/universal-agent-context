@@ -1,0 +1,63 @@
+{
+  "name": "uacs",
+  "version": "0.1.0",
+  "description": "Universal Agent Context System - Perfect recall for Claude Code with automatic conversation storage",
+  "author": "Kyle Brodeur",
+  "repository": "https://github.com/kylebrodeur/universal-agent-context",
+  "license": "MIT",
+
+  "hooks": {
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude-plugin/hooks/uacs_store.py",
+            "async": true,
+            "description": "Store conversation in UACS with perfect fidelity"
+          }
+        ]
+      }
+    ]
+  },
+
+  "skills": [
+    {
+      "name": "UACS Context Management",
+      "path": ".claude-plugin/skills/uacs_context.md",
+      "description": "Instructions for using UACS to retrieve stored context"
+    }
+  ],
+
+  "mcpServers": {
+    "uacs": {
+      "command": "uacs",
+      "args": ["serve"],
+      "description": "UACS MCP server for context retrieval and management",
+      "optional": true
+    }
+  },
+
+  "dependencies": {
+    "python": ">=3.11",
+    "packages": [
+      "universal-agent-context>=0.1.0"
+    ]
+  },
+
+  "installation": {
+    "instructions": [
+      "1. Install UACS: pip install universal-agent-context",
+      "2. Copy plugin to your project: cp -r .claude-plugin /path/to/your/project/",
+      "3. Conversations will be automatically stored in .state/context/",
+      "4. Optional: Start MCP server for retrieval: uacs serve"
+    ]
+  },
+
+  "configuration": {
+    "storage_path": ".state/context",
+    "auto_store": true,
+    "compression": true,
+    "deduplication": true
+  }
+}
