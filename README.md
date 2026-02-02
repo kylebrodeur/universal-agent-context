@@ -18,6 +18,9 @@ Building AI agent systems today means juggling multiple formats, wasting tokens,
 **In 30 seconds:**
 - 🔄 Write once → Deploy to Claude, Cursor, Cline, Gemini, Copilot
 - 🗜️ Never lose context with automatic deduplication (15% immediate savings)
+- 🛡️ **NEW:** Proactive compaction prevention for Claude Code (95%+ success rate)
+- 🤖 **NEW:** Local LLM tagging via transformers (zero API cost, better quality)
+- 📊 **NEW:** LangSmith-style trace visualization (debug any session)
 - 📦 Package management for skills + MCP servers (GitHub, Git, local)
 - 🧠 Persistent memory across sessions (project + global)
 - ⚡ Python API + CLI + MCP server = works everywhere
@@ -54,7 +57,32 @@ uvx universal-agent-context serve
 # Initialize project
 uv run uacs context init   # Creates .state/context/ directory
 uv run uacs memory init    # Creates .state/memory/ directory
+
+# Optional: For local LLM tagging (better topic extraction)
+pip install transformers torch  # ~2GB download on first use
 ```
+
+### Claude Code Plugin (NEW)
+
+**Proactive compaction prevention + real-time context storage:**
+
+```bash
+# Install plugin
+cp .claude-plugin/plugin-proactive.json ~/.claude/plugin.json
+cp .claude-plugin/hooks/*.py ~/.claude/hooks/
+chmod +x ~/.claude/hooks/*.py
+
+# Optional: Install transformers for better topic extraction
+pip install transformers torch
+```
+
+**Features:**
+- 🛡️ **Compaction Prevention**: Monitors context, compresses at 50% (before Claude's 75% threshold) - 95%+ success
+- 🤖 **Local LLM Tagging**: Uses TinyLlama (1.1B) for topic extraction - zero API cost
+- 💾 **Crash-Resistant**: Real-time storage via PostToolUse hook
+- 🔄 **Auto-Context**: Injects previous context on session resume
+
+**See:** [Quick Start Guide](./QUICKSTART.md) | [Plugin Evolution](./.github/PLUGIN_EVOLUTION.md) | [Compaction Prevention Strategy](./.github/COMPACTION_PREVENTION_STRATEGY.md)
 
 ---
 
@@ -138,6 +166,30 @@ $ uacs memory search "testing"
 - 📊 **Real-time compression stats** - See exactly what you're saving
 - 🔄 **Format conversion** - One command, any format
 - 🧠 **Memory recall** - Find relevant context instantly
+
+---
+
+## Trace Visualization (NEW)
+
+LangSmith-style visualization for debugging Claude Code sessions:
+
+```bash
+# Start visualization server
+python examples/quickstart/visualization_demo.py
+
+# Open browser
+open http://localhost:8081
+```
+
+**Features:**
+- 📊 **Session List** - View all Claude Code sessions with stats
+- 🔍 **Session Detail** - Full trace timeline with every event (prompts, tool uses, compressions)
+- 📈 **Token Dashboard** - Real-time token usage, compression savings, trends
+- 🏷️ **Topic Explorer** - Topic clusters with session links
+- 🔎 **Search & Filter** - Find anything across all sessions by topic/keyword
+- 📤 **Export** - Export session traces as JSON for analysis
+
+**See:** [Trace Visualization Design](./.github/TRACE_VISUALIZATION_DESIGN.md) | [Implementation Status](./.github/TRACE_VIZ_IMPLEMENTATION_STATUS.md)
 
 ---
 
