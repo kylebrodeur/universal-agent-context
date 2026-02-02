@@ -253,6 +253,50 @@ async def list_tools() -> list[Tool]:
                 },
             },
         ),
+        # Claude Code Context Retrieval
+        Tool(
+            name="uacs_search_context",
+            description="Search stored Claude Code conversations by topic or query",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "What to search for in stored conversations",
+                    },
+                    "topics": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Filter by topics (e.g., security, performance, bug)",
+                    },
+                    "max_tokens": {
+                        "type": "integer",
+                        "description": "Maximum tokens to return",
+                        "default": 4000,
+                    },
+                },
+                "required": ["query"],
+            },
+        ),
+        Tool(
+            name="uacs_list_topics",
+            description="List all topics in stored Claude Code conversations",
+            inputSchema={"type": "object", "properties": {}},
+        ),
+        Tool(
+            name="uacs_get_recent_sessions",
+            description="Get most recent Claude Code sessions",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "limit": {
+                        "type": "integer",
+                        "description": "Number of recent sessions to return",
+                        "default": 5,
+                    }
+                },
+            },
+        ),
     ]
 
 
@@ -527,6 +571,109 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
                 type="text",
                 text=json.dumps(
                     {"error": "ProjectValidator not yet available in UACS"}, indent=2
+                ),
+            )
+        ]
+
+    # Claude Code Context Retrieval Tools
+    if name == "uacs_search_context":
+        context_adapter = UnifiedContextAdapter()
+        query = arguments["query"]
+        topics = arguments.get("topics")
+        max_tokens = arguments.get("max_tokens", 4000)
+
+        # Use focused context if topics provided, otherwise compressed context
+        if topics and len(topics) > 0:
+            context = context_adapter.shared_context.get_focused_context(
+                topics=topics, max_tokens=max_tokens
+            )
+        else:
+            context = context_adapter.shared_context.get_compressed_context(
+                max_tokens=max_tokens
+            )
+
+        if not context or len(context.strip()) == 0:
+            return [
+                TextContent(
+                    type="text",
+                    text=json.dumps(
+                        {
+                            "found": False,
+                            "message": f"No stored conversations found for: {query}",
+                        },
+                        indent=2,
+                    ),
+                )
+            ]
+
+        return [
+            TextContent(
+                type="text",
+                text=json.dumps(
+                    {
+                        "found": True,
+                        "query": query,
+                        "topics": topics,
+                        "context": context,
+                        "tokens": context_adapter.shared_context.count_tokens(context),
+                    },
+                    indent=2,
+                ),
+            )
+        ]
+
+    if name == "uacs_list_topics":
+        context_adapter = UnifiedContextAdapter()
+
+        # Get all unique topics from entries
+        topics = set()
+        for entry in context_adapter.shared_context.entries.values():
+            if entry.topics:
+                topics.update(entry.topics)
+
+        return [
+            TextContent(
+                type="text",
+                text=json.dumps(
+                    {"topics": sorted(list(topics)), "count": len(topics)}, indent=2
+                ),
+            )
+        ]
+
+    if name == "uacs_get_recent_sessions":
+        context_adapter = UnifiedContextAdapter()
+        limit = arguments.get("limit", 5)
+
+        # Get entries sorted by timestamp (most recent first)
+        all_entries = list(context_adapter.shared_context.entries.values())
+        all_entries.sort(key=lambda e: e.timestamp, reverse=True)
+
+        # Filter for Claude Code sessions
+        sessions = []
+        seen_sessions = set()
+
+        for entry in all_entries:
+            if len(sessions) >= limit:
+                break
+
+            # Check if from Claude Code hook
+            if entry.metadata and entry.metadata.get("source") == "claude-code-hook":
+                session_id = entry.metadata.get("session_id")
+                if session_id and session_id not in seen_sessions:
+                    seen_sessions.add(session_id)
+                    sessions.append({
+                        "session_id": session_id,
+                        "timestamp": entry.timestamp,
+                        "topics": entry.topics,
+                        "turn_count": entry.metadata.get("turn_count", 0),
+                        "preview": entry.content[:200] + "..." if len(entry.content) > 200 else entry.content
+                    })
+
+        return [
+            TextContent(
+                type="text",
+                text=json.dumps(
+                    {"sessions": sessions, "count": len(sessions)}, indent=2
                 ),
             )
         ]
