@@ -8,4 +8,5 @@ Provides unified context management for AI agents:
 
 from uacs.api import UACS
 
+__version__ = "0.2.0"
 __all__ = ["UACS"]
