@@ -1,0 +1,160 @@
+{
+  "name": "uacs-proactive",
+  "version": "0.2.0",
+  "description": "Universal Agent Context System - Proactive compaction prevention with local LLM tagging",
+  "author": "Kyle Brodeur",
+  "repository": "https://github.com/kylebrodeur/universal-agent-context",
+  "license": "MIT",
+
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude-plugin/hooks/uacs_monitor_context.py",
+            "async": false,
+            "timeout": 2,
+            "description": "Monitor context size and trigger early compression at 50%"
+          },
+          {
+            "type": "command",
+            "command": "python3 .claude-plugin/hooks/uacs_tag_prompt.py",
+            "async": true,
+            "timeout": 1,
+            "description": "Tag prompts with local LLM (Ollama) for better topic extraction"
+          }
+        ]
+      }
+    ],
+
+    "SessionStart": [
+      {
+        "matcher": "resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude-plugin/hooks/uacs_inject_context.py",
+            "async": false,
+            "timeout": 10,
+            "description": "Inject previous context when resuming session"
+          }
+        ]
+      }
+    ],
+
+    "PostToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|Read|Grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude-plugin/hooks/uacs_store_realtime.py",
+            "async": true,
+            "timeout": 5,
+            "description": "Store tool usage incrementally (real-time, survives crashes)"
+          }
+        ]
+      }
+    ],
+
+    "PreCompact": [
+      {
+        "matcher": "auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude-plugin/hooks/uacs_precompact.py",
+            "async": false,
+            "timeout": 5,
+            "description": "Emergency backup if compaction prevention fails"
+          }
+        ]
+      }
+    ],
+
+    "SessionEnd": [
+      {
+        "matcher": "other",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude-plugin/hooks/uacs_store.py",
+            "async": true,
+            "timeout": 10,
+            "description": "Finalize and index full session (backup storage)"
+          }
+        ]
+      }
+    ]
+  },
+
+  "skills": [
+    {
+      "name": "UACS Context Management",
+      "path": ".claude-plugin/skills/uacs_context.md",
+      "description": "Instructions for using UACS to retrieve stored context"
+    }
+  ],
+
+  "mcpServers": {
+    "uacs": {
+      "command": "uacs",
+      "args": ["serve"],
+      "description": "UACS MCP server for context retrieval and management",
+      "optional": true
+    }
+  },
+
+  "dependencies": {
+    "python": ">=3.11",
+    "packages": [
+      "universal-agent-context>=0.1.0"
+    ],
+    "optional": {
+      "transformers": "For local LLM tagging (recommended)",
+      "torch": "Required for transformers"
+    }
+  },
+
+  "configuration": {
+    "storage_path": ".state/context",
+    "auto_store": true,
+    "real_time_storage": true,
+    "context_injection_on_resume": true,
+    "compression": true,
+    "deduplication": true,
+    "max_context_injection_tokens": 2000,
+    "proactive_compression_enabled": true,
+    "compression_threshold_percent": 50,
+    "local_llm_tagging_enabled": true,
+    "transformers_model": "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+  },
+
+  "features": {
+    "proactive_compression": {
+      "enabled": true,
+      "description": "Monitor context and compress at 50% to prevent auto-compaction at 75%"
+    },
+    "local_llm_tagging": {
+      "enabled": true,
+      "description": "Use embedded transformers for zero-cost topic extraction (better than heuristics)"
+    },
+    "real_time_storage": {
+      "enabled": true,
+      "description": "Incremental storage via PostToolUse hook (survives crashes)"
+    },
+    "context_injection": {
+      "enabled": true,
+      "description": "Automatic context injection on session resume"
+    },
+    "session_finalization": {
+      "enabled": true,
+      "description": "Full session storage on SessionEnd (backup)"
+    },
+    "emergency_backup": {
+      "enabled": true,
+      "description": "PreCompact hook as last resort if prevention fails"
+    }
+  }
+}
