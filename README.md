@@ -745,6 +745,18 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ---
 
+## Built on Standards
+
+UACS implements and extends these community standards:
+
+**[Agent Skills](https://agentskills.io)** - Universal skill format by Anthropic
+UACS supports the Agent Skills specification for skill packaging and discovery.
+
+**[AGENTS.md](https://agents.md)** - Open format for agent context
+UACS reads and writes AGENTS.md format, enabling format translation across tools.
+
+---
+
 ## Related Projects
 
 ### Complementary Tools
@@ -758,10 +770,7 @@ Export and share your Claude Code sessions. Pairs perfectly with UACS: optimize 
 **[GrepAI](https://github.com/yoanbernabeu/grepai)** - Semantic code search (100% local)
 Natural language code search as MCP server. Use together: GrepAI finds code, UACS compresses it as context.
 
-### Format Standards & Content
-
-**[AGENTS.md](https://github.com/agentsmd/agents.md)** - Agent context format specification
-Open standard for agent-readable project documentation. UACS supports AGENTS.md for format translation.
+### Content Sources
 
 **[OpenAI Skills](https://github.com/openai/skills)** - Curated skills catalog
 Official Codex skills collection. Install via UACS: `uacs packages install openai/skills-[name]`
