@@ -76,6 +76,18 @@ dev = [
 [tool.hatch.build.targets.wheel]
 packages = ["src/uacs"]
 
+[tool.hatch.build.targets.wheel.force-include]
+"uacs-web-ui/out" = "uacs/visualization/static_ui"
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "uacs-web-ui/node_modules",
+  "uacs-web-ui/.next",
+  ".github",
+  "tests",
+  "examples/.demo_state",
+]
+
 [tool.ruff]
 line-length = 88
 target-version = "py311"

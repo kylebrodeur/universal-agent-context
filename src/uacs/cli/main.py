@@ -280,13 +280,13 @@ def web(
         uacs = UACS(project_path=project_path)
         server = VisualizationServer(uacs=uacs, host=host, port=port)
 
-        # Check if Next.js build exists
-        package_root = Path(__file__).parent.parent.parent.parent
-        nextjs_out = package_root / "uacs-web-ui" / "out"
+        # Check if Next.js build exists (packaged or development)
+        packaged_ui = Path(__file__).parent.parent / "visualization" / "static_ui"
+        dev_ui = Path(__file__).parent.parent.parent.parent / "uacs-web-ui" / "out"
 
-        if not nextjs_out.exists():
+        if not packaged_ui.exists() and not dev_ui.exists():
             typer.echo("⚠️  Warning: Next.js build not found!")
-            typer.echo(f"   Expected at: {nextjs_out}")
+            typer.echo(f"   Expected at: {packaged_ui} (packaged) or {dev_ui} (dev)")
             typer.echo("   Run: cd uacs-web-ui && pnpm build\n")
 
         typer.echo("✨ Web UI is ready! Press Ctrl+C to stop\n")

@@ -61,9 +61,11 @@ class VisualizationServer:
         self._setup_routes()
 
         # Mount Next.js static build files
-        # Look for uacs-web-ui/out relative to package root
-        package_root = Path(__file__).parent.parent.parent.parent
-        nextjs_out = package_root / "uacs-web-ui" / "out"
+        # Try packaged location first, then development location
+        packaged_ui = Path(__file__).parent / "static_ui"
+        dev_ui = Path(__file__).parent.parent.parent.parent / "uacs-web-ui" / "out"
+
+        nextjs_out = packaged_ui if packaged_ui.exists() else dev_ui
 
         if nextjs_out.exists():
             # Mount Next.js static assets (_next directory)
@@ -84,7 +86,7 @@ class VisualizationServer:
 
             logger.info(f"Mounted Next.js UI from: {nextjs_out}")
         else:
-            logger.warning(f"Next.js build not found at: {nextjs_out}")
+            logger.warning(f"Next.js build not found at: {packaged_ui} or {dev_ui}")
             logger.warning("Run 'cd uacs-web-ui && pnpm build' to build the UI")
 
             # Fallback to old static directory
@@ -102,9 +104,11 @@ class VisualizationServer:
         @self.app.get("/", response_class=HTMLResponse)
         async def index():
             """Serve Next.js main page."""
-            # Try Next.js build first
-            package_root = Path(__file__).parent.parent.parent.parent
-            nextjs_index = package_root / "uacs-web-ui" / "out" / "index.html"
+            # Try packaged location first, then development location
+            packaged_index = Path(__file__).parent / "static_ui" / "index.html"
+            dev_index = Path(__file__).parent.parent.parent.parent / "uacs-web-ui" / "out" / "index.html"
+
+            nextjs_index = packaged_index if packaged_index.exists() else dev_index
 
             if nextjs_index.exists():
                 return HTMLResponse(content=nextjs_index.read_text())
@@ -947,8 +951,11 @@ class VisualizationServer:
                 )
 
             # Serve Next.js index.html for all other routes
-            package_root = Path(__file__).parent.parent.parent.parent
-            nextjs_index = package_root / "uacs-web-ui" / "out" / "index.html"
+            # Try packaged location first, then development location
+            packaged_index = Path(__file__).parent / "static_ui" / "index.html"
+            dev_index = Path(__file__).parent.parent.parent.parent / "uacs-web-ui" / "out" / "index.html"
+
+            nextjs_index = packaged_index if packaged_index.exists() else dev_index
 
             if nextjs_index.exists():
                 return HTMLResponse(content=nextjs_index.read_text())
