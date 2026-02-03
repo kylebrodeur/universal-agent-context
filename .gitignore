@@ -64,11 +64,18 @@ Thumbs.db
 
 # Internal documentation (kept locally, not in public repo)
 .github/internal/
+.github/archive/
 docs/archive/
-.github/CLAUDE_CODE_INTEGRATION_TODO.md
-.github/CLAUDE_CODE_HOOKS_ENHANCED.md
-.github/CLAUDE_CODE_PLUGIN_READY.md
-.github/PRE_RELEASE_AUDIT.md
-.github/SESSION_SUMMARY.md
-.github/TESTING_PLAN.md
-.github/REPOSITORY_SETTINGS.md
+.github/*_TODO.md
+.github/*_PLAN.md
+.github/*_SUMMARY.md
+.github/*_AUDIT.md
+.github/*_STATUS.md
+.github/TASK_GROUP_*.md
+.github/CLAUDE_CODE_*.md
+.github/PRE_RELEASE_*.md
+.github/SESSION_*.md
+.github/TESTING_*.md
+.github/REPOSITORY_*.md
+.github/PHASE_*.md
+.github/WEB_UI_*.md
