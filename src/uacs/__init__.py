@@ -1,7 +1,7 @@
 """Universal Agent Context System (UACS)
 
 Provides unified context management for AI agents:
-- Marketplace discovery (Skills + MCP)
+- Package management (Skills + MCP)
 - Format adapters (Agent Skills, AGENTS.md, etc.)
 - Context management (shared memory + compression)
 - Semantic conversations and knowledge (v0.3.0+)
