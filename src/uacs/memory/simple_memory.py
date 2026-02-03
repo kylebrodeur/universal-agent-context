@@ -1,9 +1,17 @@
-"""Simple JSON-based memory store with project/global hierarchy."""
+"""Simple JSON-based memory store with project/global hierarchy.
+
+.. deprecated:: 0.3.0
+    SimpleMemoryStore is deprecated in favor of the Semantic API.
+    Use ``UACS.add_decision()``, ``UACS.add_convention()``, etc. for structured
+    memory with semantic search and rich metadata.
+    SimpleMemoryStore will be removed in v1.0.0.
+"""
 
 from __future__ import annotations
 
 import json
 import re
+import warnings
 from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
@@ -68,13 +76,45 @@ class MemoryEntry:
 
 
 class SimpleMemoryStore:
-    """Simple JSON-based key-value memory with scoped lookup."""
+    """Simple JSON-based key-value memory with scoped lookup.
+    
+    .. deprecated:: 0.3.0
+        SimpleMemoryStore is deprecated. Use the UACS Semantic API instead:
+        
+        .. code-block:: python
+        
+            from uacs import UACS
+            uacs = UACS(project_path=Path("."))
+            
+            # Instead of store("key", {"note": "value"})
+            uacs.add_convention(
+                content="Your content here",
+                topics=["topic1", "topic2"],
+                confidence=0.9
+            )
+        
+        The Semantic API provides:
+        - Structured Pydantic models with validation
+        - Semantic search with embeddings
+        - Rich metadata (topics, confidence, provenance)
+        - Type-specific storage (decisions, conventions, learnings)
+        
+        SimpleMemoryStore will be removed in v1.0.0.
+    """
 
     def __init__(
         self,
         project_path: Path,
         global_path: Path | None = None,
     ):
+        warnings.warn(
+            "SimpleMemoryStore is deprecated as of v0.3.0 and will be removed in v1.0.0. "
+            "Use the UACS Semantic API (UACS.add_decision, UACS.add_convention, etc.) "
+            "for structured memory with semantic search and rich metadata. "
+            "See https://github.com/kylebrodeur/universal-agent-context for migration guide.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         self.project_root = project_path / ".state" / "memory"
         self.global_root = global_path or Path.home() / ".multi-agent" / "memory"
 

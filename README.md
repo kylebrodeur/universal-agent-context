@@ -522,47 +522,109 @@ uv run uacs packages install anthropic/skills-testing
 uv run uacs packages remove testing
 ```
 
-### 🧠 Memory System
+### 🧠 Memory & Knowledge Systems
 
-**The Problem:** Agents forget project conventions between sessions. You repeat instructions constantly.
+**UACS provides two systems for storing context:**
 
-**The Solution:** Persistent memory with project and global scopes.
+#### ✅ **Semantic API (Recommended)** - v0.3.0+
 
-```bash
-# Initialize
-uv run uacs memory init
+The modern system with **structured Pydantic models**, semantic search, and rich metadata. **Use this for all new projects.**
 
-# Add project-specific memory
-uv run uacs memory add "Use pytest-asyncio for async tests" --scope project
-
-# Add global memory (all projects)
-uv run uacs memory add "Prefer composition over inheritance" --scope global
-
-# Search with semantic similarity
-uv run uacs memory search "testing patterns"
-# Returns: Relevant memories with similarity scores
-
-# Python API
+```python
+from pathlib import Path
 from uacs import UACS
-uacs = UACS()
 
-# Add memory programmatically
-uacs.memory.add(
-    "Critical: Always validate input before processing",
-    scope="project",
-    tags=["security", "validation"]
+uacs = UACS(project_path=Path("."))
+
+# Track architectural decisions
+uacs.add_decision(
+    question="How should we handle API authentication?",
+    decision="JWT with RS256 asymmetric signing",
+    rationale="Stateless, scalable, works well with microservices",
+    decided_by="team",
+    session_id="auth_session_001",
+    alternatives=["Session-based", "OAuth2", "API keys"],
+    topics=["security", "authentication"]
 )
 
-# Search by topic
-results = uacs.memory.search("security", scope="project")
-for memory in results:
-    print(f"{memory.content} (score: {memory.score})")
+# Capture project conventions
+uacs.add_convention(
+    content="Always use Pydantic models for data validation",
+    topics=["validation", "best-practices"],
+    source_session="code_review_002",
+    confidence=1.0  # High confidence = always follow
+)
+
+# Store cross-session learnings
+uacs.add_learning(
+    pattern="Users prefer inline validation over submit-time validation",
+    confidence=0.85,
+    learned_from=["session_001", "session_002", "session_003"],
+    category="usability"
+)
+
+# Track code artifacts
+uacs.add_artifact(
+    type="file",
+    path="src/auth.py",
+    description="JWT authentication with RS256 signing and token refresh",
+    created_in_session="auth_session_001",
+    topics=["authentication", "jwt"]
+)
+
+# Natural language semantic search
+results = uacs.search("how did we implement authentication?", limit=5)
+for result in results:
+    print(f"[{result.type}] {result.relevance_score:.2f} - {result.content}")
+
+# Type-specific search
+decisions = uacs.search(
+    query="authentication method",
+    types=["decision"],  # Only search decisions
+    limit=3
+)
+
+# Confidence-filtered search
+high_confidence = uacs.search(
+    query="best practices",
+    types=["convention", "learning"],
+    min_confidence=0.9,  # Only high-confidence items
+    limit=10
+)
 ```
 
-**Storage:**
-- Project scope: `.state/memory/project/`
-- Global scope: `~/.config/uacs/memory/global/`
-- Format: JSON with metadata (timestamp, tags, usage count)
+**Features:**
+- ✅ **Structured models** - Pydantic validation, type checking
+- ✅ **Semantic search** - Find by meaning, not just keywords
+- ✅ **Rich metadata** - Topics, confidence, provenance, timestamps
+- ✅ **Type system** - 7 types: User/Assistant/Tool/Convention/Decision/Learning/Artifact
+- ✅ **Deduplication** - Automatic similarity detection (0.85 threshold)
+- ✅ **Quality tracking** - Confidence scores, token counts, freshness
+
+**See examples:**
+- `examples/01_semantic_basics.py` - Core usage
+- `examples/04_search_and_knowledge.py` - Advanced patterns
+
+---
+
+#### ⚠️ **SimpleMemoryStore (Deprecated)** - Legacy
+
+Basic key-value store. **Deprecated in v0.3.0, will be removed in v1.0.0.**
+
+```python
+# ❌ Don't use this for new code
+from uacs.memory import SimpleMemoryStore
+store = SimpleMemoryStore(project_path=Path("."))
+store.store("key", {"note": "value"}, scope="project")
+```
+
+**Why deprecated:**
+- ❌ No validation - accepts any dictionary
+- ❌ No structure - entries are inconsistent
+- ❌ Substring search only - no semantic matching
+- ❌ Minimal metadata - no topics, confidence, provenance
+
+**Migration:** See [MIGRATION_SIMPLE_TO_SEMANTIC.md](docs/MIGRATION_SIMPLE_TO_SEMANTIC.md) to upgrade.
 
 ---
 
