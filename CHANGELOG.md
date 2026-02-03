@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-02-03
+
+### ✨ Added
+
+- **Automated Plugin Installation**: `uacs plugin install` command for one-command Claude Code setup
+  - Automatically copies hooks to `~/.claude/hooks/`
+  - Merges or creates `~/.claude/plugin.json`
+  - Makes hooks executable
+  - Shows installation status with `uacs plugin status`
+- **Bundled Plugin Files**: `.claude-plugin/` directory now included in package
+
+### 📝 Changed
+
+- Plugin installation no longer requires manual file copying
+- Hooks are bundled with PyPI distribution
+
 ## [0.3.1] - 2026-02-03
 
 ### ✨ Added
