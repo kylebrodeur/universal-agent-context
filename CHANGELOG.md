@@ -340,7 +340,7 @@ First public release of UACS - Universal Agent Context System for AI agent conte
 - **Context Management**: Discover, translate, and manage AI agent context across multiple formats
 - **Format Adapters**: Built-in support for `.cursorrules`, `.clinerules`, `.agents.md`, and agent skill formats
 - **Context Compression**: Intelligent token reduction (70%+ compression ratio) while preserving semantic meaning
-- **Marketplace Integration**: Search and install agent skills from multiple registries
+- **Package Management**: Search and install agent skills from multiple registries
 - **Memory System**: Simple in-memory storage for agent context and history
 
 #### MCP Server
@@ -442,7 +442,7 @@ This project builds on concepts from:
 - PyPI package distribution
 - Claude Desktop integration guide
 - Cursor and Windsurf integration guides
-- Additional marketplace registries
+- Additional package registries
 - Enhanced memory system with semantic search
 
 ---
