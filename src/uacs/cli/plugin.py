@@ -55,12 +55,25 @@ def install():
         # Handle plugin.json
         plugin_json = plugin_source / "plugin-semantic.json"
         claude_plugin = claude_dir / "plugin.json"
-        
+
+        # Load and update paths in config
+        new_config = json.loads(plugin_json.read_text())
+
+        # Update hook paths to absolute paths
+        for hook_type, hook_configs in new_config.get("hooks", {}).items():
+            for config in hook_configs:
+                for hook in config.get("hooks", []):
+                    if "command" in hook:
+                        # Replace relative path with absolute path to ~/.claude/hooks/
+                        cmd = hook["command"]
+                        if ".claude-plugin/hooks/" in cmd:
+                            hook_file = cmd.split("/")[-1]
+                            hook["command"] = f"python3 {hooks_dir}/{hook_file}"
+
         if claude_plugin.exists():
             # Merge with existing
             existing = json.loads(claude_plugin.read_text())
-            new_config = json.loads(plugin_json.read_text())
-            
+
             # Merge hooks
             if "hooks" not in existing:
                 existing["hooks"] = {}
@@ -68,12 +81,12 @@ def install():
                 if hook_type not in existing["hooks"]:
                     existing["hooks"][hook_type] = []
                 existing["hooks"][hook_type].extend(hooks)
-            
+
             claude_plugin.write_text(json.dumps(existing, indent=2))
             console.print("[green]✓[/green] Merged with existing plugin.json")
         else:
-            # Copy new
-            shutil.copy2(plugin_json, claude_plugin)
+            # Create new
+            claude_plugin.write_text(json.dumps(new_config, indent=2))
             console.print("[green]✓[/green] Created plugin.json")
         
         # Success message
