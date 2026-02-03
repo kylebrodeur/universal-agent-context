@@ -2,6 +2,8 @@
 
 Get UACS up and running in 5 minutes!
 
+**v0.3.0 Update:** This guide now includes semantic API examples for structured conversation tracking and knowledge extraction.
+
 ---
 
 ## Installation
@@ -14,6 +16,10 @@ uv pip install universal-agent-context
 
 # Or using pip
 pip install universal-agent-context
+
+# Initialize project storage
+uacs context init   # Creates .state/context/
+uacs memory init    # Creates .state/memory/
 ```
 
 ### 2. Install Optional Dependencies
@@ -34,51 +40,121 @@ pip install uvicorn fastapi
 
 ---
 
-## Quick Test (No Claude Code)
+## Quick Test - v0.3.0 Semantic API
 
-Test UACS basic functionality:
+Test UACS with the new semantic API:
 
 ```python
 from uacs import UACS
+from pathlib import Path
 
-# Initialize
-uacs = UACS()
+# Initialize with project path
+uacs = UACS(project_path=Path("."))
 
-# Add context
-uacs.add_to_context(
-    key="test_entry",
-    content="Implemented JWT authentication with bcrypt password hashing",
-    topics=["security", "authentication"],
-    metadata={"agent": "claude"}
+# Track a conversation
+user_msg = uacs.add_user_message(
+    content="Help me implement JWT authentication",
+    turn=1,
+    session_id="session_001",
+    topics=["security", "feature"]
 )
 
-# Retrieve context
+assistant_msg = uacs.add_assistant_message(
+    content="I'll help you implement JWT. First, let's...",
+    turn=1,
+    session_id="session_001",
+    tokens_in=42,
+    tokens_out=156,
+    model="claude-sonnet-4"
+)
+
+# Capture a decision
+decision = uacs.add_decision(
+    question="Which auth method should we use?",
+    decision="JWT tokens",
+    rationale="Stateless, scalable, works with microservices",
+    session_id="session_001",
+    alternatives=["Session-based", "OAuth2"]
+)
+
+# Add a convention
+convention = uacs.add_convention(
+    content="We always use httpOnly cookies for JWT storage",
+    topics=["security", "auth"],
+    source_session="session_001"
+)
+
+# Search semantically
+results = uacs.search("how did we implement authentication?", limit=5)
+for result in results:
+    print(f"[{result.metadata['type']}] {result.text[:80]}...")
+    print(f"Relevance: {result.similarity:.2f}\n")
+
+# Get statistics
+stats = uacs.get_stats()
+print(f"Conversations: {stats['semantic']['conversations']}")
+print(f"Knowledge: {stats['semantic']['knowledge']}")
+print(f"Embeddings: {stats['semantic']['embeddings']}")
+```
+
+### Legacy API (v0.2.x - Deprecated)
+
+The old API still works but shows deprecation warnings:
+
+```python
+from uacs import UACS
+from pathlib import Path
+
+uacs = UACS(project_path=Path("."))
+
+# OLD API (deprecated, but works)
+uacs.add_to_context(
+    key="test_entry",
+    content="Implemented JWT authentication",
+    topics=["security", "authentication"]
+)
+
+# Get context (v0.2.0 method)
 context = uacs.shared_context.get_compressed_context(max_tokens=1000)
 print(context)
-
-# Get stats
-stats = uacs.shared_context.get_stats()
-print(f"Entries: {stats['entry_count']}")
-print(f"Tokens: {stats['total_tokens']}")
-print(f"Compression: {stats['compression_ratio']}")
 ```
+
+See [Migration Guide](docs/MIGRATION.md) for upgrading from v0.2.x to v0.3.0.
 
 ---
 
 ## Claude Code Integration
 
-### Setup (One-Time)
+### v0.3.0 Semantic Plugin Setup
 
-**1. Install Claude Code Plugin:**
+**1. Install Semantic Plugin:**
 
 ```bash
-# Copy plugin configuration
-cp .claude-plugin/plugin-proactive.json ~/.claude/plugin.json
+# Copy semantic plugin configuration (v0.3.0)
+cp .claude-plugin/plugin-semantic.json ~/.claude/plugin.json
 
 # Copy hook scripts
 mkdir -p ~/.claude/hooks
 cp .claude-plugin/hooks/*.py ~/.claude/hooks/
 chmod +x ~/.claude/hooks/*.py
+
+# Optional: Install transformers for better topic extraction
+pip install transformers torch
+```
+
+**What's New in v0.3.0 Plugin:**
+- 📝 **UserPromptSubmit Hook**: Captures user messages with topic extraction
+- 🔧 **PostToolUse Hook**: Tracks tool executions (Edit, Bash, Read, etc.)
+- 🧠 **SessionEnd Hook**: Extracts decisions and conventions from conversations
+- 🔍 **Semantic Search**: All captured data is indexed with embeddings
+
+**v0.2.0 Plugin (Proactive Compaction):**
+
+If you prefer the proactive compaction plugin without semantic capture:
+
+```bash
+# Copy proactive plugin configuration (v0.2.0)
+cp .claude-plugin/plugin-proactive.json ~/.claude/plugin.json
 ```
 
 **2. Verify Installation:**
@@ -198,6 +274,45 @@ User: Add unit tests for the auth fix
 # Model is cached in RAM
 # Tags prompt in ~100-200ms
 # Topics: ["testing", "security"]
+```
+
+### Query Semantic Context (v0.3.0)
+
+After using the semantic plugin, you can query captured context:
+
+```python
+from uacs import UACS
+from pathlib import Path
+
+uacs = UACS(project_path=Path("."))
+
+# Natural language search
+results = uacs.search("how did we implement authentication?", limit=10)
+for result in results:
+    print(f"\n[{result.metadata['type']}]")
+    print(f"Content: {result.text[:200]}...")
+    print(f"Relevance: {result.similarity:.2f}")
+    print(f"Session: {result.metadata.get('session_id', 'N/A')}")
+
+# Type-specific search
+decisions = uacs.search("authentication", types=["decision"], limit=5)
+conventions = uacs.search("coding standards", types=["convention"], limit=5)
+tools = uacs.search("file edits", types=["tool_use"], limit=10)
+
+# Session-specific search
+session_context = uacs.search(
+    "what happened in this session?",
+    session_id="session_001",
+    limit=20
+)
+
+# Get statistics
+stats = uacs.get_stats()
+print(f"\nCaptured Data:")
+print(f"  User messages: {stats['semantic']['conversations'].get('user_messages', 0)}")
+print(f"  Tool uses: {stats['semantic']['conversations'].get('tool_uses', 0)}")
+print(f"  Decisions: {stats['semantic']['knowledge'].get('decisions', 0)}")
+print(f"  Conventions: {stats['semantic']['knowledge'].get('conventions', 0)}")
 ```
 
 ---
@@ -333,20 +448,53 @@ python -c "from transformers import AutoModelForCausalLM, AutoTokenizer; AutoMod
 
 ## Next Steps
 
-### 1. Explore Package Manager
+### 1. Learn the Semantic API (v0.3.0)
+
+```bash
+# Read the complete API reference
+cat docs/API_REFERENCE.md
+
+# Or view online
+open https://github.com/kylebrodeur/universal-agent-context/blob/main/docs/API_REFERENCE.md
+```
+
+**Key methods to learn:**
+- `add_user_message()` - Track user prompts
+- `add_decision()` - Capture architectural decisions
+- `add_convention()` - Store project conventions
+- `search()` - Natural language queries
+
+### 2. Migrate from v0.2.x (If Upgrading)
+
+```bash
+# Read the migration guide
+cat docs/MIGRATION.md
+
+# Key changes:
+# - add_to_context() → structured methods
+# - Topic search → semantic search
+# - Generic context → typed knowledge
+```
+
+**Migration resources:**
+- [Migration Guide](docs/MIGRATION.md) - Complete upgrade instructions
+- [API Reference](docs/API_REFERENCE.md) - New method documentation
+- [Hooks Guide](.claude-plugin/HOOKS_GUIDE.md) - Plugin updates
+
+### 3. Explore Package Manager
 
 ```bash
 # Install packages from GitHub
-uacs install username/repo
+uacs packages install username/repo
 
 # List installed
-uacs list
+uacs packages list
 
 # Validate before installing
-uacs validate username/repo
+uacs packages validate username/repo
 ```
 
-### 2. Try Agent Skills
+### 4. Try Agent Skills
 
 ```python
 from uacs.adapters.agent_skill_adapter import AgentSkillAdapter
@@ -360,7 +508,7 @@ for adapter in adapters:
         print(adapter.to_system_prompt())
 ```
 
-### 3. Build Custom Visualization
+### 5. Build Custom Visualization
 
 ```python
 from uacs.visualization.web_server import VisualizationServer
@@ -377,8 +525,14 @@ server = VisualizationServer(manager)
 # Visit http://localhost:8081
 ```
 
-### 4. Read Full Documentation
+### 6. Read Full Documentation
 
+**v0.3.0 Documentation:**
+- [API Reference](docs/API_REFERENCE.md) - Complete API documentation
+- [Migration Guide](docs/MIGRATION.md) - Upgrade from v0.2.x
+- [Hooks Guide](.claude-plugin/HOOKS_GUIDE.md) - Semantic hooks explained
+
+**v0.2.0 Documentation:**
 - [Plugin Evolution](./.github/PLUGIN_EVOLUTION.md) - Compare plugin versions
 - [Compaction Prevention](./.github/COMPACTION_PREVENTION_STRATEGY.md) - How it works
 - [Skill Suggestion System](./.github/SKILL_SUGGESTION_SYSTEM.md) - Workflow learning

@@ -7,6 +7,162 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-02-02
+
+### 🎉 Major Feature Release - Semantic API
+
+Third release of UACS with structured conversation tracking, knowledge extraction, and semantic search.
+
+### ✨ Added
+
+#### 🧠 Semantic API
+
+- **Unified Entry Point**: Single `UACS` class with all semantic functionality (no separate `SemanticUACS`)
+- **Structured Conversation Methods**:
+  - `add_user_message()` - Track user prompts with turn and session tracking
+  - `add_assistant_message()` - Track assistant responses with token counting
+  - `add_tool_use()` - Track tool executions (Edit, Bash, Read, etc.) with latency and success tracking
+- **Knowledge Extraction Methods**:
+  - `add_decision()` - Capture architectural decisions with question, decision, rationale, and alternatives
+  - `add_convention()` - Capture project conventions and patterns with confidence scoring
+  - `add_learning()` - Capture cross-session learnings with category and confidence
+  - `add_artifact()` - Track code artifacts (files, classes, functions) with descriptions
+- **Semantic Search**:
+  - `search()` - Natural language queries across all stored context
+  - Type filtering (user_message, assistant_message, tool_use, convention, decision, learning, artifact)
+  - Relevance ranking with similarity scores
+  - Session and confidence filtering
+
+#### 🔌 Claude Code Semantic Hooks
+
+- **UserPromptSubmit Hook** (`uacs_capture_message.py`) - Captures user messages with automatic topic extraction
+- **PostToolUse Hook** (`uacs_store_realtime.py`) - Tracks tool executions incrementally (crash-resistant)
+- **SessionEnd Hook** (`uacs_extract_knowledge.py`) - Extracts decisions and conventions from conversations
+- Plugin configuration: `plugin-semantic.json` with all 3 semantic hooks
+- See [Hooks Guide](.claude-plugin/HOOKS_GUIDE.md) for detailed documentation
+
+#### 📦 Data Models (Pydantic)
+
+**Conversation Models** (`src/uacs/conversations/models.py`):
+- `UserMessage` - User prompt with turn, session_id, topics, timestamp
+- `AssistantMessage` - Assistant response with tokens, model, timestamp
+- `ToolUse` - Tool execution with latency, success, timestamp
+
+**Knowledge Models** (`src/uacs/knowledge/models.py`):
+- `Decision` - Architectural decision with question, decision, rationale, alternatives
+- `Convention` - Project convention with confidence and verification tracking
+- `Learning` - Cross-session learning with category and confidence
+- `Artifact` - Code artifact with type, path, description
+
+**Search Models**:
+- `SearchResult` - Semantic search result with type, text, similarity, metadata
+
+#### 📊 Storage & Indexing
+
+- **JSONL Storage**: Conversations and knowledge stored in `.state/`
+- **Automatic Embeddings**: All entries indexed with FAISS for semantic search
+- **Incremental Updates**: Real-time storage via PostToolUse hook
+- **Crash-Resistant**: Data persisted immediately after each event
+
+#### 📚 Documentation
+
+- **[API Reference](docs/API_REFERENCE.md)** - Complete v0.3.0 API documentation with examples
+- **[Migration Guide](docs/MIGRATION.md)** - Comprehensive upgrade guide from v0.2.x
+- **[Hooks Guide](.claude-plugin/HOOKS_GUIDE.md)** - Semantic hooks documentation (updated)
+- **README.md** - Updated with v0.3.0 features, examples, and quick start
+- **QUICKSTART.md** - Updated with semantic API examples
+
+### 🔄 Changed
+
+- **UACS Class**: Now includes all semantic functionality (conversations, knowledge, embeddings)
+- **Entry Point**: Single import `from uacs import UACS` (no more separate classes)
+- **Hook Configuration**: New `plugin-semantic.json` with UserPromptSubmit, PostToolUse, SessionEnd
+- **Storage Structure**:
+  - `.state/conversations/` - User messages, assistant messages, tool uses
+  - `.state/knowledge/` - Decisions, conventions, learnings, artifacts
+  - `.state/embeddings/` - FAISS index and metadata
+- **Statistics API**: `get_stats()` now includes semantic data (conversations, knowledge, embeddings)
+
+### ⚠️ Deprecated
+
+- **`add_to_context()`** - Deprecated in v0.3.0, removed in v0.5.0
+  - Still works but shows deprecation warnings
+  - Use structured methods instead (add_user_message, add_convention, add_decision, etc.)
+  - See [Migration Guide](docs/MIGRATION.md) for upgrade instructions
+- **SemanticUACS class** - Functionality merged into main UACS class
+
+### 🐛 Fixed
+
+- **SearchResult Attribute Mismatch**: Fixed inconsistency between `similarity` and `relevance_score` attributes
+- **Deprecation Warnings**: Cleaned up multiple deprecation warnings in tests
+- **Type Handling**: Fixed type inconsistencies in search result handling
+
+### 🎯 Backward Compatibility
+
+v0.3.0 is **fully backward compatible**:
+- ✅ Existing `add_to_context()` calls continue to work (with deprecation warnings)
+- ✅ Old imports remain unchanged (`from uacs import UACS`)
+- ✅ v0.2.0 hooks still functional (can run alongside v0.3.0 semantic hooks)
+- ✅ No breaking changes to existing APIs
+
+### 📦 Migration
+
+**Deprecation Timeline:**
+
+| Version | Status | Action |
+|---------|--------|--------|
+| v0.3.0 | `add_to_context()` deprecated with warnings | Start migrating |
+| v0.4.0 | `add_to_context()` works with warnings | Continue migrating |
+| v0.5.0 | `add_to_context()` removed | Migration must be complete |
+
+**Quick Migration Example:**
+
+```python
+# OLD (deprecated)
+uacs.add_to_context(key="decision", content="Use JWT", topics=["security"])
+
+# NEW (recommended)
+uacs.add_decision(
+    question="Which auth method?",
+    decision="JWT tokens",
+    rationale="Stateless and scalable",
+    session_id="session_001"
+)
+```
+
+**Complete migration guide:** [docs/MIGRATION.md](docs/MIGRATION.md)
+
+### ✅ What's Ready
+
+- ✅ Semantic API with 7 structured methods
+- ✅ Natural language semantic search
+- ✅ Claude Code hooks for automatic capture
+- ✅ Pydantic models with validation
+- ✅ FAISS-based embedding indexing
+- ✅ Comprehensive documentation (API Reference, Migration Guide, Hooks Guide)
+- ✅ Backward compatibility with v0.2.x
+
+### 🚀 Benefits
+
+**For Users:**
+- **Better Search**: Natural language queries instead of topic-only filtering
+- **Structured Knowledge**: Explicit types (decisions, conventions) instead of generic context
+- **Automatic Capture**: Claude Code hooks extract knowledge automatically
+- **Type Safety**: Pydantic validation prevents data errors
+
+**For Developers:**
+- **Clear API**: Purpose-specific methods (add_decision vs add_convention)
+- **Better Analytics**: Structured data enables insights and reporting
+- **Extensible**: Easy to add new knowledge types
+- **Well-Documented**: Complete API reference with examples
+
+### 📊 Test Coverage
+
+- Core test suite: 190+ tests passing
+- Semantic API: 100% manually validated
+- All code examples tested
+- Migration paths verified
+
 ## [0.2.0] - 2026-02-02
 
 ### 🎉 Major Feature Release

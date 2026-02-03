@@ -1,13 +1,13 @@
 # Universal Agent Context System (UACS)
 
-**Context Management Infrastructure for AI Agents**
+**Version 0.3.0** - Semantic Conversations & Knowledge Extraction
 
-[![PyPI](https://img.shields.io/badge/pypi-v0.1.0-blue)](https://pypi.org/project/universal-agent-context/)
-[![Tests](https://img.shields.io/badge/tests-100%2B%20passing-brightgreen)]()
+[![PyPI](https://img.shields.io/badge/pypi-v0.3.0-blue)](https://pypi.org/project/universal-agent-context/)
+[![Tests](https://img.shields.io/badge/tests-190%2B%20passing-brightgreen)]()
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)]()
 
-> **TL;DR:** Universal context middleware for AI agents. One source of truth → 5+ formats. Perfect recall with smart deduplication (15% savings). Package management for skills + MCP. Works with Claude, Cursor, Windsurf, Cline, or your own Python code.
+> **TL;DR:** Universal context middleware for AI agents with semantic conversation tracking and knowledge extraction. One source of truth → 5+ formats. Perfect recall with smart search. Package management for skills + MCP. Works with Claude, Cursor, Windsurf, Cline, or your own Python code.
 
 ---
 
@@ -17,15 +17,50 @@ Building AI agent systems today means juggling multiple formats, wasting tokens,
 
 **In 30 seconds:**
 - 🔄 Write once → Deploy to Claude, Cursor, Cline, Gemini, Copilot
+- 🧠 **NEW v0.3.0:** Semantic API for structured conversations and knowledge
+- 🔍 **NEW v0.3.0:** Natural language search across all context
+- 📝 **NEW v0.3.0:** Automatic decision and convention extraction
+- 🎯 **NEW v0.3.0:** Claude Code hooks for real-time capture
 - 🗜️ Never lose context with automatic deduplication (15% immediate savings)
-- 🛡️ **NEW:** Proactive compaction prevention for Claude Code (95%+ success rate)
-- 🤖 **NEW:** Local LLM tagging via transformers (zero API cost, better quality)
-- 📊 **NEW:** LangSmith-style trace visualization (debug any session)
+- 🛡️ Proactive compaction prevention for Claude Code (95%+ success rate)
+- 🤖 Local LLM tagging via transformers (zero API cost, better quality)
+- 📊 LangSmith-style trace visualization (debug any session)
 - 📦 Package management for skills + MCP servers (GitHub, Git, local)
-- 🧠 Persistent memory across sessions (project + global)
 - ⚡ Python API + CLI + MCP server = works everywhere
 
 **What makes UACS different:** It's **middleware**, not another agent tool. Claude Desktop gets better when you add UACS. So does Cursor. So does your custom Python agent.
+
+---
+
+## What's New in v0.3.0
+
+### Semantic API
+
+UACS v0.3.0 introduces a powerful semantic API for structured conversation tracking and knowledge extraction:
+
+**Structured Conversations:**
+- Track user messages, assistant responses, and tool executions
+- Automatic embedding generation for semantic search
+- Session-based organization with turn tracking
+
+**Knowledge Extraction:**
+- Capture architectural decisions with rationale
+- Extract project conventions and patterns
+- Store cross-session learnings
+- Track code artifacts and their purpose
+
+**Semantic Search:**
+- Natural language queries across all stored context
+- "How did we implement authentication?"
+- Type-specific filtering (messages, decisions, conventions)
+- Relevance-ranked results
+
+**Claude Code Integration:**
+- Automatic capture via hooks (UserPromptSubmit, PostToolUse, SessionEnd)
+- Real-time context storage (crash-resistant)
+- Decision and convention extraction from conversations
+
+See [Migration Guide](docs/MIGRATION.md) to upgrade from v0.2.x.
 
 ---
 
@@ -62,13 +97,13 @@ uv run uacs memory init    # Creates .state/memory/ directory
 pip install transformers torch  # ~2GB download on first use
 ```
 
-### Claude Code Plugin (NEW)
+### Claude Code Plugin
 
-**Proactive compaction prevention + real-time context storage:**
+**v0.3.0: Semantic capture + proactive compaction prevention + real-time storage:**
 
 ```bash
-# Install plugin
-cp .claude-plugin/plugin-proactive.json ~/.claude/plugin.json
+# Install semantic plugin
+cp .claude-plugin/plugin-semantic.json ~/.claude/plugin.json
 cp .claude-plugin/hooks/*.py ~/.claude/hooks/
 chmod +x ~/.claude/hooks/*.py
 
@@ -76,13 +111,19 @@ chmod +x ~/.claude/hooks/*.py
 pip install transformers torch
 ```
 
-**Features:**
+**v0.3.0 Features:**
+- 📝 **Semantic Capture**: Automatically captures user messages, tool uses, decisions, and conventions
+- 🔍 **Natural Language Search**: Query stored context with "how did we implement auth?"
+- 🧠 **Knowledge Extraction**: Identifies decisions and conventions from conversations
+- 🎯 **Structured Storage**: All data stored with embeddings for semantic search
+
+**v0.2.0 Features:**
 - 🛡️ **Compaction Prevention**: Monitors context, compresses at 50% (before Claude's 75% threshold) - 95%+ success
 - 🤖 **Local LLM Tagging**: Uses TinyLlama (1.1B) for topic extraction - zero API cost
 - 💾 **Crash-Resistant**: Real-time storage via PostToolUse hook
 - 🔄 **Auto-Context**: Injects previous context on session resume
 
-**See:** [Quick Start Guide](./QUICKSTART.md) | [Plugin Evolution](./.github/PLUGIN_EVOLUTION.md) | [Compaction Prevention Strategy](./.github/COMPACTION_PREVENTION_STRATEGY.md)
+**See:** [Hooks Guide](.claude-plugin/HOOKS_GUIDE.md) | [Migration Guide](docs/MIGRATION.md) | [API Reference](docs/API_REFERENCE.md)
 
 ---
 
@@ -315,7 +356,7 @@ relevant = uacs.memory.search("testing")
 
 ## Quick Start
 
-**Goal:** Get context compression working in 2 minutes.
+**Goal:** Get UACS working with semantic API in 2 minutes.
 
 ### Installation
 
@@ -331,20 +372,61 @@ Choose the installation method that best fits your workflow:
 #### Quick Start (Python)
 
 ```bash
-# Option 1: From source (Current - Week 1)
+# Option 1: From source (Current)
 git clone https://github.com/kylebrodeur/universal-agent-context
 cd universal-agent-context
 uv sync                    # Or: pip install -e .
 
-# Option 2: PyPI (Coming Week 3)
+# Option 2: PyPI (Coming Soon)
 pip install universal-agent-context
 
-# Option 3: One-liner (Coming Week 2)
+# Option 3: One-liner
 uvx universal-agent-context serve
 
 # Initialize project
 uv run uacs context init   # Creates .state/context/ directory
 uv run uacs memory init    # Creates .state/memory/ directory
+```
+
+### Basic Usage (v0.3.0 Semantic API)
+
+```python
+from uacs import UACS
+from pathlib import Path
+
+# Initialize
+uacs = UACS(project_path=Path("."))
+
+# Track conversation
+user_msg = uacs.add_user_message(
+    content="Help me implement JWT authentication",
+    turn=1,
+    session_id="session_001",
+    topics=["security", "feature"]
+)
+
+assistant_msg = uacs.add_assistant_message(
+    content="I'll help you implement JWT. First, let's...",
+    turn=1,
+    session_id="session_001",
+    tokens_in=42,
+    tokens_out=156
+)
+
+# Capture decisions
+decision = uacs.add_decision(
+    question="Which auth method should we use?",
+    decision="JWT tokens",
+    rationale="Stateless, scalable, works with microservices",
+    session_id="session_001",
+    alternatives=["Session-based (doesn't scale)", "OAuth2 (overkill)"]
+)
+
+# Search semantically
+results = uacs.search("how did we implement authentication?", limit=10)
+for result in results:
+    print(f"[{result.metadata['type']}] {result.text[:100]}...")
+    print(f"Relevance: {result.similarity:.2f}\n")
 ```
 
 ### 5-Minute Tutorial
@@ -663,6 +745,82 @@ for memory in results:
 
 ---
 
+## API Reference (v0.3.0)
+
+### Conversation Methods
+
+Track structured conversation elements with automatic embedding generation:
+
+- **`add_user_message(content, turn, session_id, topics)`** - Track user prompts
+- **`add_assistant_message(content, turn, session_id, tokens_in, tokens_out, model)`** - Track assistant responses
+- **`add_tool_use(tool_name, tool_input, tool_response, turn, session_id, latency_ms, success)`** - Track tool executions
+
+### Knowledge Methods
+
+Capture architectural knowledge with semantic indexing:
+
+- **`add_decision(question, decision, rationale, session_id, alternatives, decided_by, topics)`** - Capture architectural decisions
+- **`add_convention(content, topics, source_session, confidence)`** - Capture project conventions and patterns
+- **`add_learning(pattern, learned_from, category, confidence)`** - Capture cross-session learnings
+- **`add_artifact(type, path, description, created_in_session, topics)`** - Track code artifacts
+
+### Search Method
+
+Natural language semantic search across all stored context:
+
+- **`search(query, types, min_confidence, session_id, limit)`** - Search with natural language queries
+  - Returns ranked results by relevance
+  - Filter by type (user_message, assistant_message, tool_use, convention, decision, learning, artifact)
+  - Filter by session or confidence threshold
+
+### Statistics Methods
+
+Access system statistics and capabilities:
+
+- **`get_stats()`** - Get comprehensive UACS statistics (entries, tokens, compression, semantic data)
+- **`get_capabilities(agent)`** - Get available capabilities for an agent
+- **`get_token_stats()`** - Get token usage and compression statistics
+
+**Complete documentation:** [API Reference](docs/API_REFERENCE.md)
+
+---
+
+## Migrating to v0.3.0
+
+UACS v0.3.0 is **backward compatible**. Existing code using `add_to_context()` will continue to work but is deprecated.
+
+### Quick Migration
+
+**Old API (deprecated):**
+```python
+uacs.add_to_context(
+    key="claude",
+    content="Implemented feature",
+    topics=["dev"]
+)
+```
+
+**New Semantic API (recommended):**
+```python
+uacs.add_convention(
+    content="Implemented feature",
+    topics=["dev"],
+    confidence=1.0
+)
+```
+
+### Migration Benefits
+
+- ✅ **Better Search:** Natural language queries instead of topic-only filtering
+- ✅ **Structured Data:** Explicit types (decisions, conventions, learnings) instead of generic context
+- ✅ **Automatic Embeddings:** Semantic indexing for all entries
+- ✅ **Hooks Integration:** Seamless Claude Code integration with automatic capture
+- ✅ **Future-Proof:** Ready for v0.5.0+ (add_to_context removed in v0.5.0)
+
+**Complete migration guide:** [Migration Guide](docs/MIGRATION.md)
+
+---
+
 ## Documentation
 
 **Getting Started:**
@@ -678,6 +836,9 @@ UACS works with popular MCP clients out of the box:
 - 📚 [All Integrations](docs/INTEGRATIONS.md) - Overview, troubleshooting, and advanced configs
 
 **User Guides:**
+- [Migration Guide](docs/MIGRATION.md) - Upgrade from v0.2.x to v0.3.0 semantic API
+- [API Reference](docs/API_REFERENCE.md) - Complete v0.3.0 API documentation with examples
+- [Hooks Guide](.claude-plugin/HOOKS_GUIDE.md) - Claude Code hooks for automatic capture
 - [Library Guide](docs/LIBRARY_GUIDE.md) - Complete Python API reference
 - [CLI Reference](docs/CLI_REFERENCE.md) - All command documentation
 - [MCP Server Setup](docs/MCP_SERVER_SETUP.md) - MCP integration for Claude/Cursor/Windsurf

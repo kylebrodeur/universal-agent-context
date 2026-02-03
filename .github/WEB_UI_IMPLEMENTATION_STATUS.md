@@ -91,25 +91,25 @@
 
 ## Phase 3: View Implementation ⏳
 
-### 3.1 Search View (app/search/page.tsx)
-- [ ] Search input with Phosphor MagnifyingGlass icon
-- [ ] Type filters using shadcn Checkbox components
-- [ ] Results display with shadcn Card components
-- [ ] Similarity scores with Badge components
-- [ ] Expandable detail with Sheet/Dialog components
-- [ ] Loading states with skeleton UI
-- [ ] Empty state messaging
-- [ ] Error handling with Sonner toasts
+### 3.1 Search View (app/search/page.tsx) ✅
+- [x] Search input with Phosphor MagnifyingGlass icon
+- [x] Type filters using shadcn Checkbox components
+- [x] Results display with shadcn Card components
+- [x] Similarity scores with Badge components
+- [x] Expandable detail with Sheet/Dialog components
+- [x] Loading states with skeleton UI
+- [x] Empty state messaging
+- [x] Error handling with Sonner toasts
 
-### 3.2 Timeline View (app/timeline/page.tsx)
-- [ ] Session selector using shadcn Select component
-- [ ] Chronological event timeline
-- [ ] Color-coded event cards (user/assistant/tool/decision)
-- [ ] User messages with ClockCounterClockwise icon
-- [ ] Assistant responses with ChatCircle icon
-- [ ] Tool executions with Wrench icon + latency display
-- [ ] Decision/convention cards with Lightbulb icon
-- [ ] Expandable details with Sheet component
+### 3.2 Timeline View (app/timeline/page.tsx) ✅
+- [x] Session selector using shadcn Select component
+- [x] Chronological event timeline
+- [x] Color-coded event cards (user/assistant/tool/decision)
+- [x] User messages with User icon
+- [x] Assistant responses with ChatCircle icon
+- [x] Tool executions with Wrench icon + latency display
+- [x] ClockCounterClockwise for empty states and page title
+- [x] Expandable details on click
 
 ### 3.3 Knowledge Browser (app/knowledge/page.tsx)
 - [ ] Tab navigation using shadcn Tabs component

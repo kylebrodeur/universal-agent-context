@@ -267,6 +267,31 @@
             font-size: 14px;
             transition: width 0.5s ease;
         }
+
+        .knowledge-tabs .knowledge-tab {
+            background: transparent;
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .knowledge-tabs .knowledge-tab:hover {
+            background: #00d4ff;
+            color: #0f0f23;
+        }
+
+        .knowledge-tabs .knowledge-tab.active {
+            background: #00d4ff;
+            color: #0f0f23;
+        }
+
+        .knowledge-tab-content {
+            min-height: 400px;
+        }
     </style>
 </head>
 <body>
@@ -280,10 +305,14 @@
 
     <div class="nav">
         <button class="nav-button active" data-view="conversation">Conversation Flow</button>
+        <button class="nav-button" data-view="search">🔍 Search</button>
+        <button class="nav-button" data-view="timeline">📅 Timeline</button>
         <button class="nav-button" data-view="dashboard">Token Dashboard</button>
         <button class="nav-button" data-view="deduplication">Deduplication</button>
         <button class="nav-button" data-view="quality">Quality Distribution</button>
         <button class="nav-button" data-view="topics">Topic Clusters</button>
+        <button class="nav-button" data-view="knowledge">📚 Knowledge</button>
+        <button class="nav-button" data-view="sessions">🔬 Sessions</button>
     </div>
 
     <div class="container">
@@ -340,6 +369,99 @@
                 <div class="card">
                     <h3>Topic Network</h3>
                     <div id="topicGraph" style="height: 500px;"></div>
+                </div>
+            </div>
+
+            <!-- Search View -->
+            <div class="view" id="search-view">
+                <div class="card">
+                    <h3>🔍 Semantic Search</h3>
+                    <p style="color: #888; margin-bottom: 20px;">Natural language search across conversations and knowledge</p>
+                    
+                    <div class="search-controls" style="margin: 20px 0;">
+                        <input type="text" id="searchQuery" placeholder="Search... (e.g., 'authentication decisions')" 
+                               style="width: 100%; padding: 12px; font-size: 16px; border: 2px solid #00d4ff; 
+                                      background: #1a1a2e; color: #cccccc; border-radius: 5px;">
+                        
+                        <div class="search-filters" style="margin-top: 15px; display: flex; gap: 15px; flex-wrap: wrap;">
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox" class="search-type" value="user_message" checked> User Messages
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox" class="search-type" value="assistant_message" checked> Assistant Responses
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox" class="search-type" value="tool_use" checked> Tool Uses
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox" class="search-type" value="decision" checked> Decisions
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox" class="search-type" value="convention" checked> Conventions
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox" class="search-type" value="learning"> Learnings
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px;">
+                                <input type="checkbox" class="search-type" value="artifact"> Artifacts
+                            </label>
+                        </div>
+                        
+                        <button id="searchButton" style="margin-top: 15px; padding: 10px 30px; background: #00d4ff; 
+                                border: none; color: #0f0f23; font-weight: bold; border-radius: 5px; cursor: pointer;">
+                            Search
+                        </button>
+                    </div>
+                    
+                    <div id="searchResults" style="margin-top: 30px;"></div>
+                </div>
+            </div>
+
+            <!-- Timeline View -->
+            <div class="view" id="timeline-view">
+                <div class="card">
+                    <h3>📅 Conversation Timeline</h3>
+                    <p style="color: #888; margin-bottom: 20px;">Chronological view of conversations</p>
+                    
+                    <div class="timeline-controls" style="margin: 20px 0;">
+                        <select id="timelineSessionSelect" style="padding: 10px; background: #1a1a2e; color: #cccccc; 
+                                border: 2px solid #00d4ff; border-radius: 5px; font-size: 14px;">
+                            <option value="">All Sessions</option>
+                        </select>
+                    </div>
+                    
+                    <div id="timelineContainer" style="margin-top: 30px;"></div>
+                </div>
+            </div>
+
+            <!-- Knowledge Browser View -->
+            <div class="view" id="knowledge-view">
+                <div class="card">
+                    <h3>📚 Knowledge Browser</h3>
+                    <p style="color: #888; margin-bottom: 20px;">Browse decisions, conventions, learnings, and artifacts</p>
+                    
+                    <div class="knowledge-tabs" style="margin: 20px 0; display: flex; gap: 10px;">
+                        <button class="knowledge-tab active" data-tab="decisions">Decisions</button>
+                        <button class="knowledge-tab" data-tab="conventions">Conventions</button>
+                        <button class="knowledge-tab" data-tab="learnings">Learnings</button>
+                        <button class="knowledge-tab" data-tab="artifacts">Artifacts</button>
+                    </div>
+                    
+                    <div id="decisionsTab" class="knowledge-tab-content"></div>
+                    <div id="conventionsTab" class="knowledge-tab-content" style="display: none;"></div>
+                    <div id="learningsTab" class="knowledge-tab-content" style="display: none;"></div>
+                    <div id="artifactsTab" class="knowledge-tab-content" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Sessions View -->
+            <div class="view" id="sessions-view">
+                <div class="card">
+                    <h3>🔬 Session Traces</h3>
+                    <p style="color: #888; margin-bottom: 20px;">LangSmith-style session analysis</p>
+                    
+                    <div id="sessionsList" style="margin-top: 20px;"></div>
+                    <div id="sessionDetail" style="margin-top: 20px; display: none;"></div>
                 </div>
             </div>
         </div>
@@ -852,6 +974,497 @@
 
         // Fetch initial data on load
         fetchInitialData();
+
+        // ===== SEMANTIC SEARCH =====
+        const searchButton = document.getElementById('searchButton');
+        const searchQuery = document.getElementById('searchQuery');
+        const searchResults = document.getElementById('searchResults');
+
+        // Search on button click
+        if (searchButton) {
+            searchButton.addEventListener('click', performSearch);
+        }
+
+        // Search on Enter key
+        if (searchQuery) {
+            searchQuery.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') performSearch();
+            });
+        }
+
+        async function performSearch() {
+            const query = searchQuery.value.trim();
+            if (!query) {
+                searchResults.textContent = 'Please enter a search query';
+                return;
+            }
+            
+            // Get selected types
+            const types = Array.from(document.querySelectorAll('.search-type:checked'))
+                .map(cb => cb.value);
+            
+            if (types.length === 0) {
+                searchResults.textContent = 'Please select at least one content type';
+                return;
+            }
+            
+            searchResults.innerHTML = '<div style="text-align: center; padding: 20px;">Searching...</div>';
+            
+            try {
+                const response = await fetch('/api/search', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({query, types, limit: 20})
+                });
+                
+                const data = await response.json();
+                displaySearchResults(data.results || []);
+            } catch (error) {
+                searchResults.innerHTML = `<div style="color: #ff4444;">Error: ${escapeHtml(error.message)}</div>`;
+            }
+        }
+
+        function displaySearchResults(results) {
+            if (results.length === 0) {
+                searchResults.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No results found</div>';
+                return;
+            }
+            
+            const html = results.map(result => {
+                const score = Math.round(result.similarity * 100);
+                const typeColor = {
+                    user_message: '#4a9eff',
+                    assistant_message: '#44ff44',
+                    tool_use: '#ffa500',
+                    decision: '#ff44ff',
+                    convention: '#ffff44',
+                    learning: '#ff8844',
+                    artifact: '#44ffff'
+                }[result.type] || '#cccccc';
+                
+                return `
+                    <div style="background: #1a1a2e; padding: 15px; margin-bottom: 15px; border-radius: 5px; 
+                                border-left: 4px solid ${typeColor};">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="color: ${typeColor}; font-weight: bold;">${escapeHtml(result.type.replace('_', ' '))}</span>
+                            <span style="color: #00d4ff;">${score}% match</span>
+                        </div>
+                        <div style="color: #cccccc;">${escapeHtml(result.text.substring(0, 200))}${result.text.length > 200 ? '...' : ''}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            searchResults.innerHTML = html;
+        }
+
+        // ===== TIMELINE =====
+        const timelineSessionSelect = document.getElementById('timelineSessionSelect');
+        const timelineContainer = document.getElementById('timelineContainer');
+
+        // Load sessions when timeline view is shown
+        document.querySelector('[data-view="timeline"]')?.addEventListener('click', loadTimelineSessions);
+
+        async function loadTimelineSessions() {
+            if (!timelineSessionSelect) return;
+            
+            try {
+                const response = await fetch('/api/sessions?limit=50');
+                const data = await response.json();
+                
+                const options = '<option value="">All Sessions</option>' + 
+                    data.sessions.map(s => 
+                        `<option value="${escapeHtml(s.session_id)}">${escapeHtml(s.session_id)} (${s.message_count} messages)</option>`
+                    ).join('');
+                
+                timelineSessionSelect.innerHTML = options;
+            } catch (error) {
+                console.error('Error loading sessions:', error);
+            }
+        }
+
+        if (timelineSessionSelect) {
+            timelineSessionSelect.addEventListener('change', loadTimeline);
+        }
+
+        async function loadTimeline() {
+            const sessionId = timelineSessionSelect?.value || '';
+            
+            timelineContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Loading timeline...</div>';
+            
+            try {
+                const url = sessionId ? 
+                    `/api/conversations/${encodeURIComponent(sessionId)}/timeline` : 
+                    `/api/conversations?limit=50`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (sessionId) {
+                    displayTimeline(data.timeline || []);
+                } else {
+                    // Show all conversations grouped by session
+                    displayAllConversations(data.conversations || []);
+                }
+            } catch (error) {
+                timelineContainer.innerHTML = `<div style="color: #ff4444;">Error: ${escapeHtml(error.message)}</div>`;
+            }
+        }
+
+        function displayTimeline(events) {
+            if (events.length === 0) {
+                timelineContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No events found</div>';
+                return;
+            }
+            
+            const html = events.map(event => {
+                const typeColors = {
+                    user_message: '#4a9eff',
+                    assistant_message: '#44ff44',
+                    tool_use: '#ffa500'
+                };
+                const color = typeColors[event.type] || '#cccccc';
+                const icon = event.type === 'user_message' ? '👤' : 
+                             event.type === 'assistant_message' ? '🤖' : '🛠️';
+                
+                return `
+                    <div style="background: #1a1a2e; padding: 15px; margin-bottom: 10px; border-radius: 5px; 
+                                border-left: 4px solid ${color};">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>${icon} <span style="color: ${color}; font-weight: bold;">${escapeHtml(event.type.replace('_', ' '))}</span></span>
+                            <span style="color: #888;">Turn ${event.turn}</span>
+                        </div>
+                        <div style="color: #cccccc;">${escapeHtml(event.content || 'No content')}</div>
+                        ${event.latency_ms ? `<div style="color: #888; margin-top: 5px; font-size: 12px;">⏱️ ${event.latency_ms}ms</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+            timelineContainer.innerHTML = html;
+        }
+
+        function displayAllConversations(conversations) {
+            if (conversations.length === 0) {
+                timelineContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No conversations found</div>';
+                return;
+            }
+            
+            const html = conversations.map(conv => `
+                <div style="background: #1a1a2e; padding: 15px; margin-bottom: 15px; border-radius: 5px; 
+                            border-left: 4px solid #00d4ff; cursor: pointer;" 
+                     onclick="selectSession('${escapeHtml(conv.session_id)}')">
+                    <div style="font-weight: bold; color: #00d4ff; margin-bottom: 5px;">${escapeHtml(conv.session_id)}</div>
+                    <div style="color: #888; font-size: 14px;">${conv.message_count} messages, ${conv.turn_count} turns</div>
+                </div>
+            `).join('');
+            
+            timelineContainer.innerHTML = html;
+        }
+
+        function selectSession(sessionId) {
+            if (timelineSessionSelect) {
+                timelineSessionSelect.value = sessionId;
+                loadTimeline();
+            }
+        }
+
+        // ===== KNOWLEDGE BROWSER =====
+        const knowledgeTabs = document.querySelectorAll('.knowledge-tab');
+
+        knowledgeTabs.forEach(tab => {
+            tab.addEventListener('click', async () => {
+                // Update active tab
+                knowledgeTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Show corresponding content
+                const tabName = tab.dataset.tab;
+                document.querySelectorAll('.knowledge-tab-content').forEach(content => {
+                    content.style.display = 'none';
+                });
+                document.getElementById(`${tabName}Tab`).style.display = 'block';
+                
+                // Load data if not already loaded
+                await loadKnowledgeTab(tabName);
+            });
+        });
+
+        // Load knowledge view when tab is clicked
+        document.querySelector('[data-view="knowledge"]')?.addEventListener('click', () => {
+            loadKnowledgeTab('decisions');
+        });
+
+        async function loadKnowledgeTab(tabName) {
+            const container = document.getElementById(`${tabName}Tab`);
+            if (!container) return;
+            
+            // Check if already loaded (has content)
+            if (container.innerHTML.trim()) return;
+            
+            container.innerHTML = '<div style="text-align: center; padding: 20px;">Loading...</div>';
+            
+            try {
+                const response = await fetch(`/api/knowledge/${tabName}?limit=50`);
+                const data = await response.json();
+                
+                const items = data[tabName] || [];
+                
+                if (tabName === 'decisions') {
+                    displayDecisions(items, container);
+                } else if (tabName === 'conventions') {
+                    displayConventions(items, container);
+                } else if (tabName === 'learnings') {
+                    displayLearnings(items, container);
+                } else if (tabName === 'artifacts') {
+                    displayArtifacts(items, container);
+                }
+            } catch (error) {
+                container.innerHTML = `<div style="color: #ff4444;">Error loading ${tabName}: ${escapeHtml(error.message)}</div>`;
+            }
+        }
+
+        function displayDecisions(decisions, container) {
+            if (decisions.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No decisions found</div>';
+                return;
+            }
+            
+            const html = decisions.map(d => `
+                <div style="background: #1a1a2e; padding: 15px; margin-bottom: 15px; border-radius: 5px; 
+                            border-left: 4px solid #ff44ff;">
+                    <div style="color: #ff44ff; font-weight: bold; margin-bottom: 10px;">❓ ${escapeHtml(d.question)}</div>
+                    <div style="color: #00d4ff; margin-bottom: 5px;">✅ Decision: ${escapeHtml(d.decision)}</div>
+                    <div style="color: #888; margin-bottom: 10px;">${escapeHtml(d.rationale)}</div>
+                    ${d.alternatives?.length ? `
+                        <div style="color: #888; font-size: 12px; margin-top: 10px;">
+                            <strong>Alternatives:</strong> ${d.alternatives.map(a => escapeHtml(a)).join(', ')}
+                        </div>
+                    ` : ''}
+                    <div style="color: #666; font-size: 12px; margin-top: 10px;">
+                        Session: ${escapeHtml(d.session_id)} | Decided by: ${escapeHtml(d.decided_by)}
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+        }
+
+        function displayConventions(conventions, container) {
+            if (conventions.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No conventions found</div>';
+                return;
+            }
+            
+            const html = conventions.map(c => `
+                <div style="background: #1a1a2e; padding: 15px; margin-bottom: 15px; border-radius: 5px; 
+                            border-left: 4px solid #ffff44;">
+                    <div style="color: #cccccc; margin-bottom: 10px;">${escapeHtml(c.content)}</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: #888;">
+                        <span>Confidence: ${Math.round(c.confidence * 100)}%</span>
+                        ${c.source_session ? `<span>From: ${escapeHtml(c.source_session)}</span>` : ''}
+                    </div>
+                    ${c.topics?.length ? `
+                        <div style="margin-top: 10px;">
+                            ${c.topics.map(t => `<span style="background: #16213e; padding: 4px 8px; 
+                                border-radius: 3px; margin-right: 5px; font-size: 11px;">${escapeHtml(t)}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+        }
+
+        function displayLearnings(learnings, container) {
+            if (learnings.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No learnings found</div>';
+                return;
+            }
+            
+            const html = learnings.map(l => `
+                <div style="background: #1a1a2e; padding: 15px; margin-bottom: 15px; border-radius: 5px; 
+                            border-left: 4px solid #ff8844;">
+                    <div style="color: #cccccc; margin-bottom: 10px;">💡 ${escapeHtml(l.pattern)}</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: #888;">
+                        <span>Confidence: ${Math.round(l.confidence * 100)}%</span>
+                        <span>Category: ${escapeHtml(l.category)}</span>
+                    </div>
+                    <div style="color: #666; font-size: 11px; margin-top: 10px;">
+                        Learned from ${l.learned_from?.length || 0} sessions
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+        }
+
+        function displayArtifacts(artifacts, container) {
+            if (artifacts.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No artifacts found</div>';
+                return;
+            }
+            
+            const html = artifacts.map(a => `
+                <div style="background: #1a1a2e; padding: 15px; margin-bottom: 15px; border-radius: 5px; 
+                            border-left: 4px solid #44ffff;">
+                    <div style="color: #44ffff; font-weight: bold; margin-bottom: 5px;">
+                        ${escapeHtml(a.type.toUpperCase())}: ${escapeHtml(a.path)}
+                    </div>
+                    <div style="color: #888; margin-bottom: 10px;">${escapeHtml(a.description)}</div>
+                    <div style="color: #666; font-size: 12px;">
+                        Created in: ${escapeHtml(a.created_in_session)}
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+        }
+
+        // ===== SESSIONS =====
+        const sessionsList = document.getElementById('sessionsList');
+        const sessionDetail = document.getElementById('sessionDetail');
+
+        // Load sessions when view is shown
+        document.querySelector('[data-view="sessions"]')?.addEventListener('click', loadSessions);
+
+        async function loadSessions() {
+            if (!sessionsList) return;
+            
+            sessionsList.innerHTML = '<div style="text-align: center; padding: 20px;">Loading sessions...</div>';
+            
+            try {
+                const response = await fetch('/api/sessions?limit=50');
+                const data = await response.json();
+                
+                displaySessionsList(data.sessions || []);
+            } catch (error) {
+                sessionsList.innerHTML = `<div style="color: #ff4444;">Error: ${escapeHtml(error.message)}</div>`;
+            }
+        }
+
+        function displaySessionsList(sessions) {
+            if (sessions.length === 0) {
+                sessionsList.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No sessions found</div>';
+                return;
+            }
+            
+            const html = sessions.map(s => `
+                <div style="background: #1a1a2e; padding: 15px; margin-bottom: 15px; border-radius: 5px; 
+                            border-left: 4px solid #00d4ff; cursor: pointer;" 
+                     onclick="viewSession('${escapeHtml(s.session_id)}')">
+                    <div style="font-weight: bold; color: #00d4ff; margin-bottom: 5px;">${escapeHtml(s.session_id)}</div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 14px; color: #888;">
+                        <span>📝 ${s.message_count} messages</span>
+                        <span>🔄 ${s.turn_count} turns</span>
+                        <span>🎯 ${s.total_tokens_in + s.total_tokens_out} tokens</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            sessionsList.innerHTML = html;
+        }
+
+        async function viewSession(sessionId) {
+            sessionsList.style.display = 'none';
+            sessionDetail.style.display = 'block';
+            sessionDetail.innerHTML = '<div style="text-align: center; padding: 20px;">Loading session details...</div>';
+            
+            try {
+                const response = await fetch(`/api/sessions/${sessionId}`);
+                const session = await response.json();
+                
+                displaySessionDetail(session);
+            } catch (error) {
+                sessionDetail.innerHTML = `<div style="color: #ff4444;">Error: ${escapeHtml(error.message)}</div>`;
+            }
+        }
+
+        function displaySessionDetail(session) {
+            const html = `
+                <button onclick="backToSessions()" style="padding: 8px 16px; background: #00d4ff; border: none; 
+                        color: #0f0f23; font-weight: bold; border-radius: 5px; cursor: pointer; margin-bottom: 20px;">
+                    ← Back to Sessions
+                </button>
+                
+                <div style="background: #1a1a2e; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
+                    <h3 style="color: #00d4ff; margin-bottom: 15px;">${escapeHtml(session.session_id)}</h3>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; color: #888;">
+                        <div><strong>Messages:</strong> ${session.message_count}</div>
+                        <div><strong>Turns:</strong> ${session.turn_count || 0}</div>
+                        <div><strong>Tokens In:</strong> ${session.total_tokens_in || 0}</div>
+                        <div><strong>Tokens Out:</strong> ${session.total_tokens_out || 0}</div>
+                    </div>
+                </div>
+                
+                <h4 style="color: #00d4ff; margin-bottom: 15px;">📅 Timeline</h4>
+                <div id="sessionTimeline"></div>
+            `;
+            
+            sessionDetail.innerHTML = html;
+            
+            // Load timeline
+            loadSessionTimeline(session.session_id);
+        }
+
+        async function loadSessionTimeline(sessionId) {
+            const timeline = document.getElementById('sessionTimeline');
+            if (!timeline) return;
+            
+            try {
+                const response = await fetch(`/api/sessions/${sessionId}/events`);
+                const data = await response.json();
+                
+                displaySessionTimeline(data.timeline || []);
+            } catch (error) {
+                timeline.innerHTML = `<div style="color: #ff4444;">Error loading timeline</div>`;
+            }
+        }
+
+        function displaySessionTimeline(events) {
+            const timeline = document.getElementById('sessionTimeline');
+            if (!timeline) return;
+            
+            if (events.length === 0) {
+                timeline.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No events found</div>';
+                return;
+            }
+            
+            const html = events.map(event => {
+                const typeColors = {
+                    user_message: '#4a9eff',
+                    assistant_message: '#44ff44',
+                    tool_use: '#ffa500'
+                };
+                const color = typeColors[event.type] || '#cccccc';
+                const icon = event.type === 'user_message' ? '👤' : 
+                             event.type === 'assistant_message' ? '🤖' : '🛠️';
+                
+                return `
+                    <div style="background: #1a1a2e; padding: 15px; margin-bottom: 10px; border-radius: 5px; 
+                                border-left: 4px solid ${color};">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>${icon} <span style="color: ${color}; font-weight: bold;">${escapeHtml(event.type.replace('_', ' '))}</span></span>
+                            <span style="color: #888;">Turn ${event.turn}</span>
+                        </div>
+                        <div style="color: #cccccc;">${escapeHtml(event.content || 'No content')}</div>
+                        ${event.latency_ms ? `<div style="color: #888; margin-top: 5px; font-size: 12px;">⏱️ ${event.latency_ms}ms</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+            timeline.innerHTML = html;
+        }
+
+        function backToSessions() {
+            sessionsList.style.display = 'block';
+            sessionDetail.style.display = 'none';
+        }
+
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
     </script>
 </body>
 </html>

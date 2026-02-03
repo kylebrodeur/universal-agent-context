@@ -41,6 +41,8 @@ dependencies = [
     "sse-starlette>=1.8.0",
     "fastapi>=0.104.0",
     "websockets>=12.0",
+    "sentence-transformers>=2.3.0",
+    "faiss-cpu>=1.7.4",
 ]
 
 [project.urls]
@@ -182,6 +184,8 @@ module = [
     "tiktoken.*",
     "mcp.*",
     "yaml.*",
+    "sentence_transformers.*",
+    "faiss.*",
 ]
 ignore_missing_imports = true
 

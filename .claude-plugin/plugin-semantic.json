@@ -1,0 +1,103 @@
+{
+  "name": "uacs-semantic",
+  "version": "0.3.0",
+  "description": "Universal Agent Context System - Semantic conversation tracking with knowledge extraction",
+  "author": "Kyle Brodeur",
+  "repository": "https://github.com/kylebrodeur/universal-agent-context",
+  "license": "MIT",
+
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude-plugin/hooks/uacs_capture_message.py",
+            "async": true,
+            "timeout": 2,
+            "description": "Capture user messages with semantic API (v0.3.0)"
+          }
+        ]
+      }
+    ],
+
+    "PostToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|Read|Grep|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude-plugin/hooks/uacs_store_realtime.py",
+            "async": true,
+            "timeout": 5,
+            "description": "Store tool usage with semantic API (v0.3.0)"
+          }
+        ]
+      }
+    ],
+
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude-plugin/hooks/uacs_extract_knowledge.py",
+            "async": true,
+            "timeout": 10,
+            "description": "Extract decisions and conventions with semantic API (v0.3.0)"
+          }
+        ]
+      }
+    ]
+  },
+
+  "skills": [
+    {
+      "name": "UACS Context Management",
+      "path": ".claude-plugin/skills/uacs_context.md",
+      "description": "Instructions for using UACS to retrieve stored context"
+    }
+  ],
+
+  "mcpServers": {
+    "uacs": {
+      "command": "uacs",
+      "args": ["serve"],
+      "description": "UACS MCP server for context retrieval and management",
+      "optional": true
+    }
+  },
+
+  "dependencies": {
+    "python": ">=3.11",
+    "packages": [
+      "universal-agent-context>=0.3.0"
+    ]
+  },
+
+  "configuration": {
+    "storage_path": ".state",
+    "auto_store": true,
+    "semantic_tracking": true,
+    "knowledge_extraction": true
+  },
+
+  "features": {
+    "semantic_conversations": {
+      "enabled": true,
+      "description": "Structured conversation tracking with UserMessage, AssistantMessage, ToolUse"
+    },
+    "knowledge_extraction": {
+      "enabled": true,
+      "description": "Automatic extraction of decisions, conventions, and learnings"
+    },
+    "semantic_search": {
+      "enabled": true,
+      "description": "Natural language search across all context with embeddings"
+    },
+    "real_time_storage": {
+      "enabled": true,
+      "description": "Incremental storage via PostToolUse hook (survives crashes)"
+    }
+  }
+}
