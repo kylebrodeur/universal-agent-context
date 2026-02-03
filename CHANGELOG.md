@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-02-03
+
+### 🐛 Fixed
+
+- Plugin installation now uses absolute paths in plugin.json for hook commands
+- Hooks now execute correctly from any directory
+
 ## [0.3.2] - 2026-02-03
 
 ### ✨ Added
