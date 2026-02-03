@@ -254,6 +254,16 @@ class TestEdgeCases:
 
             assert isinstance(results, list)
 
+    def test_search_invalid_type(self):
+        """Test that invalid search types raise ValueError."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            uacs = UACS(project_path=Path(tmpdir))
+            uacs.add_user_message("Test message", turn=1, session_id="s1")
+
+            # Invalid type should raise ValueError
+            with pytest.raises(ValueError, match="Invalid search types"):
+                uacs.search("test", types=["invalid_type"], limit=10)
+
     def test_search_very_long_query(self):
         """Test search with very long query."""
         with tempfile.TemporaryDirectory() as tmpdir:

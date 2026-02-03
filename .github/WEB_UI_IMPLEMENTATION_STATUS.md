@@ -111,15 +111,19 @@
 - [x] ClockCounterClockwise for empty states and page title
 - [x] Expandable details on click
 
-### 3.3 Knowledge Browser (app/knowledge/page.tsx)
-- [ ] Tab navigation using shadcn Tabs component
-- [ ] Decisions tab with Question/Decision/Rationale cards
-- [ ] Conventions tab with confidence badges
-- [ ] Learnings tab with category filters
-- [ ] Artifacts tab with FileCode icons
-- [ ] Session link buttons
-- [ ] Topic badges with Brain icon
-- [ ] Pagination controls
+### 3.3 Knowledge Browser (app/knowledge/page.tsx) ✅
+- [x] Tab navigation using shadcn Tabs component
+- [x] Decisions tab with Question/Decision/Rationale cards
+- [x] Conventions tab with confidence badges
+- [x] Learnings tab with category filters
+- [x] Artifacts tab with FileCode icons
+- [x] Topic badges on all items
+- [x] Relative timestamps with formatRelativeTime
+- [x] Empty states for each tab
+- [x] Loading state with Spinner
+- [x] Error handling with Sonner toasts
+- [x] Parallel data loading with Promise.all
+- [x] Phosphor Icons (Brain, Lightbulb, BookOpen, FileCode)
 
 ### 3.4 Sessions View (app/sessions/page.tsx)
 - [ ] Sessions list with TreeStructure icon
