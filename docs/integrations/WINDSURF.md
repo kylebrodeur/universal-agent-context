@@ -1,6 +1,6 @@
 # UACS Integration with Windsurf
 
-**Universal Agent Context System (UACS)** integrates with Windsurf as an MCP (Model Context Protocol) server, bringing intelligent context management, skills marketplace, and multi-format translation to the Windsurf AI-powered IDE.
+**Universal Agent Context System (UACS)** integrates with Windsurf as an MCP (Model Context Protocol) server, bringing intelligent context management, package management, and multi-format translation to the Windsurf AI-powered IDE.
 
 ## Quick Start
 
@@ -19,7 +19,7 @@ Windsurf's Cascade AI is powerful, but UACS takes it further:
 ✅ **Extended Memory**: Persistent context across sessions  
 ✅ **Skills Library**: Pre-built capabilities for common dev tasks  
 ✅ **Token Efficiency**: Up to 70% reduction in context tokens  
-✅ **Marketplace**: Community-driven skills and tools  
+✅ **Package Management**: Community-driven skills and tools  
 ✅ **Format Translation**: Bridge between .windsurfrules, AGENTS.md, and more  
 
 ---
@@ -253,7 +253,7 @@ What MCP tools are available from UACS?
 
 Expected response should include tools like:
 - `skills_list`
-- `marketplace_search`
+- `packages_search`
 - `context_stats`
 - `unified_build_prompt`
 - Plus 20+ additional tools
@@ -265,9 +265,9 @@ Expected response should include tools like:
 Use the skills_list tool to show available agent skills.
 ```
 
-#### Search Marketplace
+#### Search Packages
 ```
-Search the skills marketplace for "debugging" related capabilities.
+Search the package registry for "debugging" related capabilities.
 ```
 
 #### Context Statistics
@@ -281,9 +281,9 @@ Show me context statistics using the context_stats tool.
 
 1. Open a Python file in Windsurf
 2. Open Cascade (F1 or ⌘ + ⇧ + P → "Cascade Chat")
-3. Prompt: "Search marketplace for code review skills, install the best one, and review my current file"
+3. Prompt: "Search packages for code review skills, install the best one, and review my current file"
 4. UACS will:
-   - Search the marketplace
+   - Search the package registry
    - Present options
    - Install selected skill
    - Apply it to your code
@@ -313,10 +313,10 @@ UACS exposes 20+ MCP tools via Windsurf Cascade:
 - `unified_capabilities` - List all capabilities
 - `unified_token_stats` - Cross-source token statistics
 
-### Marketplace Integration
-- `marketplace_search` - Search for skills and tools
-- `marketplace_install` - Install marketplace items
-- `marketplace_list_installed` - List installed items
+### Package Management
+- `packages_search` - Search for skills and tools
+- `packages_install` - Install packages
+- `packages_list_installed` - List installed items
 
 ### Project Management
 - `project_validate` - Validate AGENTS.md and skills
@@ -333,7 +333,7 @@ UACS tools are automatically available in Windsurf's Cascade AI:
 
 **Agent Flow Commands**:
 ```
-@cascade search marketplace for testing tools
+@cascade search packages for testing tools
 @cascade use context compression on this project
 @cascade validate my agent skills configuration
 ```
@@ -375,7 +375,7 @@ When using multiple Cascade agents:
 
 ```typescript
 // Windsurf Cascade
-"Search marketplace for security-focused code review skills, 
+"Search packages for security-focused code review skills, 
 install one, and thoroughly review this module for vulnerabilities."
 ```
 
@@ -396,7 +396,7 @@ with edge cases for all functions in this file."
 ### 3. Documentation Generation
 
 ```javascript
-"Use marketplace documentation skills to generate 
+"Use package documentation skills to generate 
 API docs for this entire project."
 ```
 
@@ -720,14 +720,14 @@ Point UACS to your organization's private skills:
 |---------|---------------|-------|
 | Skills Management | ✅ Full | All 20+ tools work |
 | Context Compression | ✅ Full | 70% token savings |
-| Marketplace Search | ✅ Full | Real-time search |
-| Marketplace Install | ✅ Full | Automatic installation |
+| Package Search | ✅ Full | Real-time search |
+| Package Install | ✅ Full | Automatic installation |
 | AGENTS.md | ✅ Full | Load and convert |
 | .windsurfrules | ⚠️ Partial | Translation supported |
 | Multi-Agent | ✅ Full | Cascade multi-agent flows |
 | Persistent Memory | ✅ Full | Cross-session context |
 | Team Sharing | ✅ Full | Via Docker/SSE |
-| Offline Mode | ✅ Full | Except marketplace |
+| Offline Mode | ✅ Full | Except packages |
 
 **Legend**:
 - ✅ Full: Complete support, tested
@@ -770,10 +770,10 @@ For large projects:
 
 ### 4. Search Before Creating
 
-Check marketplace before writing custom skills:
+Check packages before writing custom skills:
 
 ```
-"Search marketplace for [task description]"
+"Search packages for [task description]"
 ```
 
 ### 5. Monitor Token Usage
@@ -794,7 +794,7 @@ Regularly check stats:
 | Persistent Memory | ✅ Yes | Limited |
 | Skills Library | ✅ 100+ skills | None |
 | Token Optimization | ✅ 70% savings | Minimal |
-| Marketplace | ✅ Yes | No |
+| Package Management | ✅ Yes | No |
 | Multi-Format | ✅ 5+ formats | 1 format |
 | Team Sharing | ✅ Full | Limited |
 | Offline Work | ✅ Most features | All features |
@@ -820,7 +820,7 @@ Regularly check stats:
 A: Yes! UACS tools integrate seamlessly with Windsurf's Flow feature.
 
 **Q: Can I use UACS offline in Windsurf?**  
-A: Yes, all core features work offline. Only marketplace requires internet.
+A: Yes, all core features work offline. Only packages require internet.
 
 **Q: Does UACS slow down Cascade?**  
 A: Minimal impact: ~150ms startup, <5% CPU during use.
@@ -848,7 +848,7 @@ These are actively being addressed. See [roadmap](../IMPLEMENTATION_ROADMAP.md).
 
 With UACS integrated into Windsurf, explore:
 
-1. **[Skills Marketplace](../MARKETPLACE.md)** - Browse 100+ pre-built skills
+1. **[Package Management](../features/PACKAGES.md)** - Browse 100+ pre-built skills
 2. **[Context Optimization](../CONTEXT.md)** - Advanced compression techniques
 3. **[AGENTS.md Format](../ADAPTERS.md)** - Multi-agent coordination
 4. **[Python Library](../LIBRARY_GUIDE.md)** - Build custom integrations
