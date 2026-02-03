@@ -1,6 +1,6 @@
 # UACS CLI Reference
 
-The `uacs` command-line interface provides tools for managing context, skills, marketplace packages, and memory.
+The `uacs` command-line interface provides tools for managing context, skills, packages, and memory.
 
 ## Global Options
 

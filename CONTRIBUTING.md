@@ -197,7 +197,7 @@ Use conventional commit style:
 feat: Add support for .windsurf format
 fix: Correct token counting in compression
 docs: Update ARCHITECTURE.md with new diagrams
-test: Add tests for marketplace caching
+test: Add tests for package caching
 refactor: Extract adapter registry to separate module
 ```
 
@@ -259,11 +259,11 @@ universal-agent-context/
 │   │   ├── unified_context.py   # UnifiedContextAdapter
 │   │   ├── shared_context.py    # SharedContextManager
 │   │   └── agent_context.py     # AgentContextBuilder
-│   ├── marketplace/             # Package discovery
-│   │   ├── marketplace.py       # Unified marketplace
-│   │   ├── repositories.py      # Git repo management
-│   │   ├── packages.py          # Package metadata
-│   │   └── cache.py             # Caching layer
+│   ├── packages/                 # Package discovery
+│   │   ├── manager.py            # Package manager
+│   │   ├── repositories.py       # Git repo management
+│   │   ├── packages.py           # Package metadata
+│   │   └── cache.py              # Caching layer
 │   ├── memory/                  # Persistent storage
 │   │   ├── simple_memory.py     # Key-value store
 │   │   └── retrieval.py         # Semantic search
@@ -272,7 +272,7 @@ universal-agent-context/
 │   ├── cli/                     # CLI commands
 │   │   ├── main.py              # Main app
 │   │   ├── skills.py            # Skills commands
-│   │   ├── marketplace_cli.py   # Marketplace commands
+│   │   ├── packages_cli.py      # Package commands
 │   │   └── ...
 │   └── utils/                   # Shared utilities
 │       ├── compression.py       # Compression helpers
@@ -281,12 +281,12 @@ universal-agent-context/
 ├── tests/                       # Test suite (mirrors src/)
 │   ├── adapters/
 │   ├── context/
-│   ├── marketplace/
+│   ├── packages/
 │   └── ...
 │
 ├── examples/                    # Usage examples
 │   ├── basic_context.py
-│   ├── marketplace_search.py
+│   ├── package_search.py
 │   └── ...
 │
 ├── docs/                        # Documentation
@@ -336,7 +336,7 @@ Include:
 - [Architecture Overview](docs/ARCHITECTURE.md)
 - [Library Guide](docs/LIBRARY_GUIDE.md)
 - [CLI Reference](docs/CLI_REFERENCE.md)
-- [Marketplace Guide](docs/MARKETPLACE.md)
+- [Package Management Guide](docs/features/PACKAGES.md)
 
 ---
 

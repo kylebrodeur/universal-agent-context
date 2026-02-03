@@ -14,7 +14,7 @@ UACS can be deployed as an MCP server in three ways:
 | **Python Package** | Development, customization | Python 3.11+ |
 | **Docker Container** | Team servers, isolation | Docker |
 
-All three methods expose the same 20+ MCP tools for skills management, context optimization, and marketplace integration.
+All three methods expose the same 20+ MCP tools for skills management, context optimization, and package integration.
 
 ---
 
@@ -191,10 +191,10 @@ All UACS integrations expose these MCP tools:
 - `unified_capabilities` - Get all unified capabilities
 - `unified_token_stats` - Get token usage across all sources
 
-### Marketplace Integration (3 tools)
-- `marketplace_search` - Search skills marketplace
-- `marketplace_install` - Install skill from marketplace
-- `marketplace_list_installed` - List installed marketplace skills
+### Package Management (3 tools)
+- `packages_search` - Search skills packages
+- `packages_install` - Install skill from package registry
+- `packages_list_installed` - List installed packages
 
 ### Project Validation (1 tool)
 - `project_validate` - Validate AGENTS.md and skills configuration
@@ -238,10 +238,10 @@ Customize UACS behavior across all clients:
 
 **All Clients**:
 ```
-Search the marketplace for "testing" skills and show me the results.
+Search the packages for "testing" skills and show me the results.
 ```
 
-UACS will query multiple marketplace sources and return ranked results.
+UACS will query multiple package sources and return ranked results.
 
 ### 2. Context Optimization
 
@@ -288,7 +288,7 @@ Ensures your project follows best practices.
 |---------------|---------|-----|
 | Skills list/show | 10-30ms | 100ms |
 | Context stats | 20-50ms | 150ms |
-| Marketplace search | 50-150ms | 500ms |
+| Package search | 50-150ms | 500ms |
 | Context compression | 100-300ms | 1000ms |
 
 ### Memory Usage
@@ -455,7 +455,7 @@ Point UACS to your organization's private skills:
 {
   "env": {
     "UACS_SKILLS_REPO": "https://github.com/yourorg/skills.git",
-    "UACS_MARKETPLACE_CACHE": "86400"
+    "UACS_PACKAGES_CACHE": "86400"
   }
 }
 ```
@@ -524,7 +524,7 @@ UACS implements **MCP v1.0** specification:
 
 When running UACS locally (binary/Python):
 
-- ✅ No network traffic (except marketplace features)
+- ✅ No network traffic (except package features)
 - ✅ All data stays on your machine
 - ✅ State directory is user-owned
 - ⚠️ Binary must be trusted (verify checksums)
@@ -572,7 +572,7 @@ If you're currently using UACS CLI and want to integrate with an MCP client:
    ```bash
    # CLI still works alongside MCP
    uacs skills list
-   uacs marketplace search "testing"
+   uacs packages search "testing"
    ```
 
 ### From Other Context Systems
@@ -658,7 +658,7 @@ A: Yes, all 20+ tools work in all tested clients (Claude Desktop, Cursor, Windsu
 A: Standalone binary (stdio) has the lowest latency (~100ms startup, 10-50ms per tool call).
 
 **Q: Can I run UACS without internet?**  
-A: Yes, all core features work offline. Only marketplace search/install requires internet.
+A: Yes, all core features work offline. Only package search/install requires internet.
 
 **Q: How do I update UACS?**  
 A: Reinstall using your chosen method. Your state directory is preserved automatically.
@@ -667,7 +667,7 @@ A: Reinstall using your chosen method. Your state directory is preserved automat
 A: Yes, UACS is open source (MIT license) and free to use.
 
 **Q: Does UACS send data to external servers?**  
-A: No, except for marketplace features which query public repositories (optional).
+A: No, except for package features which query public repositories (optional).
 
 **Q: Can I contribute a new integration?**  
 A: Absolutely! Test UACS with your favorite MCP client and submit a PR with your integration guide.
@@ -678,7 +678,7 @@ A: Absolutely! Test UACS with your favorite MCP client and submit a PR with your
 
 Now that you've chosen your integration, explore:
 
-1. **[Skills Marketplace](../MARKETPLACE.md)** - Discover 100+ pre-built skills
+1. **[Package Management](PACKAGES.md)** - Discover 100+ pre-built skills
 2. **[Context Management](CONTEXT.md)** - Deep dive into context optimization  
 3. **[AGENTS.md Format](ADAPTERS.md)** - Multi-agent coordination
 4. **[Library Guide](../LIBRARY_GUIDE.md)** - Use UACS programmatically in Python

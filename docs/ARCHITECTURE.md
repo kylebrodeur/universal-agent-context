@@ -34,7 +34,7 @@ UACS is middleware for AI agent context management. It sits between your agent a
 │  Python API    │     CLI Tool         │      MCP Server               │
 │                │                      │                               │
 │  from uacs     │  $ uacs skills list  │  Server: uacs serve           │
-│  import UACS   │  $ uacs marketplace  │  Client: Claude Desktop       │
+│  import UACS   │  $ uacs packages     │  Client: Claude Desktop       │
 │                │    search "testing"  │          Cursor, Cline        │
 └────────┬───────┴──────────┬───────────┴──────────┬────────────────────┘
          │                  │                      │
@@ -234,8 +234,8 @@ results = store.search_memories(
 - Server: `uacs serve` (stdio-based MCP server)
 - Client: Claude Desktop connects via MCP protocol
 - Tools exposed:
-  - `search_marketplace` - Find skills/MCP servers
-  - `install_package` - Install from marketplace
+  - `search_packages` - Find skills/MCP servers
+  - `install_package` - Install from package registry
   - `get_context` - Build compressed context
   - `list_skills` - Show installed skills
   - `convert_format` - Translate between formats
@@ -545,11 +545,11 @@ All three use the same core (`uacs/api.py`), ensuring consistency.
 [dependencies]
 python = "^3.11"            # Modern Python with type hints
 pydantic = "^2.0"           # Data validation
-httpx = "^0.27"             # Async HTTP client (marketplace)
+httpx = "^0.27"             # Async HTTP client (packages)
 anyio = "^4.0"              # Async abstraction
 tiktoken = "^0.7"           # Token counting (OpenAI)
 zstandard = "^0.23"         # Compression (shared context)
-gitpython = "^3.1"          # Git operations (marketplace)
+gitpython = "^3.1"          # Git operations (packages)
 mcp = "^1.0"                # Model Context Protocol (server)
 typer = "^0.9"              # CLI framework
 rich = "^13.0"              # Terminal UI
@@ -566,7 +566,7 @@ bandit = "^1.7"             # Security scanning
 ### Why These Choices?
 
 **Pydantic:** Type-safe data validation, auto-documentation
-**httpx:** Modern async HTTP, needed for marketplace
+**httpx:** Modern async HTTP, needed for package management
 **tiktoken:** Accurate token counting for OpenAI-compatible models
 **zstandard:** Fast compression for context storage
 **typer + rich:** Beautiful CLI with minimal code

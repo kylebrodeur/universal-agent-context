@@ -1,6 +1,6 @@
 # UACS Integration with Claude Desktop
 
-**Universal Agent Context System (UACS)** can be integrated with Claude Desktop as an MCP (Model Context Protocol) server, providing powerful context management, skills marketplace, and multi-format translation capabilities directly in your Claude conversations.
+**Universal Agent Context System (UACS)** can be integrated with Claude Desktop as an MCP (Model Context Protocol) server, providing powerful context management, package management, and multi-format translation capabilities directly in your Claude conversations.
 
 ## Quick Start
 
@@ -301,7 +301,7 @@ What MCP tools do you have available?
 
 Claude should list UACS tools including:
 - `skills_list` - List all available agent skills
-- `marketplace_search` - Search skills marketplace
+- `packages_search` - Search skills packages
 - `context_stats` - Get context statistics
 - `unified_build_prompt` - Build complete agent prompt
 - And 20+ more tools...
@@ -315,9 +315,9 @@ Try these example prompts in Claude:
 Use the skills_list tool to show me what skills are available.
 ```
 
-#### Search the Marketplace
+#### Search Packages
 ```
-Search the skills marketplace for "testing" related skills.
+Search the package registry for "testing" related skills.
 ```
 
 #### Get Context Statistics
@@ -334,9 +334,9 @@ Use skills_test_trigger to see which skill would handle the query "review my cod
 
 Here's a complete example of using UACS with Claude Desktop:
 
-**You**: "Search the marketplace for Python testing tools"
+**You**: "Search the package registry for Python testing tools"
 
-**Claude**: Uses `marketplace_search` tool with query="python testing"
+**Claude**: Uses `packages_search` tool with query="python testing"
 
 **Result**:
 ```json
@@ -388,10 +388,10 @@ UACS exposes 20+ MCP tools organized by category:
 - `unified_capabilities` - Get all unified capabilities
 - `unified_token_stats` - Get token usage across all sources
 
-### Marketplace Integration
-- `marketplace_search` - Search skills marketplace
-- `marketplace_install` - Install skill from marketplace
-- `marketplace_list_installed` - List installed marketplace skills
+### Package Management
+- `packages_search` - Search skills packages
+- `packages_install` - Install skill from package registry
+- `packages_list_installed` - List installed packages
 
 ### Project Validation
 - `project_validate` - Validate AGENTS.md and skills configuration
@@ -607,7 +607,7 @@ journalctl --user -u claude-desktop -f
 
 ### Token Processing
 - **Context compression**: 10,000 tokens/second
-- **Marketplace search**: <100ms typical
+- **Package search**: <100ms typical
 - **Skill validation**: <50ms per skill
 
 ---
@@ -691,7 +691,7 @@ Run different UACS instances for different projects:
 A: Yes! UACS implements the standard MCP protocol and works with any MCP-compatible client (Claude Desktop, Cursor, Windsurf, etc.).
 
 **Q: Does UACS require internet access?**  
-A: No, UACS runs locally. Internet is only needed for marketplace features (optional).
+A: No, UACS runs locally. Internet is only needed for package features (optional).
 
 **Q: Can I customize which tools are exposed?**  
 A: Not yet, but this feature is planned. Track [issue #XX](https://github.com/kylebrodeur/universal-agent-context/issues).
@@ -705,7 +705,7 @@ A: Reinstall using your chosen method (binary/Docker/Python). Your state directo
 
 Now that you have UACS integrated with Claude Desktop, explore:
 
-1. **[Skills Marketplace](../MARKETPLACE.md)** - Discover and install pre-built skills
+1. **[Package Management](../features/PACKAGES.md)** - Discover and install pre-built skills
 2. **[Context Management](../CONTEXT.md)** - Learn about advanced context features
 3. **[AGENTS.md](../../docs/ADAPTERS.md)** - Multi-agent coordination
 4. **[Library Guide](../LIBRARY_GUIDE.md)** - Use UACS in Python code

@@ -1,6 +1,6 @@
 # UACS Integration with Cursor
 
-**Universal Agent Context System (UACS)** integrates with Cursor as an MCP (Model Context Protocol) server, bringing intelligent context management, skills marketplace, and format translation capabilities to your AI-powered code editor.
+**Universal Agent Context System (UACS)** integrates with Cursor as an MCP (Model Context Protocol) server, bringing intelligent context management, package management, and format translation capabilities to your AI-powered code editor.
 
 ## Quick Start
 
@@ -19,7 +19,7 @@ Cursor is already powerful, but UACS makes it even better:
 ✅ **Persistent Context**: Keep project knowledge across sessions  
 ✅ **Skills Library**: Access pre-built agent skills for common tasks  
 ✅ **Token Optimization**: 70% reduction in context tokens  
-✅ **Marketplace**: Discover and install community skills  
+✅ **Package Management**: Discover and install community skills  
 ✅ **Multi-Format Support**: Translate between .cursorrules, AGENTS.md, and more  
 
 ---
@@ -241,7 +241,7 @@ What MCP tools are available?
 
 You should see UACS tools listed, including:
 - `skills_list`
-- `marketplace_search`
+- `packages_search`
 - `context_stats`
 - `unified_build_prompt`
 - And 20+ more...
@@ -256,7 +256,7 @@ List all available agent skills using the skills_list tool.
 
 #### Search for Skills
 ```
-Search the marketplace for "code review" skills.
+Search the packages for "code review" skills.
 ```
 
 #### Get Context Statistics
@@ -271,9 +271,9 @@ Here's a practical example using UACS in Cursor:
 **Scenario**: You're working on a Python project and want to find testing skills.
 
 1. Open Cursor chat (⌘ + L)
-2. Ask: "Search the skills marketplace for Python testing tools"
-3. Cursor uses `marketplace_search` to find relevant skills
-4. Install a skill: "Install the pytest-skill from the marketplace"
+2. Ask: "Search the package registry for Python testing tools"
+3. Cursor uses `packages_search` to find relevant skills
+4. Install a skill: "Install the pytest-skill from the registry"
 5. Use it: "Use the pytest skill to generate tests for my current file"
 
 ---
@@ -300,10 +300,10 @@ UACS provides 20+ MCP tools organized by category:
 - `unified_capabilities` - Get all unified capabilities
 - `unified_token_stats` - Get token usage across all sources
 
-### Marketplace
-- `marketplace_search` - Search skills marketplace
-- `marketplace_install` - Install skill from marketplace
-- `marketplace_list_installed` - List installed skills
+### Package Management
+- `packages_search` - Search skills packages
+- `packages_install` - Install skill from package registry
+- `packages_list_installed` - List installed skills
 
 ### Project Management
 - `project_validate` - Validate AGENTS.md and skills configuration
@@ -318,11 +318,11 @@ UACS provides 20+ MCP tools organized by category:
 
 ```typescript
 // Cursor chat
-"Use the marketplace to find code review skills, then review this file for security issues."
+"Use the package manager to find code review skills, then review this file for security issues."
 ```
 
 UACS will:
-1. Search marketplace for "code review" skills
+1. Search packages for "code review" skills
 2. Install the best match
 3. Apply the skill to your current file
 4. Provide detailed feedback
@@ -650,7 +650,7 @@ UACS integrates with Cursor's inline chat (⌘ + K):
 In Cursor's Composer (⌘ + I), UACS tools are automatically available:
 
 ```
-"Search marketplace for refactoring skills, install the best one, 
+"Search packages for refactoring skills, install the best one, 
 and refactor this entire file for better performance."
 ```
 
@@ -692,12 +692,12 @@ XSS, buffer overflows..."
 "Use the security-review skill on this file"
 ```
 
-### 3. Leverage Marketplace
+### 3. Leverage Package Management
 
-Before writing custom prompts, check the marketplace:
+Before writing custom prompts, check the package registry:
 
 ```
-"Search marketplace for [your task]"
+"Search packages for [your task]"
 ```
 
 Chances are someone already built it.
@@ -721,7 +721,7 @@ This helps optimize your workflow and reduce costs.
 | Context Management | ✅ Advanced | Basic |
 | Skills Library | ✅ 100+ skills | None |
 | Token Compression | ✅ 70% savings | None |
-| Marketplace | ✅ Yes | None |
+| Package Management | ✅ Yes | None |
 | Multi-Format | ✅ 5+ formats | 1 format |
 | Persistent Memory | ✅ Yes | No |
 | Team Sharing | ✅ Yes | Limited |
@@ -746,7 +746,7 @@ This helps optimize your workflow and reduce costs.
 A: Yes! Install UACS on the remote server and configure as normal.
 
 **Q: Can I use UACS offline?**  
-A: Yes, all core features work offline. Only marketplace features require internet.
+A: Yes, all core features work offline. Only package features require internet.
 
 **Q: Does UACS slow down Cursor?**  
 A: Minimal impact (~100-200ms startup, <5% CPU during use).
@@ -760,7 +760,7 @@ A: Not yet, but this feature is planned. Track [issue #XX](https://github.com/ky
 
 Now that UACS is integrated with Cursor, explore:
 
-1. **[Skills Marketplace](../MARKETPLACE.md)** - Browse 100+ pre-built skills
+1. **[Package Management](../features/PACKAGES.md)** - Browse 100+ pre-built skills
 2. **[Context Management](../CONTEXT.md)** - Advanced context optimization
 3. **[AGENTS.md Format](../ADAPTERS.md)** - Multi-agent coordination
 4. **[Library Guide](../LIBRARY_GUIDE.md)** - Python API

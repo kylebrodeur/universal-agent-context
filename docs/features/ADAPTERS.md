@@ -21,7 +21,7 @@ The AgentSkillAdapter validates all SKILL.md files against the Agent Skills spec
 - ✅ Directory name must match skill name
 - ✅ Optional fields: `compatibility` (max 500 chars), `license`, `metadata`, `allowed-tools`
 
-Invalid skills will generate warnings in `skills list` and errors during `marketplace install`.
+Invalid skills will generate warnings in `skills list` and errors during `packages install`.
 
 **Precedence rules:**
 When the same skill name exists in both directories, `.agent/` wins:
@@ -102,6 +102,6 @@ Converts the parsed content into a dictionary compatible with Google ADK's agent
 
 ## Related Documentation
 
-- [UACS Marketplace](./MARKETPLACE.md) - Installing and validating skills
+- [UACS Package Management](./PACKAGES.md) - Installing and validating skills
 - [Context Management](./CONTEXT.md) - Using parsed content
 - [Agent Skills Specification](https://agentskills.io/specification) - Official format

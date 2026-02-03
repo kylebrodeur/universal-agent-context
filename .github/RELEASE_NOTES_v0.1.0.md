@@ -10,7 +10,7 @@ UACS is a universal system for discovering, translating, and managing AI agent c
 
 - **Format Translation**: Convert between `.cursorrules`, `.clinerules`, `.agents.md`, and other agent skill formats
 - **Context Compression**: Reduce token usage by 70%+ while preserving semantic meaning
-- **Marketplace Integration**: Search and install agent skills from multiple registries
+- **Package Management**: Search and install agent skills from multiple registries
 - **MCP Server**: Full Model Context Protocol implementation for integration with Claude Desktop, Cursor, and other MCP clients
 
 ## 📦 Installation Options
@@ -61,7 +61,7 @@ services:
 - Compress context for efficient token usage
 - Built-in validation and error checking
 
-### 🛍️ Marketplace
+### 🛍️ Package Management
 - Search across multiple skill registries
 - Install skills directly from CLI
 - Package validation and security scanning
@@ -90,8 +90,8 @@ uacs skills discover
 # Start MCP server
 uacs serve --port 8080
 
-# Search marketplace for agent skills
-uacs marketplace search "python testing"
+# Search packages for agent skills
+uacs packages search "python testing"
 ```
 
 ### Python API
@@ -148,7 +148,7 @@ UACS builds on:
 Upcoming features (Phase 3-6):
 - Windows and Linux binaries
 - Integration guides for Claude Desktop, Cursor, and Windsurf
-- Additional marketplace registries (Smithery.ai, GitHub Topics)
+- Additional package registries (Smithery.ai, GitHub Topics)
 - Enhanced memory system with semantic search
 - Performance optimizations and caching
 - Security hardening and audit

@@ -65,7 +65,7 @@ ctx.add_entry(
 history = ctx.get_compressed_context(max_tokens=2000)
 ```
 
-### Marketplace
+### Package Management
 
 Search and install skills programmatically.
 
