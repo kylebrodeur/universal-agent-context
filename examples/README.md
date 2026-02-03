@@ -1,338 +1,273 @@
-# UACS Examples and Demos
+# UACS v0.3.0 Examples
 
-Welcome to the UACS examples directory! This contains comprehensive demonstrations and code samples showing when, why, and how to use UACS.
+**Learn UACS in 15 minutes with 4 focused examples.**
 
-## Directory Structure
-
-```
-examples/
-├── quickstart/          ← Quick reference examples (single-file)
-│   ├── basic_context.py
-│   ├── compression_example.py
-│   ├── memory_usage.py
-│   └── ...
-│
-└── tutorials/           ← Comprehensive tutorials (multi-file with docs)
-    ├── 01_basic_setup/
-    ├── 02_context_compression/
-    ├── 03_multi_agent_context/
-    ├── 04_topic_based_retrieval/
-    └── 05_claude_code_integration/
-```
-
-## Quick Navigation
-
-### 🚀 Start Here: 5 Core Tutorials
-
-Follow these tutorials in order to build understanding progressively:
-
-1. **[tutorials/01_basic_setup/](./tutorials/01_basic_setup/)** - Learn the fundamentals (5 min)
-2. **[tutorials/02_context_compression/](./tutorials/02_context_compression/)** - Save 70% on token costs (5 min)
-3. **[tutorials/03_multi_agent_context/](./tutorials/03_multi_agent_context/)** - Coordinate multiple agents (5 min)
-4. **[tutorials/04_topic_based_retrieval/](./tutorials/04_topic_based_retrieval/)** - Focus context with topics (5 min)
-5. **[tutorials/05_claude_code_integration/](./tutorials/05_claude_code_integration/)** - THE KILLER USE CASE (10 min)
-
-**Total time:** ~30 minutes for complete mastery
-
-### ⚡ Quick Reference Examples
-
-Single-file examples for specific features (in `quickstart/`):
-
-- `basic_context.py` - Simple context usage
-- `compression_example.py` - Compression demo
-- `memory_usage.py` - Memory system
-- `package_install.py` - Package management
-- `multi_format_translation.py` - Format conversion
-- `custom_adapter.py` - Custom adapters
-- `mcp_tool_usage.py` - MCP integration
-- `visualization_demo.py` - Web visualization
-
-**When to use which:**
-- **Quickstart examples:** Quick reference for a specific feature
-- **Tutorials:** Learn concepts with full explanations and documentation
+This directory contains simplified, production-ready examples demonstrating the v0.3.0 semantic API. Each example builds on the previous one, taking you from basics to advanced patterns.
 
 ---
 
-## Demo Details
+## 🚀 Quick Start
 
-### Demo 1: Basic Setup
-**Location:** `01_basic_setup/`
-
-**What you'll learn:**
-- Initialize UACS
-- Add context entries
-- Build compressed context
-- Check token statistics
-
-**Files:**
-- `README.md` - Full explanation with What/Why/When/How
-- `demo.py` - Runnable demonstration
-- `output.txt` - Expected output
-
-**Run it:**
-```bash
-uv run python examples/tutorials/01_basic_setup/demo.py
-```
-
----
-
-### Demo 2: Context Compression
-**Location:** `02_context_compression/`
-
-**What you'll learn:**
-- Achieve 70%+ token reduction
-- Understand compression strategies
-- Calculate real cost savings
-- Compare before/after token usage
-
-**Files:**
-- `README.md` - Full explanation
-- `demo.py` - Runnable demonstration
-- `comparison.md` - Side-by-side token analysis
-
-**Key takeaway:** Save $210/month @ 100 calls/day
-
-**Run it:**
-```bash
-uv run python examples/tutorials/02_context_compression/demo.py
-```
-
----
-
-### Demo 3: Multi-Agent Context Sharing
-**Location:** `03_multi_agent_context/`
-
-**What you'll learn:**
-- Share context between agents
-- Sequential workflows (Agent 1 → Agent 2 → Agent 3)
-- Topic-based routing
-- Architecture patterns
-
-**Files:**
-- `README.md` - Full explanation
-- `demo.py` - 3-agent demonstration
-- `architecture.md` - Multi-agent patterns (5 patterns)
-
-**Key takeaway:** Seamless agent coordination, zero manual synchronization
-
-**Run it:**
-```bash
-uv run python examples/tutorials/03_multi_agent_context/demo.py
-```
-
----
-
-### Demo 4: Topic-Based Retrieval
-**Location:** `04_topic_based_retrieval/`
-
-**What you'll learn:**
-- Filter context by topics
-- Hierarchical topic taxonomies
-- Multi-topic queries
-- Scale to 100K+ token contexts
-
-**Files:**
-- `README.md` - Full explanation
-- `demo.py` - 4-topic demonstration
-- `use_cases.md` - Real-world topic patterns
-
-**Key takeaway:** 50-80% token reduction with topic filtering
-
-**Run it:**
-```bash
-uv run python examples/tutorials/04_topic_based_retrieval/demo.py
-```
-
----
-
-### Demo 5: Claude Code Integration - THE KILLER USE CASE
-**Location:** `05_claude_code_integration/`
-
-**What you'll learn:**
-- How Claude Code could integrate UACS
-- Perfect fidelity vs. lossy summarization
-- Production integration architecture
-- 3-month implementation roadmap
-
-**Files:**
-- `README.md` - Full explanation
-- `demo.py` - Proof of concept
-- `DESIGN.md` - Complete integration design (15 pages!)
-
-**Key takeaway:** 100% fidelity vs. 60% (summarization). Never lose conversation details again.
-
-**Run it:**
-```bash
-uv run python examples/tutorials/05_claude_code_integration/demo.py
-```
-
----
-
-## Quick Start
+Run all examples in sequence (recommended):
 
 ```bash
-# Run all tutorials
-for demo in 01_basic_setup 02_context_compression 03_multi_agent_context 04_topic_based_retrieval 05_claude_code_integration; do
-    echo "Running $demo..."
-    uv run python examples/tutorials/$demo/demo.py
-    echo ""
-done
+# 1. Core semantic API (5 minutes)
+uv run python examples/01_semantic_basics.py
+
+# 2. Claude Code integration (5 minutes)
+uv run python examples/02_claude_code_integration.py
+
+# 3. Web UI visualization (3 minutes)
+uv run python examples/03_web_ui.py
+
+# 4. Advanced patterns (2 minutes)
+uv run python examples/04_search_and_knowledge.py
 ```
 
-**Expected runtime:** ~10 seconds total
+**Total time:** ~15 minutes to understand everything
 
 ---
 
-## Learning Paths
+## 📚 Examples Overview
 
-### Path 1: New to UACS
-```
-Demo 1 → Demo 2 → Demo 3 → Demo 4 → Demo 5
-(Complete understanding in 30 minutes)
-```
+### Example 1: Semantic API Basics
+**File:** `01_semantic_basics.py`
+**Time:** 5 minutes
+**Teaches:**
+- Track conversations (`add_user_message`, `add_assistant_message`, `add_tool_use`)
+- Capture knowledge (`add_decision`, `add_convention`, `add_learning`, `add_artifact`)
+- Search semantically (`search()` with natural language)
+- Get statistics (`get_stats()`)
 
-### Path 2: Evaluating UACS
-```
-Demo 2 → Demo 5
-(See cost savings + killer use case in 15 minutes)
-```
-
-### Path 3: Specific Use Case
-
-| Your Goal | Start With |
-|-----------|-----------|
-| Reduce costs | Demo 2, Demo 4 |
-| Multi-agent system | Demo 3, Demo 1 |
-| Claude Code integration | Demo 5, then all |
-| Large project context | Demo 4, Demo 2 |
+**When to run:** Start here! This is your introduction to the v0.3.0 API.
 
 ---
 
-## What You'll Learn
+### Example 2: Claude Code Integration
+**File:** `02_claude_code_integration.py`
+**Time:** 5 minutes
+**Teaches:**
+- How UserPromptSubmit hook captures user messages automatically
+- How PostToolUse hook tracks tool executions in real-time
+- How SessionEnd hook extracts decisions and conventions
+- How to query captured session data
 
-### Core Concepts (Demo 1)
-- UACS initialization
-- Context entries
-- Compression basics
-- Token statistics
+**When to run:** After example 1, when you want to see the "killer use case"
 
-### Cost Optimization (Demo 2)
-- 70% token reduction
-- Deduplication
-- Quality filtering
-- Cost calculations
-
-### Agent Coordination (Demo 3)
-- Shared context
-- Topic routing
-- Sequential workflows
-- Architecture patterns
-
-### Focused Retrieval (Demo 4)
-- Topic filtering
-- Hierarchical topics
-- Multi-topic queries
-- Massive context scaling
-
-### Production Integration (Demo 5)
-- Perfect fidelity
-- Summarization problems
-- Integration architecture
-- Implementation roadmap
-
----
-
-## File Structure
-
-```
-examples/
-├── README.md (this file)
-│
-├── quickstart/              ← Single-file quick reference examples
-│   ├── basic_context.py
-│   ├── compression_example.py
-│   ├── memory_usage.py
-│   ├── package_install.py
-│   ├── multi_format_translation.py
-│   ├── custom_adapter.py
-│   ├── mcp_tool_usage.py
-│   └── visualization_demo.py
-│
-└── tutorials/               ← Comprehensive multi-file tutorials
-    ├── 01_basic_setup/
-    │   ├── README.md (What/Why/When/How)
-    │   ├── demo.py (runnable code)
-    │   └── output.txt (expected output)
-    │
-    ├── 02_context_compression/
-    │   ├── README.md
-    │   ├── demo.py
-    │   └── comparison.md (before/after analysis)
-    │
-    ├── 03_multi_agent_context/
-    │   ├── README.md
-    │   ├── demo.py
-    │   └── architecture.md (5 patterns)
-    │
-    ├── 04_topic_based_retrieval/
-    │   ├── README.md
-    │   ├── demo.py
-    │   └── use_cases.md (real-world examples)
-    │
-    └── 05_claude_code_integration/
-        ├── README.md
-        ├── demo.py
-        └── DESIGN.md (15-page integration design)
-```
-
----
-
-## Success Metrics
-
-After completing all demos, you will be able to:
-
-✅ Initialize and use UACS in any project
-✅ Achieve 70%+ token compression
-✅ Build multi-agent systems with shared context
-✅ Use topic filtering for focused retrieval
-✅ Understand the Claude Code integration opportunity
-✅ Design production UACS integrations
-
----
-
-## Next Steps
-
-1. **Run the demos** - Start with Demo 1
-2. **Read [docs/DEMOS.md](../docs/DEMOS.md)** - Complete guide with learning paths
-3. **Try in your project** - Integrate UACS
-4. **Join community** - Share your use case
-
----
-
-## Support
-
-- **Documentation:** [docs/](../docs/)
-- **API Reference:** [docs/LIBRARY_GUIDE.md](../docs/LIBRARY_GUIDE.md)
-- **Integration Guides:** [docs/INTEGRATIONS.md](../docs/INTEGRATIONS.md)
-- **GitHub Issues:** [Report bugs or request features](https://github.com/kylebrodeur/universal-agent-context/issues)
-
----
-
-## Quick Reference
-
-| Demo | Time | Complexity | Key Value |
-|------|------|-----------|-----------|
-| Demo 1 | 5 min | ⭐ | Foundation |
-| Demo 2 | 5 min | ⭐⭐ | 70% cost savings |
-| Demo 3 | 5 min | ⭐⭐⭐ | Agent coordination |
-| Demo 4 | 5 min | ⭐⭐⭐ | Focused retrieval |
-| Demo 5 | 10 min | ⭐⭐⭐⭐ | Perfect fidelity |
-
-**Start now:**
+**Real-world usage:**
 ```bash
-uv run python examples/tutorials/01_basic_setup/demo.py
+# Install hooks for automatic capture:
+cp .claude-plugin/plugin-semantic.json ~/.claude/plugin.json
+cp .claude-plugin/hooks/*.py ~/.claude/hooks/
+chmod +x ~/.claude/hooks/*.py
+
+# Now Claude Code automatically captures everything!
 ```
 
 ---
 
-**Have fun exploring UACS!** 🚀
+### Example 3: Web UI Visualization
+**File:** `03_web_ui.py`
+**Time:** 3 minutes
+**Teaches:**
+- How to populate UACS with rich sample data
+- How to start the FastAPI backend (port 8081)
+- How to start the Next.js frontend (port 3000)
+- What features the Web UI provides
+
+**When to run:** After example 2, when you want to visualize captured data
+
+**To actually start the Web UI:**
+```bash
+# Single command - bundled UI!
+uv run uacs web
+
+# Or with custom options:
+uv run uacs web --port 8081 --host localhost
+
+# Then open browser:
+open http://localhost:8081
+```
+
+💡 **Bundled Architecture:** The Web UI is now bundled into the Python package. The Next.js frontend (static export) is served directly from FastAPI - no separate frontend server needed!
+
+---
+
+### Example 4: Advanced Search & Knowledge
+**File:** `04_search_and_knowledge.py`
+**Time:** 2 minutes
+**Teaches:**
+- Type-filtered search (decisions only, conventions only)
+- Confidence-filtered search (high-quality items)
+- Multi-type search (search across categories)
+- Knowledge organization best practices
+- Cross-session insight extraction
+
+**When to run:** After examples 1-3, when you want to learn advanced patterns
+
+---
+
+## 🎯 Learning Paths
+
+### Path 1: Complete Learning (Recommended)
+```
+01_semantic_basics.py
+    ↓
+    Learn: Core API, conversations, knowledge, search
+    ↓
+02_claude_code_integration.py
+    ↓
+    Learn: Hooks, automatic capture, real-world usage
+    ↓
+03_web_ui.py
+    ↓
+    Learn: Visualization, Web UI, data exploration
+    ↓
+04_search_and_knowledge.py
+    ↓
+    Learn: Advanced patterns, best practices
+```
+
+**Total:** ~15 minutes
+
+### Path 2: Quick Evaluation
+If you're in a hurry, just run:
+1. `01_semantic_basics.py` - See the API
+2. `02_claude_code_integration.py` - See the value
+
+**Total:** ~10 minutes
+
+### Path 3: Visual Learner
+If you prefer UI over code:
+1. `01_semantic_basics.py` - Populate some data
+2. `03_web_ui.py` - Start Web UI and explore visually
+
+**Total:** ~8 minutes
+
+---
+
+## 📖 What's Different from v0.2.0?
+
+**Old API (v0.2.0 - DEPRECATED):**
+```python
+# Generic, unstructured context
+uacs.add_to_context(
+    key="claude",
+    content="Implemented JWT auth",
+    topics=["security"]
+)
+
+# Generic retrieval
+context = uacs.get_compressed_context(
+    topic="security",
+    max_tokens=4000
+)
+```
+
+**New API (v0.3.0 - CURRENT):**
+```python
+# Structured conversations
+uacs.add_user_message("Help with JWT auth", turn=1, session_id="s1")
+uacs.add_assistant_message("I'll help...", turn=1, session_id="s1")
+uacs.add_tool_use("Edit", {...}, "Success", turn=2, session_id="s1")
+
+# Structured knowledge
+uacs.add_decision(
+    question="Which auth method?",
+    decision="JWT with RS256",
+    rationale="Stateless, scalable",
+    alternatives=["Sessions", "OAuth2"]
+)
+
+# Natural language search
+results = uacs.search("how did we implement authentication?")
+```
+
+**Why the change?**
+- ✅ Natural language search vs topic filtering
+- ✅ Structured types vs generic content
+- ✅ Automatic embeddings for semantic search
+- ✅ Better integration with Claude Code hooks
+
+See [Migration Guide](../docs/MIGRATION.md) for full details.
+
+---
+
+## 🗂️ Old Examples (Deprecated)
+
+The previous examples using v0.2.0 API have been archived:
+- `tutorials/` - 5 tutorial series (deprecated API)
+- `quickstart/` - 8 quickstart examples (deprecated API)
+
+**These still work** (v0.2.0 API is functional but deprecated), but we recommend using the new examples above for v0.3.0.
+
+If you need to reference the old examples, they're still in the repository but use deprecated methods.
+
+---
+
+## 🚀 Next Steps
+
+After running the examples:
+
+1. **Install Claude Code hooks** for automatic capture:
+   ```bash
+   cp .claude-plugin/plugin-semantic.json ~/.claude/plugin.json
+   cp .claude-plugin/hooks/*.py ~/.claude/hooks/
+   chmod +x ~/.claude/hooks/*.py
+   ```
+
+2. **Start using UACS in your projects**:
+   ```python
+   from uacs import UACS
+   from pathlib import Path
+
+   uacs = UACS(project_path=Path.cwd())
+   # Now you can track conversations, capture knowledge, and search!
+   ```
+
+3. **Explore the Web UI**:
+   - See [03_web_ui.py](03_web_ui.py) for startup instructions
+   - Or read [Web UI README](../uacs-web-ui/README.md)
+
+4. **Read the documentation**:
+   - [API Reference](../docs/API_REFERENCE.md) - All v0.3.0 methods
+   - [Migration Guide](../docs/MIGRATION.md) - Upgrade from v0.2.0
+   - [Hooks Guide](../.claude-plugin/HOOKS_GUIDE.md) - Claude Code integration
+
+---
+
+## 💡 Tips
+
+**Running examples:**
+- Each example is self-contained and runnable
+- They create a `.demo_state/` directory for storage
+- Safe to run multiple times (data persists)
+
+**Learning approach:**
+- Read the code - it's heavily commented
+- Run the examples to see output
+- Modify and experiment
+- Check the documentation for deep dives
+
+**Getting help:**
+- Examples not working? Check `uv run python --version` (needs 3.11+)
+- Import errors? Run `uv sync` to install dependencies
+- Questions? See [Contributing Guide](../CONTRIBUTING.md)
+
+---
+
+## 📊 Example Statistics
+
+- **Total examples:** 4 focused examples (vs 13 old files)
+- **Total time:** ~15 minutes (vs ~30 minutes for old tutorials)
+- **API coverage:** 100% of v0.3.0 semantic API
+- **Lines of code:** ~600 lines across all examples
+- **Topics covered:** Conversations, knowledge, search, hooks, Web UI
+
+**Philosophy:** Less is more. Four focused examples beat 13 scattered files.
+
+---
+
+**Version:** v0.3.0
+**Last Updated:** February 3, 2026
+**Maintained By:** UACS Team

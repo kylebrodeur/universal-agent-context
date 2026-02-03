@@ -250,6 +250,58 @@ def version():
 
 
 @app.command()
+def web(
+    host: str = typer.Option("localhost", "--host", "-h", help="Server host"),
+    port: int = typer.Option(8081, "--port", "-p", help="Server port"),
+    project_path: Path = typer.Option(
+        Path.cwd(), "--project", help="Project path (default: current directory)"
+    ),
+):
+    """Start UACS Web UI visualization server.
+
+    Serves the bundled Next.js UI for browsing conversations, knowledge,
+    and semantic search. All in one command - no separate frontend server needed!
+
+    Examples:
+        uacs web                         # Start on http://localhost:8081
+        uacs web --port 3000             # Custom port
+        uacs web --host 0.0.0.0          # Listen on all interfaces
+    """
+    try:
+        import uvicorn
+        from uacs.api import UACS
+        from uacs.visualization.web_server import VisualizationServer
+
+        typer.echo(f"\n🚀 Starting UACS Web UI...")
+        typer.echo(f"📁 Project: {project_path}")
+        typer.echo(f"🌐 URL: http://{host}:{port}\n")
+
+        # Initialize UACS and server
+        uacs = UACS(project_path=project_path)
+        server = VisualizationServer(uacs=uacs, host=host, port=port)
+
+        # Check if Next.js build exists
+        package_root = Path(__file__).parent.parent.parent.parent
+        nextjs_out = package_root / "uacs-web-ui" / "out"
+
+        if not nextjs_out.exists():
+            typer.echo("⚠️  Warning: Next.js build not found!")
+            typer.echo(f"   Expected at: {nextjs_out}")
+            typer.echo("   Run: cd uacs-web-ui && pnpm build\n")
+
+        typer.echo("✨ Web UI is ready! Press Ctrl+C to stop\n")
+
+        # Start server
+        uvicorn.run(server.app, host=host, port=port, log_level="info")
+
+    except KeyboardInterrupt:
+        typer.echo("\n\n👋 Web UI stopped")
+    except Exception as e:
+        typer.echo(f"\n❌ Error: {e}", err=True)
+        raise typer.Exit(code=1)
+
+
+@app.command()
 def init(
     project_root: Path = typer.Argument(
         Path.cwd(), help="Project root directory (default: current directory)"

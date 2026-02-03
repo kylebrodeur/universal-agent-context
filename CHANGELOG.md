@@ -375,7 +375,7 @@ context.discover_adapters()
 - [Quick Start Guide](examples/README.md) - Step-by-step tutorials
 - [Library Guide](docs/LIBRARY_GUIDE.md) - Python API documentation
 - [CLI Reference](docs/CLI_REFERENCE.md) - Command-line usage
-- [MCP Server Setup](docs/MCP_SERVER_SETUP.md) - MCP integration guide
+- [MCP Server Setup](docs/guides/MCP_SERVER_SETUP.md) - MCP integration guide
 - [Architecture](docs/ARCHITECTURE.md) - System design overview
 
 ### 🙏 Acknowledgments

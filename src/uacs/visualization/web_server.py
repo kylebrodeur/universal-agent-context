@@ -57,27 +57,63 @@ class VisualizationServer:
             allow_headers=["*"],
         )
 
-        # Setup routes
+        # Setup API routes first (before static files)
         self._setup_routes()
 
-        # Setup static files
-        static_dir = Path(__file__).parent / "static"
-        if static_dir.exists():
+        # Mount Next.js static build files
+        # Look for uacs-web-ui/out relative to package root
+        package_root = Path(__file__).parent.parent.parent.parent
+        nextjs_out = package_root / "uacs-web-ui" / "out"
+
+        if nextjs_out.exists():
+            # Mount Next.js static assets (_next directory)
+            next_static = nextjs_out / "_next"
+            if next_static.exists():
+                self.app.mount(
+                    "/_next",
+                    StaticFiles(directory=str(next_static)),
+                    name="next_static"
+                )
+
+            # Serve other static files (images, etc.)
             self.app.mount(
                 "/static",
-                StaticFiles(directory=str(static_dir)),
-                name="static"
+                StaticFiles(directory=str(nextjs_out), html=True),
+                name="ui_static"
             )
+
+            logger.info(f"Mounted Next.js UI from: {nextjs_out}")
+        else:
+            logger.warning(f"Next.js build not found at: {nextjs_out}")
+            logger.warning("Run 'cd uacs-web-ui && pnpm build' to build the UI")
+
+            # Fallback to old static directory
+            static_dir = Path(__file__).parent / "static"
+            if static_dir.exists():
+                self.app.mount(
+                    "/static",
+                    StaticFiles(directory=str(static_dir)),
+                    name="static"
+                )
 
     def _setup_routes(self):
         """Setup API routes."""
 
         @self.app.get("/", response_class=HTMLResponse)
         async def index():
-            """Serve main visualization page."""
+            """Serve Next.js main page."""
+            # Try Next.js build first
+            package_root = Path(__file__).parent.parent.parent.parent
+            nextjs_index = package_root / "uacs-web-ui" / "out" / "index.html"
+
+            if nextjs_index.exists():
+                return HTMLResponse(content=nextjs_index.read_text())
+
+            # Fallback to old static
             html_file = Path(__file__).parent / "static" / "index.html"
             if html_file.exists():
                 return html_file.read_text()
+
             return HTMLResponse(
                 content=self._get_default_html(),
                 status_code=200
@@ -898,6 +934,30 @@ class VisualizationServer:
         async def health():
             """Health check endpoint."""
             return JSONResponse(content={"status": "ok"})
+
+        # Catch-all route for client-side routing (must be last)
+        @self.app.get("/{full_path:path}", response_class=HTMLResponse)
+        async def catch_all(full_path: str):
+            """Serve Next.js index.html for client-side routing."""
+            # Skip if it's an API route (already handled above)
+            if full_path.startswith("api/") or full_path.startswith("_next/"):
+                return JSONResponse(
+                    content={"error": "Not found"},
+                    status_code=404
+                )
+
+            # Serve Next.js index.html for all other routes
+            package_root = Path(__file__).parent.parent.parent.parent
+            nextjs_index = package_root / "uacs-web-ui" / "out" / "index.html"
+
+            if nextjs_index.exists():
+                return HTMLResponse(content=nextjs_index.read_text())
+
+            # Fallback
+            return HTMLResponse(
+                content=self._get_default_html(),
+                status_code=200
+            )
 
     async def _handle_websocket(self, websocket: WebSocket):
         """Handle WebSocket connection for real-time updates.

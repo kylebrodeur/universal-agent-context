@@ -73,7 +73,7 @@ Choose the installation method that best fits your workflow:
 | **Python (pip)** | Developers integrating UACS into Python projects | Python 3.11+ |
 | **uvx** | Quick, temporary usage without installing dependencies | `uv` installed |
 | **[Binary](docs/guides/MCP_SERVER_BINARY.md)** | Standalone usage, no Python environment needed | None |
-| **[Docker](docs/MCP_SERVER_DOCKER.md)** | Server deployments, team environments | Docker |
+| **[Docker](docs/guides/MCP_SERVER_DOCKER.md)** | Server deployments, team environments | Docker |
 
 ### Quick Start (Python)
 
@@ -129,108 +129,51 @@ pip install transformers torch
 
 ## CLI Demo
 
-See UACS in action:
-
 ```bash
-# Install packages from GitHub
+# Package management
 $ uacs packages install anthropic/skills-testing
-
-📦 Installing package 'anthropic/skills-testing'...
-✅ Cloning from GitHub...
-✅ Validating package structure...
 ✅ Installed to .agent/skills/testing/
 
-# List installed packages
-$ uacs packages list
-
-📚 Installed Packages (5):
-
-Skills:
-  ✓ code-review               - Review code for security and best practices
-    Source: github.com/anthropic/skills
-
-  ✓ documentation             - Generate comprehensive docs
-    Source: github.com/anthropic/skills
-
-  ✓ testing                   - Create unit, integration, and e2e tests
-    Source: github.com/anthropic/skills
-
-MCP Servers:
-  ✓ filesystem                - File operations via MCP
-    Source: github.com/anthropic/mcp-servers
-
-# Check context stats
+# Context compression
 $ uacs context stats
+📊 45,234 tokens → 38,449 (15% reduction)
+💰 Savings: $0.07/call
 
-📊 Context Statistics:
-  Total entries: 127
-  Original tokens: 45,234
-  After deduplication: 38,449 (15% reduction)
-  Token savings: 6,785
-
-  Optimization breakdown:
-    - Deduplication: 6,785 tokens (15%)
-    - Quality filtering: Enabled
-    - Topic indexing: 12 topics identified
-
-💰 Cost Savings (at $0.01/1K tokens):
-  Without deduplication: $0.45/call
-  With deduplication: $0.38/call
-  Savings: $0.07/call (15%)
-
-# Convert between formats
-$ uacs skills convert --to cursorrules
-
-✅ Converted SKILLS.md → .cursorrules
-   Skills: 5
-   Output: .cursorrules (3,456 tokens)
-   Format validated: ✓
-
-# Memory operations
+# Memory search
 $ uacs memory search "testing"
-
-🔍 Searching memories for "testing"...
-
-📝 Found 3 relevant memories:
-  1. [Score: 0.92] Always use pytest-asyncio for async tests
-     Added: 2024-12-15, Tags: testing, pytest
-     
-  2. [Score: 0.87] Integration tests run in Docker containers
-     Added: 2024-12-20, Tags: testing, docker
-     
-  3. [Score: 0.81] E2E tests use Playwright with page fixtures
-     Added: 2024-12-18, Tags: testing, e2e
+🔍 Found 3 relevant memories (scores: 0.92, 0.87, 0.81)
 ```
 
-**What this shows:**
-- 📦 **Easy package installation** - From GitHub, Git, or local paths
-- 📊 **Real-time compression stats** - See exactly what you're saving
-- 🔄 **Format conversion** - One command, any format
-- 🧠 **Memory recall** - Find relevant context instantly
+**See also:** [CLI Reference](docs/CLI_REFERENCE.md) | [Examples](examples/)
 
 ---
 
-## Trace Visualization (NEW)
+## Web UI (NEW v0.3.0)
 
-LangSmith-style visualization for debugging Claude Code sessions:
+Modern Next.js web application for exploring UACS data with semantic search and knowledge browsing. Bundled into a single command:
 
 ```bash
-# Start visualization server
-python examples/quickstart/visualization_demo.py
+# Single command - bundled UI!
+uv run uacs web
+
+# Or with custom options:
+uv run uacs web --port 8081 --host localhost
 
 # Open browser
 open http://localhost:8081
 ```
 
-**Features:**
-- 📊 **Session List** - View all Claude Code sessions with stats
-- 🔍 **Session Detail** - Full trace timeline with every event (prompts, tool uses, compressions)
-- 📈 **Token Dashboard** - Real-time token usage, compression savings, trends
-- 🏷️ **Topic Explorer** - Topic clusters with session links
-- 🔎 **Search & Filter** - Find anything across all sessions by topic/keyword
-- 📤 **Export** - Export session traces as JSON for analysis
+💡 **Bundled Architecture:** The Next.js frontend (static export) is served directly from FastAPI - no separate frontend server needed!
 
-**See:** [Trace Visualization Design](./.github/TRACE_VISUALIZATION_DESIGN.md) | [Implementation Status](./.github/TRACE_VIZ_IMPLEMENTATION_STATUS.md)
+**Features:**
+- 🔍 **Semantic Search** - Natural language search across all content with type filters
+- 📅 **Timeline View** - Chronological session events with user/assistant/tool interactions
+- 📚 **Knowledge Browser** - Explore decisions, conventions, learnings, and artifacts
+- 🔬 **Session Traces** - Expandable session cards with full execution timelines
+- 🎨 **Modern UI** - Built with Next.js 15, TypeScript, and shadcn/ui
+- 🌙 **Dark Mode** - System preference support
+
+**See:** [Web UI Documentation](uacs-web-ui/README.md) | [Implementation Complete](./.github/NEXT_JS_WEB_UI_COMPLETE.md)
 
 ---
 
@@ -331,62 +274,11 @@ relevant = uacs.memory.search("testing")
 
 ## What Makes UACS Different
 
-- 🔄 **Format Translation** - Converts between 5+ formats (SKILLS.md, AGENTS.md, .cursorrules, .clinerules, ADK Config)
-- 🗜️ **Smart Deduplication** - Automatic removal of duplicate content (15% immediate savings, 70% compression coming in v0.2.0)
-- 📦 **Package Management** - Install skills + MCP servers from GitHub, Git, or local paths
-- 🎯 **Topic-Based Retrieval** - Auto-tagging and focused context
-- 🧠 **Memory System** - Long-term memory with project and global scopes
-- 🐍 **Standalone Library** - Python API, not just CLI
-
-**vs Similar Tools:**
-
-| Feature | UACS | openskills | ai-agent-skills |
-|---------|------|------------|-----------------|
-| Format Translation | ✅ 5+ formats | ❌ Skills only | ❌ Skills only |
-| Context Management | ✅ 15% dedup + perfect recall | ❌ None | ❌ None |
-| Package Management | ✅ Skills + MCP | ⚠️ Limited | ⚠️ Limited |
-| Memory System | ✅ Project + Global | ❌ None | ❌ None |
-| MCP Server | ✅ Full integration | ❌ None | ❌ None |
-| Python API | ✅ Complete | ⚠️ Limited | ⚠️ Limited |
-| Token Tracking | ✅ Real-time stats | ❌ None | ❌ None |
-
-**Bottom line:** UACS is the only solution that provides format translation, compression, package management, memory, AND MCP server in one package.
+UACS is **middleware**, not another agent tool. It provides format translation, context compression, package management, persistent memory, and MCP server integration in one package - the only solution offering this complete feature set.
 
 ---
 
 ## Quick Start
-
-**Goal:** Get UACS working with semantic API in 2 minutes.
-
-### Installation
-
-Choose the installation method that best fits your workflow:
-
-| Method | Best For | Prerequisite |
-| :--- | :--- | :--- |
-| **Python (pip)** | Developers integrating UACS into Python projects | Python 3.11+ |
-| **uvx** | Quick, temporary usage without installing dependencies | `uv` installed |
-| **[Binary](docs/guides/MCP_SERVER_BINARY.md)** | Standalone usage, no Python environment needed | None |
-| **[Docker](docs/MCP_SERVER_DOCKER.md)** | Server deployments, team environments | Docker |
-
-#### Quick Start (Python)
-
-```bash
-# Option 1: From source (Current)
-git clone https://github.com/kylebrodeur/universal-agent-context
-cd universal-agent-context
-uv sync                    # Or: pip install -e .
-
-# Option 2: PyPI (Coming Soon)
-pip install universal-agent-context
-
-# Option 3: One-liner
-uvx universal-agent-context serve
-
-# Initialize project
-uv run uacs context init   # Creates .state/context/ directory
-uv run uacs memory init    # Creates .state/memory/ directory
-```
 
 ### Basic Usage (v0.3.0 Semantic API)
 
@@ -429,78 +321,7 @@ for result in results:
     print(f"Relevance: {result.similarity:.2f}\n")
 ```
 
-### 5-Minute Tutorial
-
-**Step 1: Test the CLI (30 seconds)**
-```bash
-uv run uacs --help
-# Output: Shows 5 command groups: context, skills, packages, memory, mcp
-```
-
-**Step 2: Install a Package (1 minute)**
-```bash
-uv run uacs packages install anthropic/skills-testing
-# Output: Clones from GitHub, validates, and installs
-# Works with GitHub repos, Git URLs, or local paths
-```
-
-**Step 3: Python API - Context Compression (2 minutes)**
-
-Create `test_uacs.py`:
-```python
-from uacs import UACS
-from pathlib import Path
-
-# Initialize
-uacs = UACS(project_path=Path.cwd())
-
-# Add context entries (simulating agent conversation)
-uacs.shared_context.add_entry(
-    content="Review authentication for security issues",
-    agent="user"
-)
-
-uacs.shared_context.add_entry(
-    content="Found timing attack in password comparison",
-    agent="claude",
-    topics=["security"]
-)
-
-# Get compressed context
-context = uacs.get_compressed_context(
-    topic="security",      # Filter by topic
-    max_tokens=1000        # Token budget
-)
-
-# Check compression stats
-stats = uacs.get_token_stats()
-print(f"Compression: {stats['compression_ratio']}")
-print(f"Tokens saved: {stats['tokens_saved_by_compression']}")
-```
-
-Run it:
-```bash
-uv run python test_uacs.py
-# Output: Shows compression ratio and tokens saved
-```
-
-**Step 4: Memory System (1 minute)**
-```bash
-# Add persistent memory
-uv run uacs memory add "Always use pytest-asyncio for async tests"
-
-# Search later
-uv run uacs memory search "testing"
-# Output: Returns relevant memories with scores
-```
-
-**What you just did:**
-- ✅ Installed UACS
-- ✅ Installed a package from GitHub
-- ✅ Compressed context with Python API
-- ✅ Added persistent memory
-
-**Next steps:** [MCP Server Setup](docs/MCP_SERVER_SETUP.md) | [Full Library Guide](docs/LIBRARY_GUIDE.md)
+**See also:** [Full Quickstart Guide](QUICKSTART.md) | [API Reference](docs/API_REFERENCE.md) | [Examples](examples/)
 
 ---
 
@@ -833,7 +654,7 @@ UACS works with popular MCP clients out of the box:
 - 🤖 [Claude Desktop](docs/integrations/CLAUDE_DESKTOP.md) - Complete setup guide with binary + Docker
 - ✏️ [Cursor](docs/integrations/CURSOR.md) - Integration with inline chat and Composer
 - 🌊 [Windsurf](docs/integrations/WINDSURF.md) - Cascade AI integration guide
-- 📚 [All Integrations](docs/INTEGRATIONS.md) - Overview, troubleshooting, and advanced configs
+- 📚 [All Integrations](docs/features/INTEGRATIONS.md) - Overview, troubleshooting, and advanced configs
 
 **User Guides:**
 - [Migration Guide](docs/MIGRATION.md) - Upgrade from v0.2.x to v0.3.0 semantic API
@@ -841,20 +662,20 @@ UACS works with popular MCP clients out of the box:
 - [Hooks Guide](.claude-plugin/HOOKS_GUIDE.md) - Claude Code hooks for automatic capture
 - [Library Guide](docs/LIBRARY_GUIDE.md) - Complete Python API reference
 - [CLI Reference](docs/CLI_REFERENCE.md) - All command documentation
-- [MCP Server Setup](docs/MCP_SERVER_SETUP.md) - MCP integration for Claude/Cursor/Windsurf
+- [MCP Server Setup](docs/guides/MCP_SERVER_SETUP.md) - MCP integration for Claude/Cursor/Windsurf
 
 **Technical Deep Dives:**
-- [Adapters](docs/ADAPTERS.md) - Format translation architecture
-- [Context Management](docs/CONTEXT.md) - Compression algorithms
-- [Package Management](docs/PACKAGES.md) - Installation and management system
+- [Adapters](docs/features/ADAPTERS.md) - Format translation architecture
+- [Context Management](docs/features/CONTEXT.md) - Compression algorithms
+- [Package Management](docs/features/PACKAGES.md) - Installation and management system
 
 **Examples:**
-All examples are in [examples/](examples/) and tested:
-- [basic_context.py](examples/basic_context.py) - Context system basics
-- [package_management.py](examples/package_management.py) - Install and manage packages
-- [memory_usage.py](examples/memory_usage.py) - Persistent memory
-- [custom_adapter.py](examples/custom_adapter.py) - Build custom format adapters
-- [mcp_tool_usage.py](examples/mcp_tool_usage.py) - Programmatic MCP access
+All examples use v0.3.0 semantic API and take ~15 minutes total:
+- [01_semantic_basics.py](examples/01_semantic_basics.py) - Core API (5 min)
+- [02_claude_code_integration.py](examples/02_claude_code_integration.py) - Hooks & auto-capture (5 min)
+- [03_web_ui.py](examples/03_web_ui.py) - Web UI visualization (3 min)
+- [04_search_and_knowledge.py](examples/04_search_and_knowledge.py) - Advanced patterns (2 min)
+- [See examples/README.md](examples/README.md) - Full guide with learning paths
 
 **Development:**
 - [Contributing](CONTRIBUTING.md) - How to contribute
@@ -961,4 +782,4 @@ MIT License - see [LICENSE](LICENSE) for details
 
 ---
 
-**Version:** 0.2.0 | **License:** MIT
+**Version:** 0.3.0 | **License:** MIT
