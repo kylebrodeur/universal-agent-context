@@ -78,6 +78,7 @@ packages = ["src/uacs"]
 
 [tool.hatch.build.targets.wheel.force-include]
 "uacs-web-ui/out" = "uacs/visualization/static_ui"
+".claude-plugin" = "uacs/.claude-plugin"
 
 [tool.hatch.build.targets.sdist]
 exclude = [

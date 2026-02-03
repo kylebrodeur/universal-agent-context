@@ -5,7 +5,7 @@ from pathlib import Path
 
 import typer
 
-from uacs.cli import context, memory, mcp, packages, skills
+from uacs.cli import context, memory, mcp, packages, plugin, skills
 
 app = typer.Typer(
     name="uacs",
@@ -19,6 +19,7 @@ app.add_typer(context.app, name="context")
 app.add_typer(packages.app, name="packages")
 app.add_typer(memory.app, name="memory")
 app.add_typer(mcp.app, name="mcp")
+app.add_typer(plugin.app, name="plugin")
 
 
 @app.command()
