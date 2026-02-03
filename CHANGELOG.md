@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-02-03
+
+### ✨ Added
+
+- **Bundled Web UI**: Single-command startup with `uacs web`
+  - Next.js frontend served as static export from FastAPI backend
+  - Eliminates two-terminal requirement (backend + frontend → single process)
+  - All UI updates remain real-time via REST API calls
+
+### 📝 Changed
+
+- **Modernized Examples**: Complete rewrite from 17 deprecated files to 4 focused examples (~15 min total)
+  - `01_semantic_basics.py` - Core API (5 min)
+  - `02_claude_code_integration.py` - Hooks integration (5 min)
+  - `03_web_ui.py` - Bundled UI demo (3 min)
+  - `04_search_and_knowledge.py` - Advanced patterns (2 min)
+- **Documentation**: Updated README and examples to reflect bundled Web UI architecture
+
+### 🐛 Fixed
+
+- SearchResult attribute compatibility across embeddings and knowledge types
+- Stats dictionary structure access (semantic.conversations)
+
+### 🧹 Removed
+
+- Deprecated v0.2.0 examples (tutorials/, quickstart/)
+- Internal planning documentation from public repository
+
 ## [0.3.0] - 2026-02-02
 
 ### 🎉 Major Feature Release - Semantic API
